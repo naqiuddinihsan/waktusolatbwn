@@ -1,7 +1,7 @@
 <!--
-Page Name: tumblr_waktu_sembahyang.html
-Version: 2.5.0
-Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ“ (Green) and âœ— (Red) indicators for Qabliyyah and Ba'diyyah across all 5 Fardhu prayers.
+Page Name: index.html
+Version: 2.6.0
+Description: Unified chronological list, safe-area adjustments for modern notches/swipe bars, anti-squish headers, and fixed PWA generic icon.
 -->
 <!DOCTYPE html>
 <html lang="ms">
@@ -19,12 +19,12 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
   <meta name="theme-color" content="#050505">
   <meta name="msapplication-navbutton-color" content="#050505">
 
-  <!-- Vector Masjid Favicon and Apple Touch Icon (Dark Theme Adjusted Base64) -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExMCIgZmlsbD0iIzEyMTIxMiIvPjxwYXRoIGQ9Ik0yNTYgNTJjLTIuOCAxNC4zLTkuOCAyNy40LTIwLjIgMzcuNy0xMC4zIDEwLjMtMjMuNCAxNy40LTM3LjcgMjAuMiAxNC4zIDIuOCAyNy40IDkuOCAzNy43IDIwLjIgMTAuMyAxMC4zIDE3LjQgMjMuNCAyMC4yIDM3LjcgMi44LTE0LjMgOS44LTI3LjQgMjAuMi0zNy43IDEwLjMtMTAuMyAyMy40LTE3LjQgMzcuNy0yMC4yLTE0LjMtMi44LTI3LjQtOS44LTM3LjctMjAuMi0xMC40LTEwLjMtMTcuNC0yMy40LTIwLjItMzcuN3oiIGZpbGw9IiNlNTVlNWUiLz48cGF0aCBkPSJNMjU2IDE0MGMtNTguOCAwLTExMiAzOC41LTEyOCAxMDBoMjU2Yy0xNi02MS41LTY5LjItMTAwLTEyOC0xMDB6IiBmaWxsPSIjZTVlNWU1Ii8+PHBhdGggZD0iTTEyOCAyNDB2MTcyYzAgNi42IDUuNCAxMiAxMiAxMmg2MHYtOTJjMC0zMSAxNC01NiA1Ni01NnM1NiAyNSA1NiA1NnY5Mmg2MGM2LjYgMCAxMi01LjQgMTItMTJWMjQwSDEyOHoiIGZpbGw9IiMyNjI2MjYiLz48cGF0aCBkPSJNMjI0IDMzMmMwLTIyLjEgMTQuMy00MCAzMi00MHMzMiAxNy45IDMyIDQwdjkyaC02NHYtOTJ6IiBmaWxsPSIjZTVlNWU1Ii8+PHBhdGggZD0iTTgxIDIyMmgxOHYxOTBIMThjLTQuNCAwLTgtMy42LTgtOFYyMzBjMC00LjQgMy42LTggOC04aDYzem0zMzIgMGgxOHYxOTBoLTYzYy00LjQgMC04LTMuNi04LThWMjMwYzAtNC40IDMuNi04IDgtOGg2M3oiIGZpbGw9IiM0MDQwNDAiLz48cGF0aCBkPSJNOTAgMTcwYy0xMy4zIDAtMjQgMjAtMjQgNTBoNDhjMC0zMC0xMC43LTUwLTI0LTUwem0zMzIgMGMtMTMuMyAwLTI0IDIwLTI0IDUwaDQ4YzAtMzAtMTAuNy01MC0yNC01MHoiIGZpbGw9IiNlNTVlNWUiLz48cGF0aCBkPSJNODAgMzg0aDM1MnYyNEg4MHoiIGZpbGw9IiNlNTVlNWUiLz48L3N2Zz4=">
-  <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExMCIgZmlsbD0iIzEyMTIxMiIvPjxwYXRoIGQ9Ik0yNTYgNTJjLTIuOCAxNC4zLTkuOCAyNy40LTIwLjIgMzcuNy0xMC4zIDEwLjMtMjMuNCAxNy40LTM3LjcgMjAuMiAxNC4zIDIuOCAyNy40IDkuOCAzNy43IDIwLjIgMTAuMyAxMC4zIDE3LjQgMjMuNCAyMC4yIDM3LjcgMi44LTE0LjMgOS44LTI3LjQgMjAuMi0zNy43IDEwLjMtMTAuMyAyMy40LTE3LjQgMzcuNy0yMC4yLTE0LjMtMi44LTI3LjQtOS44LTM3LjctMjAuMi0xMC40LTEwLjMtMTcuNC0yMy40LTIwLjItMzcuN3oiIGZpbGw9IiNlNTVlNWUiLz48cGF0aCBkPSJNMjU2IDE0MGMtNTguOCAwLTExMiAzOC41LTEyOCAxMDBoMjU2Yy0xNi02MS41LTY5LjItMTAwLTEyOC0xMDB6IiBmaWxsPSIjZTVlNWU1Ii8+PHBhdGggZD0iTTEyOCAyNDB2MTcyYzAgNi42IDUuNCAxMiAxMiAxMmg2MHYtOTJjMC0zMSAxNC01NiA1Ni01NnM1NiAyNSA1NiA1NnY5Mmg2MGM2LjYgMCAxMi01LjQgMTItMTJWMjQwSDEyOHoiIGZpbGw9IiMyNjI2MjYiLz48cGF0aCBkPSJNMjI0IDMzMmMwLTIyLjEgMTQuMy00MCAzMi00MHMzMiAxNy45IDMyIDQwdjkyaC02NHYtOTJ6IiBmaWxsPSIjZTVlNWU1Ii8+PHBhdGggZD0iTTgxIDIyMmgxOHYxOTBIMThjLTQuNCAwLTgtMy42LTgtOFYyMzBjMC00LjQgMy42LTggOC04aDYzem0zMzIgMGgxOHYxOTBoLTYzYy00LjQgMC04LTMuNi04LThWMjMwYzAtNC40IDMuNi04IDgtOGg2M3oiIGZpbGw9IiM0MDQwNDAiLz48cGF0aCBkPSJNOTAgMTcwYy0xMy4zIDAtMjQgMjAtMjQgNTBoNDhjMC0zMC0xMC43LTUwLTI0LTUwem0zMzIgMGMtMTMuMyAwLTI0IDIwLTI0IDUwaDQ4YzAtMzAtMTAuNy01MC0yNC01MHoiIGZpbGw9IiNlNTVlNWUiLz48cGF0aCBkPSJNODAgMzg0aDM1MnYyNEg4MHoiIGZpbGw9IiNlNTVlNWUiLz48L3N2Zz4=">
+  <!-- Generic PWA Icon (Apple & Favicon) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMTAiIGZpbGw9IiMxMjEyMTIiLz48cGF0aCBkPSJNMjU2IDUyYy0yLjggMTQuMy05LjggMjcuNC0yMC4yIDM3LjctMTAuMyAxMC4zLTIzLjQgMTcuNC0zNy43IDIwLjIgMTQuMyAyLjggMjcuNCA5LjggMzcuNyAyMC4yIDEwLjMgMTAuMyAxNy40IDIzLjQgMjAuMiAzNy43IDIuOC0xNC4zIDkuOC0yNy40IDIwLjItMzcuNyAxMC4zLTEwLjMgMjMuNC0xNy40IDM3LjctMjAuMi0xNC4zLTIuOC0yNy40LTkuOC0zNy43LTIwLjItMTAuNC0xMC4zLTE3LjQtMjMuNC0yMC4yLTM3Ljd6IiBmaWxsPSIjZTVlNWU1Ii8+PHBhdGggZD0iTTI1NiAxNDBjLTU4LjggMC0xMTIgMzguNS0xMjggMTAwaDI1NmMtMTYtNjEuNS02OS4yLTEwMC0xMjgtMTAweiIgZmlsbD0iI2U1ZTVlNSIvPjxwYXRoIGQ9Ik0xMjggMjQwdjE3MmMwIDYuNiA1LjQgMTIgMTIgMTJoNjB2LTkyYzAtMzEgMTQtNTYgNTYtNTZzNTYgMjUgNTYgNTZ2OTJoNjBjNi42IDAgMTItNS40IDEyLTEyVjI0MEgxMjh6IiBmaWxsPSIjMjYyNjI2Ii8+PHBhdGggZD0iTTIyNCAzMzJjMC0yMi4xIDE0LjMtNDAgMzItNDBzMzIgMTcuOSAzMiA0MHY5MmgtNjR2LTkyeiIgZmlsbD0iI2U1ZTVlNSIvPjxwYXRoIGQ9Ik04MSAyMjJoMTh2MTkwSDM2Yy00LjQgMC04LTMuNi04LThWMjMwYzAtNC40IDMuNi04IDgtOGg0NXptMzMyIDBoMTh2MTkwaC00NWMtNC40IDAtOC0zLjYtOC04VjIzMGMwLTQuNCAzLjYtOCA4LThoNDV6IiBmaWxsPSIjNDA0MDQwIi8+PHBhdGggZD0iTTkwIDE3MGMtMTMuMyAwLTI0IDIwLTI0IDUwaDQ4YzAtMzAtMTAuNy01MC0yNC01MHptMzMyIDBjLTEzLjMgMC0yNCAyMC0yNCA1MGg0OGMwLTMwLTEwLjctNTAtMjQtNTB6IiBmaWxsPSIjZTVlNWU1Ii8+PHBhdGggZD0iTTgwIDM4NGgzNTJ2MjRIODB6IiBmaWxsPSIjZTVlNWU1Ii8+PC9zdmc+">
+  <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMTAiIGZpbGw9IiMxMjEyMTIiLz48cGF0aCBkPSJNMjU2IDUyYy0yLjggMTQuMy05LjggMjcuNC0yMC4yIDM3LjctMTAuMyAxMC4zLTIzLjQgMTcuNC0zNy43IDIwLjIgMTQuMyAyLjggMjcuNCA5LjggMzcuNyAyMC4yIDEwLjMgMTAuMyAxNy40IDIzLjQgMjAuMiAzNy43IDIuOC0xNC4zIDkuOC0yNy40IDIwLjItMzcuNyAxMC4zLTEwLjMgMjMuNC0xNy40IDM3LjctMjAuMi0xNC4zLTIuOC0yNy40LTkuOC0zNy43LTIwLjItMTAuNC0xMC4zLTE3LjQtMjMuNC0yMC4yLTM3Ljd6IiBmaWxsPSIjZTVlNWU1Ii8+PHBhdGggZD0iTTI1NiAxNDBjLTU4LjggMC0xMTIgMzguNS0xMjggMTAwaDI1NmMtMTYtNjEuNS02OS4yLTEwMC0xMjgtMTAweiIgZmlsbD0iI2U1ZTVlNSIvPjxwYXRoIGQ9Ik0xMjggMjQwdjE3MmMwIDYuNiA1LjQgMTIgMTIgMTJoNjB2LTkyYzAtMzEgMTQtNTYgNTYtNTZzNTYgMjUgNTYgNTZ2OTJoNjBjNi42IDAgMTItNS40IDEyLTEyVjI0MEgxMjh6IiBmaWxsPSIjMjYyNjI2Ii8+PHBhdGggZD0iTTIyNCAzMzJjMC0yMi4xIDE0LjMtNDAgMzItNDBzMzIgMTcuOSAzMiA0MHY5MmgtNjR2LTkyeiIgZmlsbD0iI2U1ZTVlNSIvPjxwYXRoIGQ9Ik04MSAyMjJoMTh2MTkwSDM2Yy00LjQgMC04LTMuNi04LThWMjMwYzAtNC40IDMuNi04IDgtOGg0NXptMzMyIDBoMTh2MTkwaC00NWMtNC40IDAtOC0zLjYtOC04VjIzMGMwLTQuNCAzLjYtOCA4LThoNDV6IiBmaWxsPSIjNDA0MDQwIi8+PHBhdGggZD0iTTkwIDE3MGMtMTMuMyAwLTI0IDIwLTI0IDUwaDQ4YzAtMzAtMTAuNy01MC0yNC01MHptMzMyIDBjLTEzLjMgMC0yNCAyMC0yNCA1MGg0OGMwLTMwLTEwLjctNTAtMjQtNTB6IiBmaWxsPSIjZTVlNWU1Ii8+PHBhdGggZD0iTTgwIDM4NGgzNTJ2MjRIODB6IiBmaWxsPSIjZTVlNWU1Ii8+PC9zdmc+">
 
-  <!-- Embedded Web App Manifest -->
-  <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiV2FrdHUgU29sYXQgQnJ1bmVpIiwiY29ubmVjdF9uYW1lIjoiV2FrdHVTb2xhdCIsInN0YXJ0X3VybCI6Ii93YWt0dXNvbGF0YnJ1bmVpIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzA1MDUwNSIsInRoZW1lX2NvbG9yIjoiIzA1MDUwNSIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBIUjJaM0c0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2Iza3dJakFnTUNBME1USXdNVEVpUGp4eFpXTjBJR2RwWkNSb2lqRWVNQ0lnYUdWcGcyZDBJamV4TVRBaUlISm9JajB4TVRBaUlHWnBiR3cwSWpFeU1USXhNaUkrUEhCaGRHZ2daRDBpVFRJMU5pQTFNbU10TWk0NElERTBMak10T1M0NElESTNMalF0TWpBdU1pQXpOeTNoTFRFd0xqTWdNVEF1TXlBdE1qTXVOQ0V4Tnk0MExUTTNOeWNnTWpBdU1pQXhOQzR6SURJdU9DQXlOeTRwSUQrd09DQXpOeWNnTWpBdU1pQXhNQzR6SURFd0xqTWdNVGMwT0NBeU15NDBJREl3TGpJd016YzNJREl1T0MweE5DNHpJRGs0T0MweU55NDBJREl3TGpJd016YzNJREV3TGpNdE1UQXVNeUF5TXk0MExURTNOQ0F6Tnk0M0xUSXdMakl0TVRRdU15MHlMakd0TWpjdU5DMU9Mamd0TXpjM0xUSXdMakl0TVRBdU5DMHhNQzR6TFRFM05DMHlNeTRwSURJd0xqSXRNemMzZWlJZ1ptbHNiRDBpSTJWMU5XVTFaaUkrUEhCaGRHZ2daRDBpVFRJMU5pQXhOREJqTFRVNExqZ2dNQzB4TVRJZ016Z3VOQzB4TWpnb01UQXdhREkxTm1NdE1UWXROakV1TlMwMk9TNHlMVEV3TUMweE1qZ3RNVEF3ZWlJZ1ptbHNiRDBpSTJWMU5XVTFaaUkrUEhCaGRHZ2daRDBpVFRFeU9DQXlOREIyTVRjeVl6QWdOaTRnTlM0MElERXlJREV5SURFeWFEWXdkaTBzTW1Nd0xUTXhJREUwTFRVMklEVTJMVFUyY3pVcklESTFJRFUySUQVMmRqazJhRFl3WXpZdU5pQXdJREUyTFRVdU5DQXhNaTB4TWxZeU5EQklNVEk0ZWlJZ1ptbHNiRDBpSTBJMk1qWXlOaUkrUEhCaGRHZ2daRDBpVFRJeU5DQXpNekpqTUMweU1pNHhJREUwTGpNdE5EQWdNell0TkRCek16SWdNVGN1T1NBek1pQTBNSFk1TW1ndE5qUjJMVEt5ZWlJZ1ptbHNiRDBpSTJWMU5XVTFaaUkrUEhCaGRHZ2daRDBpVlRneElESXlNbWd4T0hZeE9UQklNVFpqTFRRdU5DQXdMVGd0TXk0MkxUZ3RPRlkyTXpCak1DMDBMalFnTXk0MkxUZ2dPQzB0YURZemVtMHpNeklnT0dneE9IWXhPVEJvTFRZell5MDBMalFnTUMwNExUTXVOQzB0T0ZZeU16QmpNQzAwTGpRZ015NDJMVGdnT0MwdGFEWXplbW9pSUdabWJHeDAPS0pFTURRd05EQXFJQ0IrUEhCaGRHZ2daRDBpVFU1d0lERTNNR010TVRNdU15QXdMVEkwSURJd0xUSTBJRFV3YURRNFl6QXRNekF0TVRBdU55MDFNQzB5TkMwMU1IZG1Nek15SURCakxURXpMak1nTUMweU5DQXlNQzB5TkNBMU1HZzBPR013TFRNd0xURXdMamd0TlRBdE1qUXROVDFwSWdabWJHeDAPS0pFTlRWMU5XVWlQajR3WVhSb0lHUTlJazFPT0RBZ016ZzBhRE0xTW5ZeU5FZzRNSG9pSUdabWJHeDAPS0pFTlRWMU5XVWlQancvYzNaM2EwPSIrd1A9PSIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+  <!-- Valid Web App Manifest for Add to Home Screen -->
+  <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiV2FrdHUgU29sYXQgQnJ1bmVpIiwic2hvcnRfbmFtZSI6Ildha3R1U29sYXQiLCJzdGFydF91cmwiOiIuLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiMwNTA1MDUiLCJ0aGVtZV9jb2xvciI6IiMwNTA1MDUiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpSUhaaGJIUmhjM01pUUhWa1oybDBQU0lzZEdobGNuTjFZM1FpSUhacFpYZENiM2t3SWpBZ01DQTBNVEl3TVRFaUlIZHBaSFJvUFNJMU1USWlJR2hsYVdkb2REMGlOVEV5SWo0OGNtVmpkQ0IzYVdSMGFEMGlOVEV5SWlCb1pXbG5hSFE5SWpVeE1pSWdjaWc5SWpFeE1DSWdabWxzYkQwaUl6RXlNVEl4TWlJdlBqeHdZWFJvSUdROUlrMHlOVFlnT1RJalF0TWk0NElERTBMak10T1M0NElESTNMalF0TWpBdU1pQXpOeTNoTFRFd0xqTWdNVGMwT0NBeU15NDBJREl3TGpJd016YzNJREl1T0MweE5DNHpJRGs0T0MweU55NDBJREl3TGpJd016YzNJREV3TGpNdE1UQXVNeUF5TXk0MExURTNOQ0F6Tnk0M0xUSXdMakl0TVRRdU15MHlMakd0TWpjdU5DMU9Mamd0TXpjM0xUSXdMakl0TVRBdU5DMHhNQzR6TFRFM05DMHlNeTRwSURJd0xqSXRNemMzZWlJZ1ptbHNiRDBpSTJWNVpUVmxOU0l2UGp4d1lYUm9JR1E5SWsweU5UWWdNVFF3WXkwMU9DNDRJREF0TVRFeUlETTRMakV0TVRJNElERXdibWd5TlRZakxURTJMVFl4TGpZdE5qa3VNaTB4TURBdE1USTRJREV3TUhvaUlHWm1iR3gwUFNJalptVmxaV1VpTHo0OGNHRjBhQ0JrUFNKTk1USTRJREkwTUhZeE56SmpNQ0EyTGpZZ05TNDBJREV5SURFeU1USm9OakIyTFRreVl6QXRNellnTVRRdE5UWWdOVFl0TlRaeU5UWWdNakVnTlRZZ05UWjJPVEpvTmpCak5pNDJJREFnTVRJdE5TNDBJREV5TFRFeVZqSTBNRWd4TWpoNklpQm1hV3g1UFNJak1qWXlOakkySWk4K1BIQmhkaUJrUFNKTk1qSTBJRE16TW1Nd0xUSXlMakVnTVRRdU15MDBNQ0F6TWkwME1ITXpNaUExTnlBek1pQTBNSFk1TW1ndE5qUjJMVEt5ZWlJZ1ptbHNiRDBpSTJWNVpUVmxOU0l2UGp4d1lYUm9JR1E5SWs0NE1TQXlNakpvTVRoMk1Ua3dTRE0yWXkwMExqUWdNQzA0TFRNdU5pMDRMVGhXTWpNd1l6QXROQzQwSURNdU5pMDRJRGd0T0dnME5YbHRNek15SURCb01UaDJNVGt3YkMwME5XTXROQzQwSURBdE9DMHpMakl0T0MwNFZqSXpNR013TFRRdU5DQXpMak10T0NBNExUaG9ORFZySWlCbWFXeDVQU0lqTkRBMERBMEFJaTgrUEhCaGRpQmtQU0pOT1RBZ01UY3dZeTB4TXk0eklEQXRNalFnTWpBdE1qUWdOVEJvTkRoak1DMHpNQzB4TUM0M0xUVXdMVElwTFRVd2VtMHpNeXdnTUhNdE1UTXVNeUF3TFRJMENBMHhOUzB5TkNBMU1HZzBPR013TFRNd0xURXdMamd0TlRBdE1qUXROVDFwSWdabWJHeDAPS0pFTlRWMU5XVWlQajR3WVhSb0lHUTlJazE0T0NBek9EUm9NelV5ZGpJMFNERTRNSG9pSUdabWJHeDAPS0pFTlRWMU5XVWlQancvYzNaM2EwPSIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 
   <style>
     :root {
@@ -67,7 +67,13 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding: max(16px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+      
+      /* Safe Area Paddings for Notches and Swipe Bars */
+      padding-top: max(16px, env(safe-area-inset-top));
+      padding-bottom: max(24px, env(safe-area-inset-bottom));
+      padding-left: max(12px, env(safe-area-inset-left));
+      padding-right: max(12px, env(safe-area-inset-right));
+      
       -webkit-font-smoothing: antialiased;
       overflow: hidden; 
     }
@@ -95,6 +101,7 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
       display: flex;
       align-items: center;
       gap: 10px;
+      min-width: 0; /* allows child to shrink */
     }
 
     .brand-logo {
@@ -107,11 +114,18 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
     }
 
     .brand-logo svg {
       width: 100%;
       height: 100%;
+    }
+
+    .header-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0; /* prevent blowout */
     }
 
     .header-info h1 {
@@ -121,6 +135,9 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
       color: var(--text-primary);
       text-transform: uppercase;
       line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .header-dates {
@@ -130,8 +147,10 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
       display: flex;
       gap: 6px;
       align-items: center;
+      flex-wrap: nowrap; /* keep strictly on one line */
     }
 
+    /* Fixed Squished Badge */
     .district-badge {
       font-size: 0.65rem;
       font-weight: 600;
@@ -140,11 +159,20 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
       border: 1px solid var(--border-subtle);
       padding: 1px 6px;
       border-radius: 4px;
+      white-space: nowrap;
+      flex-shrink: 0; 
+    }
+
+    .date-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .controls-cluster {
       display: flex;
       gap: 6px;
+      flex-shrink: 0;
     }
 
     .lang-switcher {
@@ -258,86 +286,75 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
       transition: width 0.8s ease;
     }
 
-    /* Compact Reference Strip */
-    .ref-strip {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      width: 100%;
-      flex-shrink: 0;
-    }
-
-    .ref-item {
-      flex: 1;
-      background-color: var(--bg-surface);
-      border: 1px dashed var(--border-subtle);
-      border-radius: 8px;
-      padding: 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
-    }
-
-    .ref-name {
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .ref-time {
-      font-size: 0.95rem;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      color: var(--text-primary);
-    }
-
-    /* Dense Fardhu List */
-    .fardhu-list {
+    /* Unified Condensed List */
+    .prayer-list {
       display: flex;
       flex-direction: column;
       gap: 8px;
       width: 100%;
       flex-grow: 1;
       overflow-y: auto;
+      padding-bottom: 4px;
     }
 
-    .fardhu-row {
+    .prayer-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
       border-radius: 10px;
-      padding: 12px 14px;
       transition: all 0.2s ease;
+      width: 100%;
+      flex-shrink: 0;
     }
 
-    .fardhu-row.is-active {
+    /* Primary Fardhu Row Styling */
+    .prayer-row.is-fardhu {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 12px 14px;
+    }
+
+    /* Secondary Row Styling (Imsak, Syuruk, Duha) */
+    .prayer-row.is-secondary {
+      background: rgba(18, 18, 18, 0.4);
+      border: 1px dashed var(--border-subtle);
+      padding: 8px 14px;
+    }
+
+    .prayer-row.is-active {
       background: linear-gradient(90deg, var(--bg-surface-active) 0%, var(--bg-surface) 100%);
-      border-color: var(--border-active);
+      border: 1px solid var(--border-active);
       box-shadow: inset 3px 0 0 var(--accent-primary);
     }
 
-    .fardhu-row.is-past {
-      opacity: 0.4;
+    .prayer-row.is-past {
+      opacity: 0.35;
       filter: grayscale(1);
     }
 
-    .row-left {
+    /* Name Formatting */
+    .row-left-fardhu {
       width: 80px;
       font-size: 1.05rem;
       font-weight: 700;
       color: var(--text-primary);
     }
 
-    .fardhu-row.is-active .row-left {
+    .row-left-sec {
+      width: 80px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .prayer-row.is-active .row-left-fardhu,
+    .prayer-row.is-active .row-left-sec {
       color: var(--accent-primary);
     }
 
+    /* Badges */
     .row-mid {
       flex: 1;
       display: flex;
@@ -366,7 +383,8 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
       color: var(--badge-haram-color);
     }
 
-    .row-right {
+    /* Time Formatting */
+    .row-right-fardhu {
       font-size: 1.15rem;
       font-weight: 700;
       font-variant-numeric: tabular-nums;
@@ -374,7 +392,16 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
       text-align: right;
     }
 
-    .fardhu-row.is-active .row-right {
+    .row-right-sec {
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    .prayer-row.is-active .row-right-fardhu,
+    .prayer-row.is-active .row-right-sec {
       color: #ffffff;
     }
 
@@ -385,7 +412,7 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
       color: var(--text-muted);
       line-height: 1.4;
       flex-shrink: 0;
-      padding-top: 4px;
+      padding-top: 2px;
     }
 
     .site-footer a {
@@ -413,7 +440,7 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
         <div class="header-info">
           <h1 id="ui-app-title">Waktu Solat</h1>
           <div class="header-dates">
-            <span id="gregorian-date">-</span>
+            <span class="date-text" id="gregorian-date">-</span>
             <span class="separator">|</span>
             <span class="district-badge" id="ui-district-badge">Brunei-Muara</span>
           </div>
@@ -442,11 +469,8 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
       </div>
     </section>
 
-    <!-- Ultra Compact Reference Strip (Imsak, Syuruk, Duha) -->
-    <div class="ref-strip" id="ref-strip-container"></div>
-
-    <!-- Single Screen List (5 Fardhu) -->
-    <main class="fardhu-list" id="fardhu-list-container"></main>
+    <!-- Unified Single Screen List (All 8 Windows) -->
+    <main class="prayer-list" id="prayer-list-container"></main>
 
     <footer class="site-footer">
       <div>
@@ -502,17 +526,6 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
       }
     };
 
-    const ALL_KEYS = [
-      { key: "imsak", name: "Imsak", isFardhu: false },
-      { key: "subuh", name: "Subuh", isFardhu: true },
-      { key: "syuruk", name: "Syuruk", isFardhu: false },
-      { key: "duha", name: "Duha", isFardhu: false },
-      { key: "zuhur", name: "Zuhur", isFardhu: true },
-      { key: "asar", name: "Asar", isFardhu: true },
-      { key: "maghrib", name: "Maghrib", isFardhu: true },
-      { key: "isya", name: "Isya'", isFardhu: true }
-    ];
-
     let cachedSchedule = {
       imsak: "04:42",
       subuh: "04:52",
@@ -559,36 +572,16 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
 
     function getAdjustedSchedule() {
       const adjusted = {};
-      ALL_KEYS.forEach(function(item) {
-        let baseMins = timeStringToMinutes(cachedSchedule[item.key]);
-        adjusted[item.key] = baseMins + BASE_DISTRICT_OFFSET;
+      const keys = ["imsak", "subuh", "syuruk", "duha", "zuhur", "asar", "maghrib", "isya"];
+      keys.forEach(function(key) {
+        let baseMins = timeStringToMinutes(cachedSchedule[key]);
+        adjusted[key] = baseMins + BASE_DISTRICT_OFFSET;
       });
       return adjusted;
     }
 
-    function renderReferenceStrip(adjustedTimes) {
-      const container = document.getElementById("ref-strip-container");
-      if (!container) return;
-      container.innerHTML = "";
-
-      const refItems = [
-        { key: "imsak", name: "Imsak" },
-        { key: "syuruk", name: "Syuruk" },
-        { key: "duha", name: "Duha" }
-      ];
-
-      refItems.forEach(function(item) {
-        const div = document.createElement("div");
-        div.className = "ref-item";
-        div.innerHTML = 
-          '<span class="ref-name">' + item.name + '</span>' +
-          '<span class="ref-time">' + minutesToDisplay(adjustedTimes[item.key]) + '</span>';
-        container.appendChild(div);
-      });
-    }
-
-    function renderFardhuList(adjustedTimes, activeKey) {
-      const list = document.getElementById("fardhu-list-container");
+    function renderPrayerList(adjustedTimes, activeKey) {
+      const list = document.getElementById("prayer-list-container");
       if (!list) return;
       list.innerHTML = "";
 
@@ -596,37 +589,40 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
       const currentMinutes = now.getHours() * 60 + now.getMinutes();
       const t = I18N[currentLang];
 
-      const fardhuList = [
+      const sequence = [
+        { key: "imsak", name: "Imsak", type: "secondary" },
         {
-          key: "subuh", name: "Subuh",
+          key: "subuh", name: "Subuh", type: "fardhu",
           badges: [
             { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
             { text: t.fiqh.ba_diyyah + " &#10007;", type: "is-haram" }
           ]
         },
+        { key: "syuruk", name: "Syuruk", type: "secondary" },
+        { key: "duha", name: "Duha", type: "secondary" },
         {
-          key: "zuhur", name: "Zuhur",
+          key: "zuhur", name: "Zuhur", type: "fardhu",
           badges: [
             { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
             { text: t.fiqh.ba_diyyah + " &#10003;", type: "is-ok" }
           ]
         },
         {
-          key: "asar", name: "Asar",
+          key: "asar", name: "Asar", type: "fardhu",
           badges: [
             { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
             { text: t.fiqh.ba_diyyah + " &#10007;", type: "is-haram" }
           ]
         },
         {
-          key: "maghrib", name: "Maghrib",
+          key: "maghrib", name: "Maghrib", type: "fardhu",
           badges: [
             { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
             { text: t.fiqh.ba_diyyah + " &#10003;", type: "is-ok" }
           ]
         },
         {
-          key: "isya", name: "Isya'",
+          key: "isya", name: "Isya'", type: "fardhu",
           badges: [
             { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
             { text: t.fiqh.ba_diyyah + " &#10003;", type: "is-ok" },
@@ -635,9 +631,9 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
         }
       ];
 
-      fardhuList.forEach(function(item) {
+      sequence.forEach(function(item) {
         const row = document.createElement("div");
-        row.className = "fardhu-row";
+        row.className = "prayer-row is-" + item.type;
 
         const prayerMins = adjustedTimes[item.key];
         
@@ -648,14 +644,19 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
         }
 
         let badgesHtml = '';
-        item.badges.forEach(function(b) {
-          badgesHtml += '<span class="fiqh-badge ' + b.type + '">' + b.text + '</span>';
-        });
+        if (item.badges) {
+          item.badges.forEach(function(b) {
+            badgesHtml += '<span class="fiqh-badge ' + b.type + '">' + b.text + '</span>';
+          });
+        }
+
+        const nameClass = item.type === "fardhu" ? "row-left-fardhu" : "row-left-sec";
+        const timeClass = item.type === "fardhu" ? "row-right-fardhu" : "row-right-sec";
 
         row.innerHTML = 
-          '<div class="row-left">' + item.name + '</div>' +
+          '<div class="' + nameClass + '">' + item.name + '</div>' +
           '<div class="row-mid">' + badgesHtml + '</div>' +
-          '<div class="row-right">' + minutesToDisplay(prayerMins) + '</div>';
+          '<div class="' + timeClass + '">' + minutesToDisplay(prayerMins) + '</div>';
 
         list.appendChild(row);
       });
@@ -755,8 +756,7 @@ Description: Dark Slate/Black theme update. Replaced text warnings with clear âœ
       const progressFill = document.getElementById("hero-progress-fill");
       if (progressFill) progressFill.style.width = progressPercent.toFixed(1) + "%";
 
-      renderReferenceStrip(adjustedTimes);
-      renderFardhuList(adjustedTimes, state.active.key);
+      renderPrayerList(adjustedTimes, state.active.key);
     }
 
     function setDateHeaders() {
