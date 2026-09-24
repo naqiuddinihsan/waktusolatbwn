@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 3.0.1
-Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Service Worker. Features Dynamic Glassmorphism, Astronomical Sun/Moon Tracking, and Smart District Dropdown.
+Version: 3.1.0
+Description: Condensed UI to fit single screens, glassmorphism footer for contrast against celestial engine, text-selection and double-tap-to-zoom disabled for native feel.
 -->
 <!DOCTYPE html>
 <html lang="ms">
@@ -26,7 +26,7 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
       /* Base Colors */
       --bg-base: #050505;
       
-      /* Glassmorphism Surface (Replaces solid slate) */
+      /* Glassmorphism Surface */
       --bg-surface: rgba(18, 18, 18, 0.65);
       --bg-surface-elevated: rgba(30, 30, 30, 0.7);
       --bg-surface-active: rgba(23, 23, 23, 0.85);
@@ -49,11 +49,16 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
       --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
 
+    /* Disable Highlights and Double-Tap Zoom */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none; /* Safari */
+      -ms-user-select: none; /* IE 10+ */
+      user-select: none; /* Standard */
+      touch-action: manipulation; /* Disables double-tap to zoom */
     }
 
     body {
@@ -66,8 +71,8 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
       align-items: center;
       justify-content: flex-start;
       
-      padding-top: calc(env(safe-area-inset-top, 20px) + 16px);
-      padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 12px);
+      padding-top: calc(env(safe-area-inset-top, 20px) + 12px);
+      /* Removed bottom padding from body to allow footer to flush to bottom */
       padding-left: max(12px, env(safe-area-inset-left));
       padding-right: max(12px, env(safe-area-inset-right));
       
@@ -94,7 +99,7 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
       z-index: -1;
       transform: translate(-50%, -50%);
       transition: top 2s ease-out, left 2s ease-out, box-shadow 3s ease, background 3s ease;
-      opacity: 0; /* Hidden until activated */
+      opacity: 0; 
     }
 
     .app-wrapper {
@@ -103,7 +108,7 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
       height: 100%;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px; /* Condensed gap */
       overflow: hidden; 
       z-index: 10;
     }
@@ -112,8 +117,8 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
     .header-bar {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      padding-bottom: 8px;
+      gap: 8px;
+      padding-bottom: 6px;
       border-bottom: 1px solid var(--border-subtle);
       flex-shrink: 0; 
     }
@@ -128,17 +133,17 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
     .brand-cluster {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .brand-logo {
-      width: 34px;
-      height: 34px;
+      width: 30px;
+      height: 30px;
       border-radius: 8px;
       background: var(--bg-surface-elevated);
       backdrop-filter: blur(8px);
       border: 1px solid var(--border-subtle);
-      padding: 5px;
+      padding: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -151,7 +156,7 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
     }
 
     .header-title-box h1 {
-      font-size: 1.15rem;
+      font-size: 1.05rem;
       font-weight: 700;
       letter-spacing: -0.01em;
       color: var(--text-primary);
@@ -162,7 +167,7 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
 
     .controls-cluster {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       align-items: center;
     }
 
@@ -172,12 +177,12 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
       border: 1px solid var(--border-subtle);
       color: var(--text-primary);
       border-radius: 6px;
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       cursor: pointer;
     }
 
@@ -194,9 +199,9 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
       background: none;
       border: none;
       color: var(--text-muted);
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 600;
-      padding: 4px 8px;
+      padding: 4px 6px;
       border-radius: 4px;
       cursor: pointer;
     }
@@ -213,13 +218,13 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
       align-items: center;
       background: var(--bg-surface);
       backdrop-filter: blur(8px);
-      padding: 6px 10px;
+      padding: 4px 10px;
       border-radius: 6px;
       border: 1px solid var(--border-subtle);
     }
 
     .date-text {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 500;
       color: var(--text-secondary);
       white-space: nowrap;
@@ -234,16 +239,18 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
 
     .district-select {
       appearance: none;
-      background-color: var(--bg-surface-elevated);
+      background-color: transparent;
       border: 1px solid var(--border-active);
       color: var(--text-primary);
       font-size: 0.65rem;
       font-weight: 600;
-      padding: 2px 20px 2px 8px;
+      padding: 2px 18px 2px 6px;
       border-radius: 4px;
       outline: none;
       cursor: pointer;
       font-family: var(--font-stack);
+      -webkit-user-select: auto; /* Re-enable for dropdown */
+      user-select: auto;
     }
 
     .district-select-wrapper::after {
@@ -257,30 +264,41 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
       pointer-events: none;
     }
 
-    /* Fixed Hero Section */
+    /* Condensed Hero Section */
     .hero-tracker {
       background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(10, 10, 10, 0.8) 100%);
       backdrop-filter: blur(16px);
       border: 1px solid var(--border-subtle);
-      border-radius: 14px;
-      padding: 16px 20px;
+      border-radius: 12px;
+      padding: 12px 16px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
       position: relative;
       overflow: hidden;
       flex-shrink: 0; 
     }
 
+    .hero-tracker::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 150px;
+      height: 100%;
+      background: radial-gradient(circle at top right, var(--accent-glow) 0%, transparent 80%);
+      pointer-events: none;
+    }
+
     .hero-top-row {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 0px;
       z-index: 1;
     }
 
     .hero-now-label {
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -288,7 +306,7 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
     }
 
     .hero-name {
-      font-size: 2.2rem;
+      font-size: 1.8rem;
       font-weight: 800;
       letter-spacing: -0.02em;
       color: #ffffff;
@@ -296,7 +314,7 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
     }
 
     .hero-time {
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       color: var(--text-secondary);
       margin-top: 2px;
     }
@@ -305,13 +323,13 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
       z-index: 1;
-      margin-top: 4px;
+      margin-top: 2px;
     }
 
     .progress-countdown {
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       font-weight: 700;
       font-variant-numeric: tabular-nums;
       color: var(--text-primary);
@@ -338,19 +356,19 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
     .prayer-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
       width: 100%;
       flex-grow: 1; 
       overflow-y: auto; 
       -webkit-overflow-scrolling: touch; 
-      padding-bottom: 12px;
+      padding-bottom: 8px;
     }
 
     .prayer-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-radius: 10px;
+      border-radius: 8px;
       transition: all 0.2s ease;
       width: 100%;
       flex-shrink: 0; 
@@ -360,13 +378,13 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
     .prayer-row.is-fardhu {
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
-      padding: 12px 14px;
+      padding: 10px 12px;
     }
 
     .prayer-row.is-secondary {
       background: rgba(10, 10, 10, 0.4);
       border: 1px dashed var(--border-subtle);
-      padding: 8px 14px;
+      padding: 6px 12px;
     }
 
     .prayer-row.is-active {
@@ -380,8 +398,8 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
       filter: grayscale(1);
     }
 
-    .row-left-fardhu { width: 80px; font-size: 1.05rem; font-weight: 700; color: var(--text-primary); }
-    .row-left-sec { width: 80px; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+    .row-left-fardhu { width: 75px; font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
+    .row-left-sec { width: 75px; font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
 
     .prayer-row.is-active .row-left-fardhu,
     .prayer-row.is-active .row-left-sec { color: var(--accent-primary); }
@@ -389,16 +407,16 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
     .row-mid {
       flex: 1;
       display: flex;
-      gap: 6px;
+      gap: 4px;
       flex-wrap: wrap;
       justify-content: flex-start;
-      padding: 0 8px;
+      padding: 0 4px;
     }
 
     .fiqh-badge {
-      font-size: 0.6rem;
+      font-size: 0.55rem;
       font-weight: 600;
-      padding: 3px 6px;
+      padding: 2px 5px;
       border-radius: 4px;
       text-transform: uppercase;
       letter-spacing: 0.04em;
@@ -407,20 +425,25 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
     .fiqh-badge.is-ok { background-color: var(--badge-ok-bg); color: var(--badge-ok-color); }
     .fiqh-badge.is-haram { background-color: var(--badge-haram-bg); color: var(--badge-haram-color); }
 
-    .row-right-fardhu { font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-primary); text-align: right; }
-    .row-right-sec { font-size: 0.95rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; }
+    .row-right-fardhu { font-size: 1rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-primary); text-align: right; }
+    .row-right-sec { font-size: 0.85rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; }
     .prayer-row.is-active .row-right-fardhu, .prayer-row.is-active .row-right-sec { color: #ffffff; }
 
-    /* Fixed Footer */
+    /* Frosted Glass Footer to prevent unreadability over Sun Graphic */
     .site-footer {
       text-align: center;
-      font-size: 0.7rem;
-      color: var(--text-muted);
+      font-size: 0.65rem;
+      color: var(--text-primary);
       line-height: 1.4;
       flex-shrink: 0; 
-      padding-top: 4px;
+      padding: 6px 12px calc(env(safe-area-inset-bottom, 12px) + 6px) 12px;
+      margin: auto -12px 0 -12px; /* Expands to touch edges */
+      background: rgba(18, 18, 18, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-top: 1px solid var(--border-subtle);
-      margin-top: auto;
+      border-radius: 12px 12px 0 0;
+      z-index: 10;
     }
 
     .site-footer a { color: var(--text-secondary); text-decoration: none; }
@@ -494,7 +517,7 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
     <main class="prayer-list" id="prayer-list-container"></main>
 
     <footer class="site-footer">
-      <div style="padding-top: 4px;">
+      <div>
         <a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank" rel="noopener noreferrer">Sumber: KHEU Brunei Darussalam</a>
       </div>
       <div>
@@ -504,7 +527,6 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
   </div>
 
   <script>
-    // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
@@ -516,7 +538,6 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
     let currentLang = "ms";
     let visualsEnabled = true;
 
-    // Check Local Storage for settings
     if (localStorage.getItem('bwn_visuals') === 'false') {
       visualsEnabled = false;
     }
@@ -624,6 +645,7 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
 
       const t = I18N[currentLang];
       setText("ui-app-title", t.appTitle);
+      document.title = t.appTitle;
       setText("ui-now-label", t.nowLabel);
       
       let savedIndex = document.getElementById("district-select").selectedIndex;
@@ -742,31 +764,27 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
       celestial.style.opacity = "1";
 
       if (isDay) {
-        // Daytime Engine (Sun)
         let dayProgress = (currentMins - subuhMins) / (maghribMins - subuhMins);
         
         celestial.style.background = "radial-gradient(circle, #fffdf2 0%, #ffe484 50%, transparent 100%)";
         celestial.style.boxShadow = "0 0 40px 20px rgba(255, 228, 132, 0.4)";
         celestial.style.left = (10 + (dayProgress * 80)) + "vw";
-        // Parabolic arc for sun height
         let heightMultiplier = Math.sin(dayProgress * Math.PI); 
         celestial.style.top = (85 - (heightMultiplier * 60)) + "vh";
 
-        // Dynamic Gradients
         if (dayProgress < 0.15) {
-          skyBg.style.background = "linear-gradient(to bottom, #0f172a 0%, #312e81 60%, #701a75 100%)"; // Dawn
+          skyBg.style.background = "linear-gradient(to bottom, #0f172a 0%, #312e81 60%, #701a75 100%)"; 
         } else if (dayProgress < 0.3) {
-          skyBg.style.background = "linear-gradient(to bottom, #1e3a8a 0%, #7c2d12 60%, #b45309 100%)"; // Morning
+          skyBg.style.background = "linear-gradient(to bottom, #1e3a8a 0%, #7c2d12 60%, #b45309 100%)"; 
         } else if (dayProgress < 0.7) {
-          skyBg.style.background = "linear-gradient(to bottom, #0ea5e9 0%, #38bdf8 100%)"; // Noon
+          skyBg.style.background = "linear-gradient(to bottom, #0ea5e9 0%, #38bdf8 100%)"; 
         } else if (dayProgress < 0.9) {
-          skyBg.style.background = "linear-gradient(to bottom, #1d4ed8 0%, #c2410c 100%)"; // Afternoon
+          skyBg.style.background = "linear-gradient(to bottom, #1d4ed8 0%, #c2410c 100%)"; 
         } else {
-          skyBg.style.background = "linear-gradient(to bottom, #1e1b4b 0%, #831843 60%, #ea580c 100%)"; // Sunset
+          skyBg.style.background = "linear-gradient(to bottom, #1e1b4b 0%, #831843 60%, #ea580c 100%)"; 
         }
 
       } else {
-        // Nighttime Engine (Moon)
         let nightDuration = (1440 - maghribMins) + subuhMins;
         let elapsedNight = currentMins >= maghribMins ? (currentMins - maghribMins) : ((1440 - maghribMins) + currentMins);
         let nightProgress = elapsedNight / nightDuration;
@@ -777,11 +795,10 @@ Description: Hijri date hotfix (13 Rabiulakhir). PWA Native Installation with Se
         let heightMultiplier = Math.sin(nightProgress * Math.PI); 
         celestial.style.top = (75 - (heightMultiplier * 40)) + "vh";
 
-        // Night Sky
         if (nightProgress < 0.1) {
-          skyBg.style.background = "linear-gradient(to bottom, #020617 0%, #172554 100%)"; // Dusk settling
+          skyBg.style.background = "linear-gradient(to bottom, #020617 0%, #172554 100%)"; 
         } else {
-          skyBg.style.background = "linear-gradient(to bottom, #000000 0%, #020617 100%)"; // Deep night
+          skyBg.style.background = "linear-gradient(to bottom, #000000 0%, #020617 100%)"; 
         }
       }
     }
