@@ -1,18 +1,18 @@
 <!--
 Page Name: index.html
-Version: 2.6.0
-Description: Unified chronological list, safe-area adjustments for modern notches/swipe bars, anti-squish headers, and fixed PWA generic icon.
+Version: 2.8.0
+Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunrise, Zuhr, Asr, Isha', Dhuha, Witir). App structure updated to true fixed header/footer using 100dvh.
 -->
 <!DOCTYPE html>
 <html lang="ms">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Waktu Solat Brunei Darussalam</title>
+  <title>Waktu Solat BWN</title>
 
   <!-- PWA & Mobile Web App Meta Tags -->
-  <meta name="application-name" content="Waktu Solat">
-  <meta name="apple-mobile-web-app-title" content="Waktu Solat">
+  <meta name="application-name" content="Waktu Solat BWN">
+  <meta name="apple-mobile-web-app-title" content="Waktu Solat BWN">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -24,7 +24,7 @@ Description: Unified chronological list, safe-area adjustments for modern notche
   <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMTAiIGZpbGw9IiMxMjEyMTIiLz48cGF0aCBkPSJNMjU2IDUyYy0yLjggMTQuMy05LjggMjcuNC0yMC4yIDM3LjctMTAuMyAxMC4zLTIzLjQgMTcuNC0zNy43IDIwLjIgMTQuMyAyLjggMjcuNCA5LjggMzcuNyAyMC4yIDEwLjMgMTAuMyAxNy40IDIzLjQgMjAuMiAzNy43IDIuOC0xNC4zIDkuOC0yNy40IDIwLjItMzcuNyAxMC4zLTEwLjMgMjMuNC0xNy40IDM3LjctMjAuMi0xNC4zLTIuOC0yNy40LTkuOC0zNy43LTIwLjItMTAuNC0xMC4zLTE3LjQtMjMuNC0yMC4yLTM3Ljd6IiBmaWxsPSIjZTVlNWU1Ii8+PHBhdGggZD0iTTI1NiAxNDBjLTU4LjggMC0xMTIgMzguNS0xMjggMTAwaDI1NmMtMTYtNjEuNS02OS4yLTEwMC0xMjgtMTAweiIgZmlsbD0iI2U1ZTVlNSIvPjxwYXRoIGQ9Ik0xMjggMjQwdjE3MmMwIDYuNiA1LjQgMTIgMTIgMTJoNjB2LTkyYzAtMzEgMTQtNTYgNTYtNTZzNTYgMjUgNTYgNTZ2OTJoNjBjNi42IDAgMTItNS40IDEyLTEyVjI0MEgxMjh6IiBmaWxsPSIjMjYyNjI2Ii8+PHBhdGggZD0iTTIyNCAzMzJjMC0yMi4xIDE0LjMtNDAgMzItNDBzMzIgMTcuOSAzMiA0MHY5MmgtNjR2LTkyeiIgZmlsbD0iI2U1ZTVlNSIvPjxwYXRoIGQ9Ik04MSAyMjJoMTh2MTkwSDM2Yy00LjQgMC04LTMuNi04LThWMjMwYzAtNC40IDMuNi04IDgtOGg0NXptMzMyIDBoMTh2MTkwaC00NWMtNC40IDAtOC0zLjYtOC04VjIzMGMwLTQuNCAzLjYtOCA4LThoNDV6IiBmaWxsPSIjNDA0MDQwIi8+PHBhdGggZD0iTTkwIDE3MGMtMTMuMyAwLTI0IDIwLTI0IDUwaDQ4YzAtMzAtMTAuNy01MC0yNC01MHptMzMyIDBjLTEzLjMgMC0yNCAyMC0yNCA1MGg0OGMwLTMwLTEwLjctNTAtMjQtNTB6IiBmaWxsPSIjZTVlNWU1Ii8+PHBhdGggZD0iTTgwIDM4NGgzNTJ2MjRIODB6IiBmaWxsPSIjZTVlNWU1Ii8+PC9zdmc+">
 
   <!-- Valid Web App Manifest for Add to Home Screen -->
-  <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiV2FrdHUgU29sYXQgQnJ1bmVpIiwic2hvcnRfbmFtZSI6Ildha3R1U29sYXQiLCJzdGFydF91cmwiOiIuLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiMwNTA1MDUiLCJ0aGVtZV9jb2xvciI6IiMwNTA1MDUiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpSUhaaGJIUmhjM01pUUhWa1oybDBQU0lzZEdobGNuTjFZM1FpSUhacFpYZENiM2t3SWpBZ01DQTBNVEl3TVRFaUlIZHBaSFJvUFNJMU1USWlJR2hsYVdkb2REMGlOVEV5SWo0OGNtVmpkQ0IzYVdSMGFEMGlOVEV5SWlCb1pXbG5hSFE5SWpVeE1pSWdjaWc5SWpFeE1DSWdabWxzYkQwaUl6RXlNVEl4TWlJdlBqeHdZWFJvSUdROUlrMHlOVFlnT1RJalF0TWk0NElERTBMak10T1M0NElESTNMalF0TWpBdU1pQXpOeTNoTFRFd0xqTWdNVGMwT0NBeU15NDBJREl3TGpJd016YzNJREl1T0MweE5DNHpJRGs0T0MweU55NDBJREl3TGpJd016YzNJREV3TGpNdE1UQXVNeUF5TXk0MExURTNOQ0F6Tnk0M0xUSXdMakl0TVRRdU15MHlMakd0TWpjdU5DMU9Mamd0TXpjM0xUSXdMakl0TVRBdU5DMHhNQzR6TFRFM05DMHlNeTRwSURJd0xqSXRNemMzZWlJZ1ptbHNiRDBpSTJWNVpUVmxOU0l2UGp4d1lYUm9JR1E5SWsweU5UWWdNVFF3WXkwMU9DNDRJREF0TVRFeUlETTRMakV0TVRJNElERXdibWd5TlRZakxURTJMVFl4TGpZdE5qa3VNaTB4TURBdE1USTRJREV3TUhvaUlHWm1iR3gwUFNJalptVmxaV1VpTHo0OGNHRjBhQ0JrUFNKTk1USTRJREkwTUhZeE56SmpNQ0EyTGpZZ05TNDBJREV5SURFeU1USm9OakIyTFRreVl6QXRNellnTVRRdE5UWWdOVFl0TlRaeU5UWWdNakVnTlRZZ05UWjJPVEpvTmpCak5pNDJJREFnTVRJdE5TNDBJREV5TFRFeVZqSTBNRWd4TWpoNklpQm1hV3g1UFNJak1qWXlOakkySWk4K1BIQmhkaUJrUFNKTk1qSTBJRE16TW1Nd0xUSXlMakVnTVRRdU15MDBNQ0F6TWkwME1ITXpNaUExTnlBek1pQTBNSFk1TW1ndE5qUjJMVEt5ZWlJZ1ptbHNiRDBpSTJWNVpUVmxOU0l2UGp4d1lYUm9JR1E5SWs0NE1TQXlNakpvTVRoMk1Ua3dTRE0yWXkwMExqUWdNQzA0TFRNdU5pMDRMVGhXTWpNd1l6QXROQzQwSURNdU5pMDRJRGd0T0dnME5YbHRNek15SURCb01UaDJNVGt3YkMwME5XTXROQzQwSURBdE9DMHpMakl0T0MwNFZqSXpNR013TFRRdU5DQXpMak10T0NBNExUaG9ORFZySWlCbWFXeDVQU0lqTkRBMERBMEFJaTgrUEhCaGRpQmtQU0pOT1RBZ01UY3dZeTB4TXk0eklEQXRNalFnTWpBdE1qUWdOVEJvTkRoak1DMHpNQzB4TUM0M0xUVXdMVElwTFRVd2VtMHpNeXdnTUhNdE1UTXVNeUF3TFRJMENBMHhOUzB5TkNBMU1HZzBPR013TFRNd0xURXdMamd0TlRBdE1qUXROVDFwSWdabWJHeDAPS0pFTlRWMU5XVWlQajR3WVhSb0lHUTlJazE0T0NBek9EUm9NelV5ZGpJMFNERTRNSG9pSUdabWJHeDAPS0pFTlRWMU5XVWlQancvYzNaM2EwPSIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
+  <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiV2FrdHUgU29sYXQgQldOIiwic2hvcnRfbmFtZSI6Ildha3R1IEJXTiIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzA1MDUwNSIsInRoZW1lX2NvbG9yIjoiIzA1MDUwNSIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBIUjJaM0c0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2Iza3dJakFnTUNBME1USXdNVEVpSUhkcFpIUm9QU0kxTVRJaUlHaGxhV2RvZEQwaU5URXlJajQ4Y21WamRDQjNhV1IwYUQwaU5URXlJaUJvWldsbmFIUTlJalV4TWlJZ2NpZzlJakV4TUNJZ1ptbHNiRDBpSXpFeU1USXhNaUl2UGp4d1lYUm9JR1E5SWsweU5UWWdPVElqUXRNaTQ0SURFMExqTXRPUzQ0SURJM0xqUXRNakF1TWlBek55M2hMVEV3TGpNZ01UYzBPQ0F5TXk0MElESXdMakl3TXpjM0lESXVPQzB4TkM0eklEazVPQzB5Tnk0MElESXdMakl3TXpjM0lERVdMak10TVRBdU15QXlNeTQwTFRFM05DQXpOeTQzTFRJd0xqSXRNVFF1TXkweUxqR3RNamN1TkMxT0xqZ3RNemMzTFRJd0xqSXRNVEF1TkMweE1DNHpMVEUzTkMweU15NHBJREl3TGpJd016YzNlaUlnWm1sc2JEMGlJMlY1WlRWbE5TSXZQanh3WVhSb0lHUTlJazB5TlRZZ01UUXdZeTAxT0M0NElEQXRNVEV5SURNNExqRXRNVEk0SURFd2JtZ3lOVFlqTFRFMkxUWXhMall0TmprdU1pMHhNREF0TVRRNElERXdNSG9pSUdabWJHeDBQU0lqWm1WbFpXVWlMejQ4Y0dGMFhDQmtQU0pOTVE0NElESTBNSFl4TnpKaktBMkxqWWdOUzQwSURFeUlERXlNVEpvTmpCMkxUa3lZekF0TXpZZ01UUXROVFlnTlRZdE5UWnlOVFlnTWpFZ05UWWdOVFoyT1RKb05qQmpOaTQySURBZ01USXROUzQwSURFeUxURXlWakkwTUVneE1qaDZJaUJtYVd4NVBTSWpNall5TmpJMklpOCtQSEJoZGlCa1BTSk5NakkwSURNek1tTXdMVEl5TGpFZ01UUXVNeTAwTUNBek1pMDBNSE16TWlBMU55QXpNaUEwTUhZNU1tZ3ROalIyTFRLeWVpSWdabWxzYkQwaUkyVjVaVFZsTlNJdlBqeHdZWFJvSUdROUlrNDRNU0F5TWpKb01UaDJNVGt3U0RNMll5MDBMalFnTUMwNExUTXVOaTA0TFRoV01qTXdZekF0TkM0MElETXVOaTA0SURndE9HZzBOWGx0TXpNeUlEQm9NVGgyTVRrd2JDMDBOV010TkM0MElEQXRPQzB6TGpJdE9DMDRWakl6TUdNd0xUUXVDQXpMak10T0NBNExUaG9ORFZySWlCbWFXeDVQU0lqTkRBMERBMEFJaTgrUEhCaGRpQmtQU0pOT1RBZ01UY3dZeTB4TXk0eklEQXRNalFnTWpBdE1qUWdOVEJvTkRoak1DMHpNQzB4TUM0M0xUVXdMVElwTFRVd2VtMHpNeXdnTUhNdE1UTXVNeUF3TFRJMENBMHhOUzB5TkNBMU1HZzBPR013TFRNd0xURXdMamd0TlRBdE1qUXROVDFwSWdabWJHeDAPS0pFTlRWMU5XVWlQajR3WVhSb0lHUTlFazE0T0NBek9EUm9NelV5ZGpJMFNERTRNSG9pSUdabWJHeDAPS0pFTlRWMU5XVWlQancvYzNaM2EwPSIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 
   <style>
     :root {
@@ -62,15 +62,15 @@ Description: Unified chronological list, safe-area adjustments for modern notche
       background-color: var(--bg-base);
       color: var(--text-primary);
       font-family: var(--font-stack);
-      height: 100vh;
+      height: 100dvh; /* Dynamic Viewport Height fixes iOS bottom bar issues */
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
       
       /* Safe Area Paddings for Notches and Swipe Bars */
-      padding-top: max(16px, env(safe-area-inset-top));
-      padding-bottom: max(24px, env(safe-area-inset-bottom));
+      padding-top: calc(env(safe-area-inset-top, 20px) + 16px);
+      padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 12px);
       padding-left: max(12px, env(safe-area-inset-left));
       padding-right: max(12px, env(safe-area-inset-right));
       
@@ -85,23 +85,30 @@ Description: Unified chronological list, safe-area adjustments for modern notche
       display: flex;
       flex-direction: column;
       gap: 12px;
+      overflow: hidden; /* Prevents stretching */
     }
 
-    /* Header */
+    /* Fixed Header */
     .header-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-shrink: 0; /* Locks to top */
+    }
+
+    .header-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border-subtle);
-      flex-shrink: 0;
+      width: 100%;
     }
 
     .brand-cluster {
       display: flex;
       align-items: center;
       gap: 10px;
-      min-width: 0; /* allows child to shrink */
     }
 
     .brand-logo {
@@ -122,57 +129,14 @@ Description: Unified chronological list, safe-area adjustments for modern notche
       height: 100%;
     }
 
-    .header-info {
-      display: flex;
-      flex-direction: column;
-      min-width: 0; /* prevent blowout */
-    }
-
-    .header-info h1 {
-      font-size: 1.1rem;
+    .header-title-box h1 {
+      font-size: 1.15rem;
       font-weight: 700;
       letter-spacing: -0.01em;
       color: var(--text-primary);
       text-transform: uppercase;
       line-height: 1.1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .header-dates {
-      margin-top: 2px;
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      flex-wrap: nowrap; /* keep strictly on one line */
-    }
-
-    /* Fixed Squished Badge */
-    .district-badge {
-      font-size: 0.65rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      background-color: var(--bg-surface-elevated);
-      border: 1px solid var(--border-subtle);
-      padding: 1px 6px;
-      border-radius: 4px;
-      white-space: nowrap;
-      flex-shrink: 0; 
-    }
-
-    .date-text {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .controls-cluster {
-      display: flex;
-      gap: 6px;
-      flex-shrink: 0;
+      margin: 0;
     }
 
     .lang-switcher {
@@ -199,7 +163,39 @@ Description: Unified chronological list, safe-area adjustments for modern notche
       color: var(--text-primary);
     }
 
-    /* Hero Section */
+    /* Header Bottom Row (Date & Badge) */
+    .header-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(26, 26, 26, 0.4);
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .date-text {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .district-badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-active);
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+      flex-shrink: 0; 
+    }
+
+    /* Fixed Hero Section */
     .hero-tracker {
       background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(20, 20, 20, 0.95) 100%);
       border: 1px solid var(--border-subtle);
@@ -210,7 +206,7 @@ Description: Unified chronological list, safe-area adjustments for modern notche
       gap: 12px;
       position: relative;
       overflow: hidden;
-      flex-shrink: 0;
+      flex-shrink: 0; /* Locks to top under header */
     }
 
     .hero-tracker::after {
@@ -286,15 +282,16 @@ Description: Unified chronological list, safe-area adjustments for modern notche
       transition: width 0.8s ease;
     }
 
-    /* Unified Condensed List */
+    /* Scrollable Unified List */
     .prayer-list {
       display: flex;
       flex-direction: column;
       gap: 8px;
       width: 100%;
-      flex-grow: 1;
-      overflow-y: auto;
-      padding-bottom: 4px;
+      flex-grow: 1; /* Takes up remaining middle space */
+      overflow-y: auto; /* Allows scrolling */
+      -webkit-overflow-scrolling: touch; /* Smooth iOS scroll */
+      padding-bottom: 12px;
     }
 
     .prayer-row {
@@ -304,7 +301,11 @@ Description: Unified chronological list, safe-area adjustments for modern notche
       border-radius: 10px;
       transition: all 0.2s ease;
       width: 100%;
-      flex-shrink: 0;
+      flex-shrink: 0; /* Prevents rows from squishing inside scroll view */
+    }
+
+    .prayer-row:active {
+      transform: scale(0.98);
     }
 
     /* Primary Fardhu Row Styling */
@@ -405,14 +406,16 @@ Description: Unified chronological list, safe-area adjustments for modern notche
       color: #ffffff;
     }
 
-    /* Footer */
+    /* Fixed Footer */
     .site-footer {
       text-align: center;
       font-size: 0.7rem;
       color: var(--text-muted);
       line-height: 1.4;
-      flex-shrink: 0;
-      padding-top: 2px;
+      flex-shrink: 0; /* Locks to bottom */
+      padding-top: 4px;
+      border-top: 1px solid var(--border-subtle);
+      margin-top: auto;
     }
 
     .site-footer a {
@@ -425,33 +428,35 @@ Description: Unified chronological list, safe-area adjustments for modern notche
 
   <div class="app-wrapper">
     <header class="header-bar">
-      <div class="brand-cluster">
-        <div class="brand-logo" aria-hidden="true">
-          <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M256 52c-2.8 14.3-9.8 27.4-20.2 37.7-10.3 10.3-23.4 17.4-37.7 20.2 14.3 2.8 27.4 9.8 37.7 20.2 10.3 10.3 17.4 23.4 20.2 37.7 2.8-14.3 9.8-27.4 20.2-37.7 10.3-10.3 23.4-17.4 37.7-20.2-14.3-2.8-27.4-9.8-37.7-20.2-10.4-10.3-17.4-23.4-20.2-37.7z" fill="#e5e5e5"/>
-            <path d="M256 140c-58.8 0-112 38.5-128 100h256c-16-61.5-69.2-100-128-100z" fill="#e5e5e5"/>
-            <path d="M128 240v172c0 6.6 5.4 12 12 12h60v-92c0-31 14-56 56-56s56 25 56 56v92h60c6.6 0 12-5.4 12-12V240H128z" fill="#262626"/>
-            <path d="M224 332c0-22.1 14.3-40 32-40s32 17.9 32 40v92h-64v-92z" fill="#e5e5e5"/>
-            <path d="M81 222h18v190H36c-4.4 0-8-3.6-8-8V230c0-4.4 3.6-8 8-8h45zm332 0h18v190h-45c-4.4 0-8-3.6-8-8V230c0-4.4 3.6-8 8-8h45z" fill="#404040"/>
-            <path d="M90 170c-13.3 0-24 20-24 50h48c0-30-10.7-50-24-50zm332 0c-13.3 0-24 20-24 50h48c0-30-10.7-50-24-50z" fill="#e5e5e5"/>
-            <path d="M80 384h352v24H80z" fill="#e5e5e5"/>
-          </svg>
-        </div>
-        <div class="header-info">
-          <h1 id="ui-app-title">Waktu Solat</h1>
-          <div class="header-dates">
-            <span class="date-text" id="gregorian-date">-</span>
-            <span class="separator">|</span>
-            <span class="district-badge" id="ui-district-badge">Brunei-Muara</span>
+      <!-- Top Row: Logo, Title, Toggle -->
+      <div class="header-top">
+        <div class="brand-cluster">
+          <div class="brand-logo" aria-hidden="true">
+            <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M256 52c-2.8 14.3-9.8 27.4-20.2 37.7-10.3 10.3-23.4 17.4-37.7 20.2 14.3 2.8 27.4 9.8 37.7 20.2 10.3 10.3 17.4 23.4 20.2 37.7 2.8-14.3 9.8-27.4 20.2-37.7 10.3-10.3 23.4-17.4 37.7-20.2-14.3-2.8-27.4-9.8-37.7-20.2-10.4-10.3-17.4-23.4-20.2-37.7z" fill="#e5e5e5"/>
+              <path d="M256 140c-58.8 0-112 38.5-128 100h256c-16-61.5-69.2-100-128-100z" fill="#e5e5e5"/>
+              <path d="M128 240v172c0 6.6 5.4 12 12 12h60v-92c0-31 14-56 56-56s56 25 56 56v92h60c6.6 0 12-5.4 12-12V240H128z" fill="#262626"/>
+              <path d="M224 332c0-22.1 14.3-40 32-40s32 17.9 32 40v92h-64v-92z" fill="#e5e5e5"/>
+              <path d="M81 222h18v190H36c-4.4 0-8-3.6-8-8V230c0-4.4 3.6-8 8-8h45zm332 0h18v190h-45c-4.4 0-8-3.6-8-8V230c0-4.4 3.6-8 8-8h45z" fill="#404040"/>
+              <path d="M90 170c-13.3 0-24 20-24 50h48c0-30-10.7-50-24-50zm332 0c-13.3 0-24 20-24 50h48c0-30-10.7-50-24-50z" fill="#e5e5e5"/>
+              <path d="M80 384h352v24H80z" fill="#e5e5e5"/>
+            </svg>
+          </div>
+          <div class="header-title-box">
+            <h1 id="ui-app-title">Waktu Solat BWN</h1>
           </div>
         </div>
-      </div>
 
-      <div class="controls-cluster">
         <div class="lang-switcher">
           <button id="lang-btn-ms" class="lang-btn active" onclick="setLanguage('ms')">BM</button>
           <button id="lang-btn-en" class="lang-btn" onclick="setLanguage('en')">EN</button>
         </div>
+      </div>
+
+      <!-- Bottom Row: Date & Badge -->
+      <div class="header-bottom">
+        <span class="date-text" id="gregorian-date">-</span>
+        <span class="district-badge" id="ui-district-badge">Brunei-Muara</span>
       </div>
     </header>
 
@@ -473,7 +478,7 @@ Description: Unified chronological list, safe-area adjustments for modern notche
     <main class="prayer-list" id="prayer-list-container"></main>
 
     <footer class="site-footer">
-      <div>
+      <div style="padding-top: 4px;">
         <a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank" rel="noopener noreferrer">Sumber: KHEU Brunei Darussalam</a>
       </div>
       <div>
@@ -495,7 +500,7 @@ Description: Unified chronological list, safe-area adjustments for modern notche
 
     const I18N = {
       ms: {
-        appTitle: "Waktu Solat",
+        appTitle: "Waktu Solat BWN",
         nowLabel: "Sekarang:",
         enteredAt: "Masuk pada",
         toNext: "ke",
@@ -503,6 +508,16 @@ Description: Unified chronological list, safe-area adjustments for modern notche
         localeDate: "ms-MY",
         yesterdaySuffix: "(Malam Tadi)",
         tomorrowSuffix: "(Esok)",
+        prayers: {
+          imsak: "Imsak",
+          subuh: "Subuh",
+          syuruk: "Syuruk",
+          duha: "Duha",
+          zuhur: "Zuhur",
+          asar: "Asar",
+          maghrib: "Maghrib",
+          isya: "Isya'"
+        },
         fiqh: {
           qabliyyah: "Qabliyyah",
           ba_diyyah: "Ba'diyyah",
@@ -510,7 +525,7 @@ Description: Unified chronological list, safe-area adjustments for modern notche
         }
       },
       en: {
-        appTitle: "Prayer Times",
+        appTitle: "Waktu Solat BWN",
         nowLabel: "Now:",
         enteredAt: "Entered at",
         toNext: "to",
@@ -518,13 +533,25 @@ Description: Unified chronological list, safe-area adjustments for modern notche
         localeDate: "en-GB",
         yesterdaySuffix: "(Last Night)",
         tomorrowSuffix: "(Tomorrow)",
+        prayers: {
+          imsak: "Imsak",
+          subuh: "Fajr",
+          syuruk: "Sunrise",
+          duha: "Dhuha",
+          zuhur: "Zuhr",
+          asar: "Asr",
+          maghrib: "Maghrib",
+          isya: "Isha'"
+        },
         fiqh: {
           qabliyyah: "Qabliyyah",
           ba_diyyah: "Ba'diyyah",
-          witir: "Witr"
+          witir: "Witir"
         }
       }
     };
+
+    const ALL_KEYS = ["imsak", "subuh", "syuruk", "duha", "zuhur", "asar", "maghrib", "isya"];
 
     let cachedSchedule = {
       imsak: "04:42",
@@ -563,6 +590,7 @@ Description: Unified chronological list, safe-area adjustments for modern notche
 
       const t = I18N[currentLang];
       setText("ui-app-title", t.appTitle);
+      document.title = t.appTitle;
       setText("ui-now-label", t.nowLabel);
       setText("ui-district-badge", t.districtBadge);
 
@@ -572,8 +600,7 @@ Description: Unified chronological list, safe-area adjustments for modern notche
 
     function getAdjustedSchedule() {
       const adjusted = {};
-      const keys = ["imsak", "subuh", "syuruk", "duha", "zuhur", "asar", "maghrib", "isya"];
-      keys.forEach(function(key) {
+      ALL_KEYS.forEach(function(key) {
         let baseMins = timeStringToMinutes(cachedSchedule[key]);
         adjusted[key] = baseMins + BASE_DISTRICT_OFFSET;
       });
@@ -590,39 +617,39 @@ Description: Unified chronological list, safe-area adjustments for modern notche
       const t = I18N[currentLang];
 
       const sequence = [
-        { key: "imsak", name: "Imsak", type: "secondary" },
+        { key: "imsak", type: "secondary" },
         {
-          key: "subuh", name: "Subuh", type: "fardhu",
+          key: "subuh", type: "fardhu",
           badges: [
             { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
             { text: t.fiqh.ba_diyyah + " &#10007;", type: "is-haram" }
           ]
         },
-        { key: "syuruk", name: "Syuruk", type: "secondary" },
-        { key: "duha", name: "Duha", type: "secondary" },
+        { key: "syuruk", type: "secondary" },
+        { key: "duha", type: "secondary" },
         {
-          key: "zuhur", name: "Zuhur", type: "fardhu",
+          key: "zuhur", type: "fardhu",
           badges: [
             { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
             { text: t.fiqh.ba_diyyah + " &#10003;", type: "is-ok" }
           ]
         },
         {
-          key: "asar", name: "Asar", type: "fardhu",
+          key: "asar", type: "fardhu",
           badges: [
             { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
             { text: t.fiqh.ba_diyyah + " &#10007;", type: "is-haram" }
           ]
         },
         {
-          key: "maghrib", name: "Maghrib", type: "fardhu",
+          key: "maghrib", type: "fardhu",
           badges: [
             { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
             { text: t.fiqh.ba_diyyah + " &#10003;", type: "is-ok" }
           ]
         },
         {
-          key: "isya", name: "Isya'", type: "fardhu",
+          key: "isya", type: "fardhu",
           badges: [
             { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
             { text: t.fiqh.ba_diyyah + " &#10003;", type: "is-ok" },
@@ -636,6 +663,7 @@ Description: Unified chronological list, safe-area adjustments for modern notche
         row.className = "prayer-row is-" + item.type;
 
         const prayerMins = adjustedTimes[item.key];
+        const prayerName = t.prayers[item.key];
         
         if (item.key === activeKey) {
           row.classList.add("is-active");
@@ -654,7 +682,7 @@ Description: Unified chronological list, safe-area adjustments for modern notche
         const timeClass = item.type === "fardhu" ? "row-right-fardhu" : "row-right-sec";
 
         row.innerHTML = 
-          '<div class="' + nameClass + '">' + item.name + '</div>' +
+          '<div class="' + nameClass + '">' + prayerName + '</div>' +
           '<div class="row-mid">' + badgesHtml + '</div>' +
           '<div class="' + timeClass + '">' + minutesToDisplay(prayerMins) + '</div>';
 
@@ -668,16 +696,9 @@ Description: Unified chronological list, safe-area adjustments for modern notche
       const currentSecs = now.getSeconds();
       const t = I18N[currentLang];
 
-      const sequence = [
-        { key: "imsak", name: "Imsak", mins: adjustedTimes.imsak },
-        { key: "subuh", name: "Subuh", mins: adjustedTimes.subuh },
-        { key: "syuruk", name: "Syuruk", mins: adjustedTimes.syuruk },
-        { key: "duha", name: "Duha", mins: adjustedTimes.duha },
-        { key: "zuhur", name: "Zuhur", mins: adjustedTimes.zuhur },
-        { key: "asar", name: "Asar", mins: adjustedTimes.asar },
-        { key: "maghrib", name: "Maghrib", mins: adjustedTimes.maghrib },
-        { key: "isya", name: "Isya'", mins: adjustedTimes.isya }
-      ];
+      const sequence = ALL_KEYS.map(function(key) {
+        return { key: key, mins: adjustedTimes[key] };
+      });
 
       let activeItem = null;
       let nextItem = null;
@@ -685,22 +706,38 @@ Description: Unified chronological list, safe-area adjustments for modern notche
       if (currentMins < sequence[0].mins) {
         activeItem = {
           key: "isya",
-          name: "Isya' " + t.yesterdaySuffix,
+          name: t.prayers["isya"] + " " + t.yesterdaySuffix,
           mins: sequence[sequence.length - 1].mins - 1440
         };
-        nextItem = sequence[0];
+        nextItem = {
+          key: sequence[0].key,
+          name: t.prayers[sequence[0].key],
+          mins: sequence[0].mins
+        };
       } else {
         for (let i = 0; i < sequence.length; i++) {
           if (i === sequence.length - 1) {
-            activeItem = sequence[i];
+            activeItem = {
+              key: sequence[i].key,
+              name: t.prayers[sequence[i].key],
+              mins: sequence[i].mins
+            };
             nextItem = {
-              key: "imsak",
-              name: "Imsak " + t.tomorrowSuffix,
+              key: sequence[0].key,
+              name: t.prayers[sequence[0].key] + " " + t.tomorrowSuffix,
               mins: sequence[0].mins + 1440
             };
           } else if (currentMins >= sequence[i].mins && currentMins < sequence[i + 1].mins) {
-            activeItem = sequence[i];
-            nextItem = sequence[i + 1];
+            activeItem = {
+              key: sequence[i].key,
+              name: t.prayers[sequence[i].key],
+              mins: sequence[i].mins
+            };
+            nextItem = {
+              key: sequence[i + 1].key,
+              name: t.prayers[sequence[i + 1].key],
+              mins: sequence[i + 1].mins
+            };
             break;
           }
         }
@@ -761,7 +798,7 @@ Description: Unified chronological list, safe-area adjustments for modern notche
 
     function setDateHeaders() {
       const now = new Date();
-      const gregorianOptions = { weekday: "short", day: "numeric", month: "short" };
+      const gregorianOptions = { weekday: "short", day: "numeric", month: "short", year: "numeric" };
       setText("gregorian-date", now.toLocaleDateString(I18N[currentLang].localeDate, gregorianOptions) + " | " + hijrahString);
     }
 
