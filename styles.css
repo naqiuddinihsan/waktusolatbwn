@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 3.3.0
-Description: Main stylesheet for Waktu Solat BWN. Features Glassmorphism, Safe-Area adaptations, and Dark Slate theme.
+Version: 3.3.1
+Description: Fixed bottom black bar issue by removing double safe-area padding. Footer now spans to the absolute bottom of the screen.
 */
 
 :root {
@@ -55,7 +55,7 @@ body {
   justify-content: flex-start;
   
   padding-top: calc(env(safe-area-inset-top, 35px) + 24px);
-  padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 12px);
+  padding-bottom: 0; /* FIX: Removed double padding to eliminate the black gap */
   padding-left: max(12px, env(safe-area-inset-left));
   padding-right: max(12px, env(safe-area-inset-right));
   
@@ -441,29 +441,28 @@ body {
 .row-right-sec { font-size: 0.85rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; }
 .prayer-row.is-active .row-right-fardhu, .prayer-row.is-active .row-right-sec { color: #ffffff; }
 
-/* Minimalist Transparent Footer */
+/* Frosted Glass Footer to prevent unreadability over Sun Graphic */
 .site-footer {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 12px;
   font-size: 0.65rem;
-  color: var(--text-muted);
+  color: var(--text-primary);
+  line-height: 1.4;
   flex-shrink: 0; 
-  padding-top: 6px;
-  margin-top: auto;
-  letter-spacing: 0.02em;
+  padding: 8px 12px calc(env(safe-area-inset-bottom, 16px) + 8px) 12px;
+  margin: auto -12px 0 -12px; /* Expands to touch edges */
+  background: rgba(18, 18, 18, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border-subtle);
+  border-radius: 12px 12px 0 0;
+  z-index: 10;
 }
 
-.site-footer a { 
-  color: var(--text-secondary); 
-  text-decoration: none; 
-  transition: color 0.2s;
-}
-
-.site-footer a:hover {
-  color: var(--accent-primary);
-}
+.site-footer a { color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+.site-footer a:hover { color: var(--accent-primary); }
 
 .footer-divider {
   width: 3px;
