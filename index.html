@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 3.1.0
-Description: Condensed UI to fit single screens, glassmorphism footer for contrast against celestial engine, text-selection and double-tap-to-zoom disabled for native feel.
+Version: 3.2.0
+Description: Increased iPhone notch clearance. Overhauled minimalist footer (removed glass box). Added animated cloud layer to celestial engine. Dynamic background disabled by default.
 -->
 <!DOCTYPE html>
 <html lang="ms">
@@ -55,10 +55,10 @@ Description: Condensed UI to fit single screens, glassmorphism footer for contra
       margin: 0;
       padding: 0;
       -webkit-tap-highlight-color: transparent;
-      -webkit-user-select: none; /* Safari */
-      -ms-user-select: none; /* IE 10+ */
-      user-select: none; /* Standard */
-      touch-action: manipulation; /* Disables double-tap to zoom */
+      -webkit-user-select: none; 
+      -ms-user-select: none; 
+      user-select: none; 
+      touch-action: manipulation; 
     }
 
     body {
@@ -71,8 +71,9 @@ Description: Condensed UI to fit single screens, glassmorphism footer for contra
       align-items: center;
       justify-content: flex-start;
       
-      padding-top: calc(env(safe-area-inset-top, 20px) + 12px);
-      /* Removed bottom padding from body to allow footer to flush to bottom */
+      /* Increased top padding for better notch clearance */
+      padding-top: calc(env(safe-area-inset-top, 35px) + 24px);
+      padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 12px);
       padding-left: max(12px, env(safe-area-inset-left));
       padding-right: max(12px, env(safe-area-inset-right));
       
@@ -85,7 +86,7 @@ Description: Condensed UI to fit single screens, glassmorphism footer for contra
     #sky-bg {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      z-index: -2;
+      z-index: -3;
       transition: background 3s ease;
       background: var(--bg-base);
     }
@@ -96,10 +97,39 @@ Description: Condensed UI to fit single screens, glassmorphism footer for contra
       width: 80px;
       height: 80px;
       border-radius: 50%;
-      z-index: -1;
+      z-index: -2;
       transform: translate(-50%, -50%);
       transition: top 2s ease-out, left 2s ease-out, box-shadow 3s ease, background 3s ease;
       opacity: 0; 
+    }
+
+    /* Animated Clouds Layer */
+    #clouds-layer {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 2s ease;
+      overflow: hidden;
+    }
+
+    .cloud {
+      position: absolute;
+      background: #ffffff;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.2;
+      animation: floatCloud linear infinite;
+    }
+
+    .cloud.c1 { width: 300px; height: 100px; top: 10%; left: -300px; animation-duration: 45s; }
+    .cloud.c2 { width: 400px; height: 120px; top: 35%; left: -400px; animation-duration: 65s; animation-delay: -15s; }
+    .cloud.c3 { width: 250px; height: 80px; top: 65%; left: -250px; animation-duration: 55s; animation-delay: -30s; }
+
+    @keyframes floatCloud {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(calc(100vw + 400px)); }
     }
 
     .app-wrapper {
@@ -108,7 +138,7 @@ Description: Condensed UI to fit single screens, glassmorphism footer for contra
       height: 100%;
       display: flex;
       flex-direction: column;
-      gap: 8px; /* Condensed gap */
+      gap: 8px; 
       overflow: hidden; 
       z-index: 10;
     }
@@ -249,7 +279,7 @@ Description: Condensed UI to fit single screens, glassmorphism footer for contra
       outline: none;
       cursor: pointer;
       font-family: var(--font-stack);
-      -webkit-user-select: auto; /* Re-enable for dropdown */
+      -webkit-user-select: auto; 
       user-select: auto;
     }
 
@@ -429,24 +459,36 @@ Description: Condensed UI to fit single screens, glassmorphism footer for contra
     .row-right-sec { font-size: 0.85rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; }
     .prayer-row.is-active .row-right-fardhu, .prayer-row.is-active .row-right-sec { color: #ffffff; }
 
-    /* Frosted Glass Footer to prevent unreadability over Sun Graphic */
+    /* Elegant Transparent Footer */
     .site-footer {
-      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
       font-size: 0.65rem;
-      color: var(--text-primary);
-      line-height: 1.4;
+      color: var(--text-muted);
       flex-shrink: 0; 
-      padding: 6px 12px calc(env(safe-area-inset-bottom, 12px) + 6px) 12px;
-      margin: auto -12px 0 -12px; /* Expands to touch edges */
-      background: rgba(18, 18, 18, 0.7);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-top: 1px solid var(--border-subtle);
-      border-radius: 12px 12px 0 0;
-      z-index: 10;
+      padding-top: 6px;
+      margin-top: auto;
+      letter-spacing: 0.02em;
     }
 
-    .site-footer a { color: var(--text-secondary); text-decoration: none; }
+    .site-footer a { 
+      color: var(--text-secondary); 
+      text-decoration: none; 
+      transition: color 0.2s;
+    }
+
+    .site-footer a:hover {
+      color: var(--accent-primary);
+    }
+
+    .footer-divider {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--border-active);
+    }
   </style>
 </head>
 <body>
@@ -454,6 +496,11 @@ Description: Condensed UI to fit single screens, glassmorphism footer for contra
   <!-- Visual Layers -->
   <div id="sky-bg"></div>
   <div id="celestial-body"></div>
+  <div id="clouds-layer">
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+    <div class="cloud c3"></div>
+  </div>
 
   <div class="app-wrapper">
     <header class="header-bar">
@@ -477,7 +524,7 @@ Description: Condensed UI to fit single screens, glassmorphism footer for contra
         </div>
 
         <div class="controls-cluster">
-          <button class="icon-btn" id="visuals-toggle" onclick="toggleVisuals()">☀️</button>
+          <button class="icon-btn" id="visuals-toggle" onclick="toggleVisuals()">🌙</button>
           <div class="lang-switcher">
             <button id="lang-btn-ms" class="lang-btn active" onclick="setLanguage('ms')">BM</button>
             <button id="lang-btn-en" class="lang-btn" onclick="setLanguage('en')">EN</button>
@@ -516,13 +563,11 @@ Description: Condensed UI to fit single screens, glassmorphism footer for contra
     <!-- Unified Single Screen List -->
     <main class="prayer-list" id="prayer-list-container"></main>
 
+    <!-- Minimalist Transparent Footer -->
     <footer class="site-footer">
-      <div>
-        <a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank" rel="noopener noreferrer">Sumber: KHEU Brunei Darussalam</a>
-      </div>
-      <div>
-        &copy; 2026 <a href="https://github.com/naqiuddinihsan" target="_blank" rel="noopener noreferrer">Qwamii / Naqiuddin Ihsan</a>
-      </div>
+      <a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank" rel="noopener noreferrer">Sumber Data: KHEU</a>
+      <span class="footer-divider"></span>
+      <a href="https://github.com/naqiuddinihsan" target="_blank" rel="noopener noreferrer">&copy; Qwamii / Naqiuddin Ihsan</a>
     </footer>
   </div>
 
@@ -536,10 +581,12 @@ Description: Condensed UI to fit single screens, glassmorphism footer for contra
     const GITHUB_JSON_URL = "https://raw.githubusercontent.com/naqiuddinihsan/waktu-solat-brunei/main/brunei_prayers.json";
     
     let currentLang = "ms";
-    let visualsEnabled = true;
+    let visualsEnabled = false; // Default disabled
 
-    if (localStorage.getItem('bwn_visuals') === 'false') {
-      visualsEnabled = false;
+    if (localStorage.getItem('bwn_visuals') !== null) {
+      visualsEnabled = localStorage.getItem('bwn_visuals') === 'true';
+    } else {
+      localStorage.setItem('bwn_visuals', 'false');
     }
 
     function setText(id, text) {
@@ -633,7 +680,7 @@ Description: Condensed UI to fit single screens, glassmorphism footer for contra
 
     function toggleVisuals() {
       visualsEnabled = !visualsEnabled;
-      localStorage.setItem('bwn_visuals', visualsEnabled);
+      localStorage.setItem('bwn_visuals', visualsEnabled ? 'true' : 'false');
       document.getElementById('visuals-toggle').textContent = visualsEnabled ? "☀️" : "🌙";
       updateTick();
     }
@@ -749,11 +796,14 @@ Description: Condensed UI to fit single screens, glassmorphism footer for contra
     function updateSkyVisuals(adjustedTimes, currentMins) {
       const skyBg = document.getElementById("sky-bg");
       const celestial = document.getElementById("celestial-body");
+      const cloudsLayer = document.getElementById("clouds-layer");
+      
       document.getElementById('visuals-toggle').textContent = visualsEnabled ? "☀️" : "🌙";
 
       if (!visualsEnabled) {
         skyBg.style.background = "var(--bg-base)";
         celestial.style.opacity = "0";
+        if (cloudsLayer) cloudsLayer.style.opacity = "0";
         return;
       }
 
@@ -764,8 +814,9 @@ Description: Condensed UI to fit single screens, glassmorphism footer for contra
       celestial.style.opacity = "1";
 
       if (isDay) {
-        let dayProgress = (currentMins - subuhMins) / (maghribMins - subuhMins);
+        if (cloudsLayer) cloudsLayer.style.opacity = "0.7"; 
         
+        let dayProgress = (currentMins - subuhMins) / (maghribMins - subuhMins);
         celestial.style.background = "radial-gradient(circle, #fffdf2 0%, #ffe484 50%, transparent 100%)";
         celestial.style.boxShadow = "0 0 40px 20px rgba(255, 228, 132, 0.4)";
         celestial.style.left = (10 + (dayProgress * 80)) + "vw";
@@ -785,6 +836,8 @@ Description: Condensed UI to fit single screens, glassmorphism footer for contra
         }
 
       } else {
+        if (cloudsLayer) cloudsLayer.style.opacity = "0.15"; 
+        
         let nightDuration = (1440 - maghribMins) + subuhMins;
         let elapsedNight = currentMins >= maghribMins ? (currentMins - maghribMins) : ((1440 - maghribMins) + currentMins);
         let nightProgress = elapsedNight / nightDuration;
