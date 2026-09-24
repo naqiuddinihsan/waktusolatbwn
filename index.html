@@ -1,0 +1,809 @@
+<!--
+Page Name: tumblr_waktu_sembahyang.html
+Version: 2.5.0
+Description: Dark Slate/Black theme update. Replaced text warnings with clear ✓ (Green) and ✗ (Red) indicators for Qabliyyah and Ba'diyyah across all 5 Fardhu prayers.
+-->
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Waktu Solat Brunei Darussalam</title>
+
+  <!-- PWA & Mobile Web App Meta Tags -->
+  <meta name="application-name" content="Waktu Solat">
+  <meta name="apple-mobile-web-app-title" content="Waktu Solat">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#050505">
+  <meta name="msapplication-navbutton-color" content="#050505">
+
+  <!-- Vector Masjid Favicon and Apple Touch Icon (Dark Theme Adjusted Base64) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExMCIgZmlsbD0iIzEyMTIxMiIvPjxwYXRoIGQ9Ik0yNTYgNTJjLTIuOCAxNC4zLTkuOCAyNy40LTIwLjIgMzcuNy0xMC4zIDEwLjMtMjMuNCAxNy40LTM3LjcgMjAuMiAxNC4zIDIuOCAyNy40IDkuOCAzNy43IDIwLjIgMTAuMyAxMC4zIDE3LjQgMjMuNCAyMC4yIDM3LjcgMi44LTE0LjMgOS44LTI3LjQgMjAuMi0zNy43IDEwLjMtMTAuMyAyMy40LTE3LjQgMzcuNy0yMC4yLTE0LjMtMi44LTI3LjQtOS44LTM3LjctMjAuMi0xMC40LTEwLjMtMTcuNC0yMy40LTIwLjItMzcuN3oiIGZpbGw9IiNlNTVlNWUiLz48cGF0aCBkPSJNMjU2IDE0MGMtNTguOCAwLTExMiAzOC41LTEyOCAxMDBoMjU2Yy0xNi02MS41LTY5LjItMTAwLTEyOC0xMDB6IiBmaWxsPSIjZTVlNWU1Ii8+PHBhdGggZD0iTTEyOCAyNDB2MTcyYzAgNi42IDUuNCAxMiAxMiAxMmg2MHYtOTJjMC0zMSAxNC01NiA1Ni01NnM1NiAyNSA1NiA1NnY5Mmg2MGM2LjYgMCAxMi01LjQgMTItMTJWMjQwSDEyOHoiIGZpbGw9IiMyNjI2MjYiLz48cGF0aCBkPSJNMjI0IDMzMmMwLTIyLjEgMTQuMy00MCAzMi00MHMzMiAxNy45IDMyIDQwdjkyaC02NHYtOTJ6IiBmaWxsPSIjZTVlNWU1Ii8+PHBhdGggZD0iTTgxIDIyMmgxOHYxOTBIMThjLTQuNCAwLTgtMy42LTgtOFYyMzBjMC00LjQgMy42LTggOC04aDYzem0zMzIgMGgxOHYxOTBoLTYzYy00LjQgMC04LTMuNi04LThWMjMwYzAtNC40IDMuNi04IDgtOGg2M3oiIGZpbGw9IiM0MDQwNDAiLz48cGF0aCBkPSJNOTAgMTcwYy0xMy4zIDAtMjQgMjAtMjQgNTBoNDhjMC0zMC0xMC43LTUwLTI0LTUwem0zMzIgMGMtMTMuMyAwLTI0IDIwLTI0IDUwaDQ4YzAtMzAtMTAuNy01MC0yNC01MHoiIGZpbGw9IiNlNTVlNWUiLz48cGF0aCBkPSJNODAgMzg0aDM1MnYyNEg4MHoiIGZpbGw9IiNlNTVlNWUiLz48L3N2Zz4=">
+  <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExMCIgZmlsbD0iIzEyMTIxMiIvPjxwYXRoIGQ9Ik0yNTYgNTJjLTIuOCAxNC4zLTkuOCAyNy40LTIwLjIgMzcuNy0xMC4zIDEwLjMtMjMuNCAxNy40LTM3LjcgMjAuMiAxNC4zIDIuOCAyNy40IDkuOCAzNy43IDIwLjIgMTAuMyAxMC4zIDE3LjQgMjMuNCAyMC4yIDM3LjcgMi44LTE0LjMgOS44LTI3LjQgMjAuMi0zNy43IDEwLjMtMTAuMyAyMy40LTE3LjQgMzcuNy0yMC4yLTE0LjMtMi44LTI3LjQtOS44LTM3LjctMjAuMi0xMC40LTEwLjMtMTcuNC0yMy40LTIwLjItMzcuN3oiIGZpbGw9IiNlNTVlNWUiLz48cGF0aCBkPSJNMjU2IDE0MGMtNTguOCAwLTExMiAzOC41LTEyOCAxMDBoMjU2Yy0xNi02MS41LTY5LjItMTAwLTEyOC0xMDB6IiBmaWxsPSIjZTVlNWU1Ii8+PHBhdGggZD0iTTEyOCAyNDB2MTcyYzAgNi42IDUuNCAxMiAxMiAxMmg2MHYtOTJjMC0zMSAxNC01NiA1Ni01NnM1NiAyNSA1NiA1NnY5Mmg2MGM2LjYgMCAxMi01LjQgMTItMTJWMjQwSDEyOHoiIGZpbGw9IiMyNjI2MjYiLz48cGF0aCBkPSJNMjI0IDMzMmMwLTIyLjEgMTQuMy00MCAzMi00MHMzMiAxNy45IDMyIDQwdjkyaC02NHYtOTJ6IiBmaWxsPSIjZTVlNWU1Ii8+PHBhdGggZD0iTTgxIDIyMmgxOHYxOTBIMThjLTQuNCAwLTgtMy42LTgtOFYyMzBjMC00LjQgMy42LTggOC04aDYzem0zMzIgMGgxOHYxOTBoLTYzYy00LjQgMC04LTMuNi04LThWMjMwYzAtNC40IDMuNi04IDgtOGg2M3oiIGZpbGw9IiM0MDQwNDAiLz48cGF0aCBkPSJNOTAgMTcwYy0xMy4zIDAtMjQgMjAtMjQgNTBoNDhjMC0zMC0xMC43LTUwLTI0LTUwem0zMzIgMGMtMTMuMyAwLTI0IDIwLTI0IDUwaDQ4YzAtMzAtMTAuNy01MC0yNC01MHoiIGZpbGw9IiNlNTVlNWUiLz48cGF0aCBkPSJNODAgMzg0aDM1MnYyNEg4MHoiIGZpbGw9IiNlNTVlNWUiLz48L3N2Zz4=">
+
+  <!-- Embedded Web App Manifest -->
+  <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiV2FrdHUgU29sYXQgQnJ1bmVpIiwiY29ubmVjdF9uYW1lIjoiV2FrdHVTb2xhdCIsInN0YXJ0X3VybCI6Ii93YWt0dXNvbGF0YnJ1bmVpIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzA1MDUwNSIsInRoZW1lX2NvbG9yIjoiIzA1MDUwNSIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBIUjJaM0c0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2Iza3dJakFnTUNBME1USXdNVEVpUGp4eFpXTjBJR2RwWkNSb2lqRWVNQ0lnYUdWcGcyZDBJamV4TVRBaUlISm9JajB4TVRBaUlHWnBiR3cwSWpFeU1USXhNaUkrUEhCaGRHZ2daRDBpVFRJMU5pQTFNbU10TWk0NElERTBMak10T1M0NElESTNMalF0TWpBdU1pQXpOeTNoTFRFd0xqTWdNVEF1TXlBdE1qTXVOQ0V4Tnk0MExUTTNOeWNnTWpBdU1pQXhOQzR6SURJdU9DQXlOeTRwSUQrd09DQXpOeWNnTWpBdU1pQXhNQzR6SURFd0xqTWdNVGMwT0NBeU15NDBJREl3TGpJd016YzNJREl1T0MweE5DNHpJRGs0T0MweU55NDBJREl3TGpJd016YzNJREV3TGpNdE1UQXVNeUF5TXk0MExURTNOQ0F6Tnk0M0xUSXdMakl0TVRRdU15MHlMakd0TWpjdU5DMU9Mamd0TXpjM0xUSXdMakl0TVRBdU5DMHhNQzR6TFRFM05DMHlNeTRwSURJd0xqSXRNemMzZWlJZ1ptbHNiRDBpSTJWMU5XVTFaaUkrUEhCaGRHZ2daRDBpVFRJMU5pQXhOREJqTFRVNExqZ2dNQzB4TVRJZ016Z3VOQzB4TWpnb01UQXdhREkxTm1NdE1UWXROakV1TlMwMk9TNHlMVEV3TUMweE1qZ3RNVEF3ZWlJZ1ptbHNiRDBpSTJWMU5XVTFaaUkrUEhCaGRHZ2daRDBpVFRFeU9DQXlOREIyTVRjeVl6QWdOaTRnTlM0MElERXlJREV5SURFeWFEWXdkaTBzTW1Nd0xUTXhJREUwTFRVMklEVTJMVFUyY3pVcklESTFJRFUySUQVMmRqazJhRFl3WXpZdU5pQXdJREUyTFRVdU5DQXhNaTB4TWxZeU5EQklNVEk0ZWlJZ1ptbHNiRDBpSTBJMk1qWXlOaUkrUEhCaGRHZ2daRDBpVFRJeU5DQXpNekpqTUMweU1pNHhJREUwTGpNdE5EQWdNell0TkRCek16SWdNVGN1T1NBek1pQTBNSFk1TW1ndE5qUjJMVEt5ZWlJZ1ptbHNiRDBpSTJWMU5XVTFaaUkrUEhCaGRHZ2daRDBpVlRneElESXlNbWd4T0hZeE9UQklNVFpqTFRRdU5DQXdMVGd0TXk0MkxUZ3RPRlkyTXpCak1DMDBMalFnTXk0MkxUZ2dPQzB0YURZemVtMHpNeklnT0dneE9IWXhPVEJvTFRZell5MDBMalFnTUMwNExUTXVOQzB0T0ZZeU16QmpNQzAwTGpRZ015NDJMVGdnT0MwdGFEWXplbW9pSUdabWJHeDAPS0pFTURRd05EQXFJQ0IrUEhCaGRHZ2daRDBpVFU1d0lERTNNR010TVRNdU15QXdMVEkwSURJd0xUSTBJRFV3YURRNFl6QXRNekF0TVRBdU55MDFNQzB5TkMwMU1IZG1Nek15SURCakxURXpMak1nTUMweU5DQXlNQzB5TkNBMU1HZzBPR013TFRNd0xURXdMamd0TlRBdE1qUXROVDFwSWdabWJHeDAPS0pFTlRWMU5XVWlQajR3WVhSb0lHUTlJazFPT0RBZ016ZzBhRE0xTW5ZeU5FZzRNSG9pSUdabWJHeDAPS0pFTlRWMU5XVWlQancvYzNaM2EwPSIrd1A9PSIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+
+  <style>
+    :root {
+      /* Slate Dark Gray / Black Theme */
+      --bg-base: #050505;
+      --bg-surface: #121212;
+      --bg-surface-elevated: #1a1a1a;
+      --bg-surface-active: #171717;
+      --border-subtle: #262626;
+      --border-active: #525252;
+      --text-primary: #f5f5f5;
+      --text-secondary: #a3a3a3;
+      --text-muted: #737373;
+      --accent-primary: #e5e5e5;
+      --accent-highlight: #d4d4d4;
+      --accent-glow: rgba(255, 255, 255, 0.08);
+
+      /* Status Indicators: Green (Tick) & Red (Cross) */
+      --badge-ok-bg: rgba(52, 211, 153, 0.15);
+      --badge-ok-color: #34d399; 
+      --badge-haram-bg: rgba(244, 63, 94, 0.15);
+      --badge-haram-color: #fb7185; 
+
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-stack);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: max(16px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden; 
+    }
+
+    .app-wrapper {
+      width: 100%;
+      max-width: 600px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Header */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+
+    .brand-cluster {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand-logo svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .header-info h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+
+    .header-dates {
+      margin-top: 2px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .district-badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    .controls-cluster {
+      display: flex;
+      gap: 6px;
+    }
+
+    .lang-switcher {
+      display: flex;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 2px;
+    }
+
+    .lang-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .lang-btn.active {
+      background-color: var(--bg-surface-elevated);
+      color: var(--text-primary);
+    }
+
+    /* Hero Section */
+    .hero-tracker {
+      background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(20, 20, 20, 0.95) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .hero-tracker::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 150px;
+      height: 100%;
+      background: radial-gradient(circle at top right, var(--accent-glow) 0%, transparent 80%);
+      pointer-events: none;
+    }
+
+    .hero-top-row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      z-index: 1;
+    }
+
+    .hero-now-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+    }
+
+    .hero-name {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      line-height: 1;
+    }
+
+    .hero-time {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .progress-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 1;
+      margin-top: 4px;
+    }
+
+    .progress-countdown {
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-primary);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background-color: var(--border-subtle);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent-primary);
+      border-radius: 999px;
+      box-shadow: 0 0 10px var(--accent-primary);
+      transition: width 0.8s ease;
+    }
+
+    /* Compact Reference Strip */
+    .ref-strip {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+      flex-shrink: 0;
+    }
+
+    .ref-item {
+      flex: 1;
+      background-color: var(--bg-surface);
+      border: 1px dashed var(--border-subtle);
+      border-radius: 8px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .ref-name {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .ref-time {
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-primary);
+    }
+
+    /* Dense Fardhu List */
+    .fardhu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .fardhu-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 12px 14px;
+      transition: all 0.2s ease;
+    }
+
+    .fardhu-row.is-active {
+      background: linear-gradient(90deg, var(--bg-surface-active) 0%, var(--bg-surface) 100%);
+      border-color: var(--border-active);
+      box-shadow: inset 3px 0 0 var(--accent-primary);
+    }
+
+    .fardhu-row.is-past {
+      opacity: 0.4;
+      filter: grayscale(1);
+    }
+
+    .row-left {
+      width: 80px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .fardhu-row.is-active .row-left {
+      color: var(--accent-primary);
+    }
+
+    .row-mid {
+      flex: 1;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      padding: 0 8px;
+    }
+
+    .fiqh-badge {
+      font-size: 0.6rem;
+      font-weight: 600;
+      padding: 3px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .fiqh-badge.is-ok {
+      background-color: var(--badge-ok-bg);
+      color: var(--badge-ok-color);
+    }
+
+    .fiqh-badge.is-haram {
+      background-color: var(--badge-haram-bg);
+      color: var(--badge-haram-color);
+    }
+
+    .row-right {
+      font-size: 1.15rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-primary);
+      text-align: right;
+    }
+
+    .fardhu-row.is-active .row-right {
+      color: #ffffff;
+    }
+
+    /* Footer */
+    .site-footer {
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      flex-shrink: 0;
+      padding-top: 4px;
+    }
+
+    .site-footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-wrapper">
+    <header class="header-bar">
+      <div class="brand-cluster">
+        <div class="brand-logo" aria-hidden="true">
+          <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M256 52c-2.8 14.3-9.8 27.4-20.2 37.7-10.3 10.3-23.4 17.4-37.7 20.2 14.3 2.8 27.4 9.8 37.7 20.2 10.3 10.3 17.4 23.4 20.2 37.7 2.8-14.3 9.8-27.4 20.2-37.7 10.3-10.3 23.4-17.4 37.7-20.2-14.3-2.8-27.4-9.8-37.7-20.2-10.4-10.3-17.4-23.4-20.2-37.7z" fill="#e5e5e5"/>
+            <path d="M256 140c-58.8 0-112 38.5-128 100h256c-16-61.5-69.2-100-128-100z" fill="#e5e5e5"/>
+            <path d="M128 240v172c0 6.6 5.4 12 12 12h60v-92c0-31 14-56 56-56s56 25 56 56v92h60c6.6 0 12-5.4 12-12V240H128z" fill="#262626"/>
+            <path d="M224 332c0-22.1 14.3-40 32-40s32 17.9 32 40v92h-64v-92z" fill="#e5e5e5"/>
+            <path d="M81 222h18v190H36c-4.4 0-8-3.6-8-8V230c0-4.4 3.6-8 8-8h45zm332 0h18v190h-45c-4.4 0-8-3.6-8-8V230c0-4.4 3.6-8 8-8h45z" fill="#404040"/>
+            <path d="M90 170c-13.3 0-24 20-24 50h48c0-30-10.7-50-24-50zm332 0c-13.3 0-24 20-24 50h48c0-30-10.7-50-24-50z" fill="#e5e5e5"/>
+            <path d="M80 384h352v24H80z" fill="#e5e5e5"/>
+          </svg>
+        </div>
+        <div class="header-info">
+          <h1 id="ui-app-title">Waktu Solat</h1>
+          <div class="header-dates">
+            <span id="gregorian-date">-</span>
+            <span class="separator">|</span>
+            <span class="district-badge" id="ui-district-badge">Brunei-Muara</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls-cluster">
+        <div class="lang-switcher">
+          <button id="lang-btn-ms" class="lang-btn active" onclick="setLanguage('ms')">BM</button>
+          <button id="lang-btn-en" class="lang-btn" onclick="setLanguage('en')">EN</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero-tracker">
+      <div class="hero-top-row">
+        <div class="hero-now-label" id="ui-now-label">Sekarang:</div>
+        <div class="hero-name" id="hero-current-name">-</div>
+        <div class="hero-time" id="hero-current-range">-</div>
+      </div>
+      <div class="progress-container">
+        <div class="progress-countdown" id="hero-countdown-text">-</div>
+        <div class="progress-track">
+          <div class="progress-fill" id="hero-progress-fill"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ultra Compact Reference Strip (Imsak, Syuruk, Duha) -->
+    <div class="ref-strip" id="ref-strip-container"></div>
+
+    <!-- Single Screen List (5 Fardhu) -->
+    <main class="fardhu-list" id="fardhu-list-container"></main>
+
+    <footer class="site-footer">
+      <div>
+        <a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank" rel="noopener noreferrer">Sumber: KHEU Brunei Darussalam</a>
+      </div>
+      <div>
+        &copy; 2026 <a href="https://github.com/naqiuddinihsan" target="_blank" rel="noopener noreferrer">Qwamii / Naqiuddin Ihsan</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const GITHUB_JSON_URL = "https://raw.githubusercontent.com/naqiuddinihsan/waktu-solat-brunei/main/brunei_prayers.json";
+    const BASE_DISTRICT_OFFSET = 0;
+    
+    let currentLang = "ms";
+
+    function setText(id, text) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    }
+
+    const I18N = {
+      ms: {
+        appTitle: "Waktu Solat",
+        nowLabel: "Sekarang:",
+        enteredAt: "Masuk pada",
+        toNext: "ke",
+        districtBadge: "Brunei-Muara",
+        localeDate: "ms-MY",
+        yesterdaySuffix: "(Malam Tadi)",
+        tomorrowSuffix: "(Esok)",
+        fiqh: {
+          qabliyyah: "Qabliyyah",
+          ba_diyyah: "Ba'diyyah",
+          witir: "Witir"
+        }
+      },
+      en: {
+        appTitle: "Prayer Times",
+        nowLabel: "Now:",
+        enteredAt: "Entered at",
+        toNext: "to",
+        districtBadge: "Brunei-Muara",
+        localeDate: "en-GB",
+        yesterdaySuffix: "(Last Night)",
+        tomorrowSuffix: "(Tomorrow)",
+        fiqh: {
+          qabliyyah: "Qabliyyah",
+          ba_diyyah: "Ba'diyyah",
+          witir: "Witr"
+        }
+      }
+    };
+
+    const ALL_KEYS = [
+      { key: "imsak", name: "Imsak", isFardhu: false },
+      { key: "subuh", name: "Subuh", isFardhu: true },
+      { key: "syuruk", name: "Syuruk", isFardhu: false },
+      { key: "duha", name: "Duha", isFardhu: false },
+      { key: "zuhur", name: "Zuhur", isFardhu: true },
+      { key: "asar", name: "Asar", isFardhu: true },
+      { key: "maghrib", name: "Maghrib", isFardhu: true },
+      { key: "isya", name: "Isya'", isFardhu: true }
+    ];
+
+    let cachedSchedule = {
+      imsak: "04:42",
+      subuh: "04:52",
+      syuruk: "06:09",
+      duha: "06:31",
+      zuhur: "12:13",
+      asar: "15:22",
+      maghrib: "18:15",
+      isya: "19:24"
+    };
+    let hijrahString = "14 Rabiulakhir 1448 H";
+
+    function timeStringToMinutes(str) {
+      const parts = str.split(":");
+      return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+    }
+
+    function minutesToDisplay(mins) {
+      let normalized = mins % 1440;
+      let h = Math.floor(normalized / 60);
+      let m = normalized % 60;
+      let period = h >= 12 ? "PM" : "AM";
+      let displayH = h % 12;
+      displayH = displayH === 0 ? 12 : displayH;
+      let displayM = m < 10 ? "0" + m : m;
+      return displayH + ":" + displayM + " " + period;
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const msBtn = document.getElementById("lang-btn-ms");
+      const enBtn = document.getElementById("lang-btn-en");
+      if (msBtn) msBtn.classList.toggle("active", lang === "ms");
+      if (enBtn) enBtn.classList.toggle("active", lang === "en");
+
+      const t = I18N[currentLang];
+      setText("ui-app-title", t.appTitle);
+      setText("ui-now-label", t.nowLabel);
+      setText("ui-district-badge", t.districtBadge);
+
+      setDateHeaders();
+      updateTick();
+    }
+
+    function getAdjustedSchedule() {
+      const adjusted = {};
+      ALL_KEYS.forEach(function(item) {
+        let baseMins = timeStringToMinutes(cachedSchedule[item.key]);
+        adjusted[item.key] = baseMins + BASE_DISTRICT_OFFSET;
+      });
+      return adjusted;
+    }
+
+    function renderReferenceStrip(adjustedTimes) {
+      const container = document.getElementById("ref-strip-container");
+      if (!container) return;
+      container.innerHTML = "";
+
+      const refItems = [
+        { key: "imsak", name: "Imsak" },
+        { key: "syuruk", name: "Syuruk" },
+        { key: "duha", name: "Duha" }
+      ];
+
+      refItems.forEach(function(item) {
+        const div = document.createElement("div");
+        div.className = "ref-item";
+        div.innerHTML = 
+          '<span class="ref-name">' + item.name + '</span>' +
+          '<span class="ref-time">' + minutesToDisplay(adjustedTimes[item.key]) + '</span>';
+        container.appendChild(div);
+      });
+    }
+
+    function renderFardhuList(adjustedTimes, activeKey) {
+      const list = document.getElementById("fardhu-list-container");
+      if (!list) return;
+      list.innerHTML = "";
+
+      const now = new Date();
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+      const t = I18N[currentLang];
+
+      const fardhuList = [
+        {
+          key: "subuh", name: "Subuh",
+          badges: [
+            { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
+            { text: t.fiqh.ba_diyyah + " &#10007;", type: "is-haram" }
+          ]
+        },
+        {
+          key: "zuhur", name: "Zuhur",
+          badges: [
+            { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
+            { text: t.fiqh.ba_diyyah + " &#10003;", type: "is-ok" }
+          ]
+        },
+        {
+          key: "asar", name: "Asar",
+          badges: [
+            { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
+            { text: t.fiqh.ba_diyyah + " &#10007;", type: "is-haram" }
+          ]
+        },
+        {
+          key: "maghrib", name: "Maghrib",
+          badges: [
+            { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
+            { text: t.fiqh.ba_diyyah + " &#10003;", type: "is-ok" }
+          ]
+        },
+        {
+          key: "isya", name: "Isya'",
+          badges: [
+            { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
+            { text: t.fiqh.ba_diyyah + " &#10003;", type: "is-ok" },
+            { text: t.fiqh.witir + " &#10003;", type: "is-ok" }
+          ]
+        }
+      ];
+
+      fardhuList.forEach(function(item) {
+        const row = document.createElement("div");
+        row.className = "fardhu-row";
+
+        const prayerMins = adjustedTimes[item.key];
+        
+        if (item.key === activeKey) {
+          row.classList.add("is-active");
+        } else if (prayerMins < currentMinutes) {
+          row.classList.add("is-past");
+        }
+
+        let badgesHtml = '';
+        item.badges.forEach(function(b) {
+          badgesHtml += '<span class="fiqh-badge ' + b.type + '">' + b.text + '</span>';
+        });
+
+        row.innerHTML = 
+          '<div class="row-left">' + item.name + '</div>' +
+          '<div class="row-mid">' + badgesHtml + '</div>' +
+          '<div class="row-right">' + minutesToDisplay(prayerMins) + '</div>';
+
+        list.appendChild(row);
+      });
+    }
+
+    function determinePrayerState(adjustedTimes) {
+      const now = new Date();
+      const currentMins = now.getHours() * 60 + now.getMinutes();
+      const currentSecs = now.getSeconds();
+      const t = I18N[currentLang];
+
+      const sequence = [
+        { key: "imsak", name: "Imsak", mins: adjustedTimes.imsak },
+        { key: "subuh", name: "Subuh", mins: adjustedTimes.subuh },
+        { key: "syuruk", name: "Syuruk", mins: adjustedTimes.syuruk },
+        { key: "duha", name: "Duha", mins: adjustedTimes.duha },
+        { key: "zuhur", name: "Zuhur", mins: adjustedTimes.zuhur },
+        { key: "asar", name: "Asar", mins: adjustedTimes.asar },
+        { key: "maghrib", name: "Maghrib", mins: adjustedTimes.maghrib },
+        { key: "isya", name: "Isya'", mins: adjustedTimes.isya }
+      ];
+
+      let activeItem = null;
+      let nextItem = null;
+
+      if (currentMins < sequence[0].mins) {
+        activeItem = {
+          key: "isya",
+          name: "Isya' " + t.yesterdaySuffix,
+          mins: sequence[sequence.length - 1].mins - 1440
+        };
+        nextItem = sequence[0];
+      } else {
+        for (let i = 0; i < sequence.length; i++) {
+          if (i === sequence.length - 1) {
+            activeItem = sequence[i];
+            nextItem = {
+              key: "imsak",
+              name: "Imsak " + t.tomorrowSuffix,
+              mins: sequence[0].mins + 1440
+            };
+          } else if (currentMins >= sequence[i].mins && currentMins < sequence[i + 1].mins) {
+            activeItem = sequence[i];
+            nextItem = sequence[i + 1];
+            break;
+          }
+        }
+      }
+
+      return {
+        active: activeItem,
+        next: nextItem,
+        currentMinutes: currentMins,
+        currentSeconds: currentSecs
+      };
+    }
+
+    function updateTick() {
+      const adjustedTimes = getAdjustedSchedule();
+      const state = determinePrayerState(adjustedTimes);
+      const t = I18N[currentLang];
+
+      if (!state.active || !state.next) return;
+
+      setText("hero-current-name", state.active.name);
+      
+      let targetMins = state.next.mins;
+      let currentTotalSecs = state.currentMinutes * 60 + state.currentSeconds;
+      let targetTotalSecs = targetMins * 60;
+      let diffSeconds = targetTotalSecs - currentTotalSecs;
+
+      if (diffSeconds < 0) diffSeconds = 0;
+
+      let hours = Math.floor(diffSeconds / 3600);
+      let mins = Math.floor((diffSeconds % 3600) / 60);
+      let secs = diffSeconds % 60;
+
+      let hStr = hours < 10 ? "0" + hours : hours;
+      let mStr = mins < 10 ? "0" + mins : mins;
+      let sStr = secs < 10 ? "0" + secs : secs;
+
+      let countdownString = hStr + ":" + mStr + ":" + sStr + " " + t.toNext + " " + state.next.name;
+      setText("hero-countdown-text", countdownString);
+
+      let activeMinsDisplay = adjustedTimes[state.active.key] ? minutesToDisplay(adjustedTimes[state.active.key]) : "-";
+      setText("hero-current-range", t.enteredAt + " " + activeMinsDisplay);
+
+      let startTotalSecs = state.active.mins * 60;
+      let intervalSecs = targetTotalSecs - startTotalSecs;
+      let progressPercent = 0;
+
+      if (intervalSecs > 0) {
+        let elapsedSecs = currentTotalSecs - startTotalSecs;
+        progressPercent = Math.min(100, Math.max(0, (elapsedSecs / intervalSecs) * 100));
+      }
+
+      const progressFill = document.getElementById("hero-progress-fill");
+      if (progressFill) progressFill.style.width = progressPercent.toFixed(1) + "%";
+
+      renderReferenceStrip(adjustedTimes);
+      renderFardhuList(adjustedTimes, state.active.key);
+    }
+
+    function setDateHeaders() {
+      const now = new Date();
+      const gregorianOptions = { weekday: "short", day: "numeric", month: "short" };
+      setText("gregorian-date", now.toLocaleDateString(I18N[currentLang].localeDate, gregorianOptions) + " | " + hijrahString);
+    }
+
+    function fetchRemoteData() {
+      const now = new Date();
+      const day = String(now.getDate()).padStart(2, "0");
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const year = now.getFullYear();
+      const dateKey = day + "-" + month + "-" + year;
+
+      fetch(GITHUB_JSON_URL)
+        .then(function(res) {
+          if (!res.ok) throw new Error("HTTP error");
+          return res.json();
+        })
+        .then(function(data) {
+          if (data && data[dateKey]) {
+            cachedSchedule = {
+              imsak: data[dateKey].imsak,
+              subuh: data[dateKey].subuh,
+              syuruk: data[dateKey].syuruk,
+              duha: data[dateKey].duha,
+              zuhur: data[dateKey].zuhur,
+              asar: data[dateKey].asar,
+              maghrib: data[dateKey].maghrib,
+              isya: data[dateKey].isya
+            };
+            if (data[dateKey].date_hijrah) {
+              hijrahString = data[dateKey].date_hijrah;
+              setDateHeaders();
+            }
+            updateTick();
+          }
+        })
+        .catch(function(err) {
+          console.warn("Using internal fallback schedule");
+        });
+    }
+
+    setLanguage("ms");
+    fetchRemoteData();
+    setInterval(updateTick, 1000);
+  </script>
+</body>
+</html>
