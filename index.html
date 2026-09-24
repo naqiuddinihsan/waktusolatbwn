@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 2.8.0
-Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunrise, Zuhr, Asr, Isha', Dhuha, Witir). App structure updated to true fixed header/footer using 100dvh.
+Version: 3.0.0
+Description: PWA Native Installation with Service Worker. Features Dynamic Glassmorphism, Astronomical Sun/Moon Tracking, and Smart District Dropdown.
 -->
 <!DOCTYPE html>
 <html lang="ms">
@@ -10,42 +10,40 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Waktu Solat BWN</title>
 
-  <!-- PWA & Mobile Web App Meta Tags -->
-  <meta name="application-name" content="Waktu Solat BWN">
-  <meta name="apple-mobile-web-app-title" content="Waktu Solat BWN">
+  <!-- PWA Core Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="application-name" content="Waktu BWN">
+  <meta name="apple-mobile-web-app-title" content="Waktu BWN">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#050505">
-  <meta name="msapplication-navbutton-color" content="#050505">
-
-  <!-- Generic PWA Icon (Apple & Favicon) -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMTAiIGZpbGw9IiMxMjEyMTIiLz48cGF0aCBkPSJNMjU2IDUyYy0yLjggMTQuMy05LjggMjcuNC0yMC4yIDM3LjctMTAuMyAxMC4zLTIzLjQgMTcuNC0zNy43IDIwLjIgMTQuMyAyLjggMjcuNCA5LjggMzcuNyAyMC4yIDEwLjMgMTAuMyAxNy40IDIzLjQgMjAuMiAzNy43IDIuOC0xNC4zIDkuOC0yNy40IDIwLjItMzcuNyAxMC4zLTEwLjMgMjMuNC0xNy40IDM3LjctMjAuMi0xNC4zLTIuOC0yNy40LTkuOC0zNy43LTIwLjItMTAuNC0xMC4zLTE3LjQtMjMuNC0yMC4yLTM3Ljd6IiBmaWxsPSIjZTVlNWU1Ii8+PHBhdGggZD0iTTI1NiAxNDBjLTU4LjggMC0xMTIgMzguNS0xMjggMTAwaDI1NmMtMTYtNjEuNS02OS4yLTEwMC0xMjgtMTAweiIgZmlsbD0iI2U1ZTVlNSIvPjxwYXRoIGQ9Ik0xMjggMjQwdjE3MmMwIDYuNiA1LjQgMTIgMTIgMTJoNjB2LTkyYzAtMzEgMTQtNTYgNTYtNTZzNTYgMjUgNTYgNTZ2OTJoNjBjNi42IDAgMTItNS40IDEyLTEyVjI0MEgxMjh6IiBmaWxsPSIjMjYyNjI2Ii8+PHBhdGggZD0iTTIyNCAzMzJjMC0yMi4xIDE0LjMtNDAgMzItNDBzMzIgMTcuOSAzMiA0MHY5MmgtNjR2LTkyeiIgZmlsbD0iI2U1ZTVlNSIvPjxwYXRoIGQ9Ik04MSAyMjJoMTh2MTkwSDM2Yy00LjQgMC04LTMuNi04LThWMjMwYzAtNC40IDMuNi04IDgtOGg0NXptMzMyIDBoMTh2MTkwaC00NWMtNC40IDAtOC0zLjYtOC04VjIzMGMwLTQuNCAzLjYtOCA4LThoNDV6IiBmaWxsPSIjNDA0MDQwIi8+PHBhdGggZD0iTTkwIDE3MGMtMTMuMyAwLTI0IDIwLTI0IDUwaDQ4YzAtMzAtMTAuNy01MC0yNC01MHptMzMyIDBjLTEzLjMgMC0yNCAyMC0yNCA1MGg0OGMwLTMwLTEwLjctNTAtMjQtNTB6IiBmaWxsPSIjZTVlNWU1Ii8+PHBhdGggZD0iTTgwIDM4NGgzNTJ2MjRIODB6IiBmaWxsPSIjZTVlNWU1Ii8+PC9zdmc+">
-  <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMTAiIGZpbGw9IiMxMjEyMTIiLz48cGF0aCBkPSJNMjU2IDUyYy0yLjggMTQuMy05LjggMjcuNC0yMC4yIDM3LjctMTAuMyAxMC4zLTIzLjQgMTcuNC0zNy43IDIwLjIgMTQuMyAyLjggMjcuNCA5LjggMzcuNyAyMC4yIDEwLjMgMTAuMyAxNy40IDIzLjQgMjAuMiAzNy43IDIuOC0xNC4zIDkuOC0yNy40IDIwLjItMzcuNyAxMC4zLTEwLjMgMjMuNC0xNy40IDM3LjctMjAuMi0xNC4zLTIuOC0yNy40LTkuOC0zNy43LTIwLjItMTAuNC0xMC4zLTE3LjQtMjMuNC0yMC4yLTM3Ljd6IiBmaWxsPSIjZTVlNWU1Ii8+PHBhdGggZD0iTTI1NiAxNDBjLTU4LjggMC0xMTIgMzguNS0xMjggMTAwaDI1NmMtMTYtNjEuNS02OS4yLTEwMC0xMjgtMTAweiIgZmlsbD0iI2U1ZTVlNSIvPjxwYXRoIGQ9Ik0xMjggMjQwdjE3MmMwIDYuNiA1LjQgMTIgMTIgMTJoNjB2LTkyYzAtMzEgMTQtNTYgNTYtNTZzNTYgMjUgNTYgNTZ2OTJoNjBjNi42IDAgMTItNS40IDEyLTEyVjI0MEgxMjh6IiBmaWxsPSIjMjYyNjI2Ii8+PHBhdGggZD0iTTIyNCAzMzJjMC0yMi4xIDE0LjMtNDAgMzItNDBzMzIgMTcuOSAzMiA0MHY5MmgtNjR2LTkyeiIgZmlsbD0iI2U1ZTVlNSIvPjxwYXRoIGQ9Ik04MSAyMjJoMTh2MTkwSDM2Yy00LjQgMC04LTMuNi04LThWMjMwYzAtNC40IDMuNi04IDgtOGg0NXptMzMyIDBoMTh2MTkwaC00NWMtNC40IDAtOC0zLjYtOC04VjIzMGMwLTQuNCAzLjYtOCA4LThoNDV6IiBmaWxsPSIjNDA0MDQwIi8+PHBhdGggZD0iTTkwIDE3MGMtMTMuMyAwLTI0IDIwLTI0IDUwaDQ4YzAtMzAtMTAuNy01MC0yNC01MHptMzMyIDBjLTEzLjMgMC0yNCAyMC0yNCA1MGg0OGMwLTMwLTEwLjctNTAtMjQtNTB6IiBmaWxsPSIjZTVlNWU1Ii8+PHBhdGggZD0iTTgwIDM4NGgzNTJ2MjRIODB6IiBmaWxsPSIjZTVlNWU1Ii8+PC9zdmc+">
-
-  <!-- Valid Web App Manifest for Add to Home Screen -->
-  <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiV2FrdHUgU29sYXQgQldOIiwic2hvcnRfbmFtZSI6Ildha3R1IEJXTiIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzA1MDUwNSIsInRoZW1lX2NvbG9yIjoiIzA1MDUwNSIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBIUjJaM0c0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2Iza3dJakFnTUNBME1USXdNVEVpSUhkcFpIUm9QU0kxTVRJaUlHaGxhV2RvZEQwaU5URXlJajQ4Y21WamRDQjNhV1IwYUQwaU5URXlJaUJvWldsbmFIUTlJalV4TWlJZ2NpZzlJakV4TUNJZ1ptbHNiRDBpSXpFeU1USXhNaUl2UGp4d1lYUm9JR1E5SWsweU5UWWdPVElqUXRNaTQ0SURFMExqTXRPUzQ0SURJM0xqUXRNakF1TWlBek55M2hMVEV3TGpNZ01UYzBPQ0F5TXk0MElESXdMakl3TXpjM0lESXVPQzB4TkM0eklEazVPQzB5Tnk0MElESXdMakl3TXpjM0lERVdMak10TVRBdU15QXlNeTQwTFRFM05DQXpOeTQzTFRJd0xqSXRNVFF1TXkweUxqR3RNamN1TkMxT0xqZ3RNemMzTFRJd0xqSXRNVEF1TkMweE1DNHpMVEUzTkMweU15NHBJREl3TGpJd016YzNlaUlnWm1sc2JEMGlJMlY1WlRWbE5TSXZQanh3WVhSb0lHUTlJazB5TlRZZ01UUXdZeTAxT0M0NElEQXRNVEV5SURNNExqRXRNVEk0SURFd2JtZ3lOVFlqTFRFMkxUWXhMall0TmprdU1pMHhNREF0TVRRNElERXdNSG9pSUdabWJHeDBQU0lqWm1WbFpXVWlMejQ4Y0dGMFhDQmtQU0pOTVE0NElESTBNSFl4TnpKaktBMkxqWWdOUzQwSURFeUlERXlNVEpvTmpCMkxUa3lZekF0TXpZZ01UUXROVFlnTlRZdE5UWnlOVFlnTWpFZ05UWWdOVFoyT1RKb05qQmpOaTQySURBZ01USXROUzQwSURFeUxURXlWakkwTUVneE1qaDZJaUJtYVd4NVBTSWpNall5TmpJMklpOCtQSEJoZGlCa1BTSk5NakkwSURNek1tTXdMVEl5TGpFZ01UUXVNeTAwTUNBek1pMDBNSE16TWlBMU55QXpNaUEwTUhZNU1tZ3ROalIyTFRLeWVpSWdabWxzYkQwaUkyVjVaVFZsTlNJdlBqeHdZWFJvSUdROUlrNDRNU0F5TWpKb01UaDJNVGt3U0RNMll5MDBMalFnTUMwNExUTXVOaTA0TFRoV01qTXdZekF0TkM0MElETXVOaTA0SURndE9HZzBOWGx0TXpNeUlEQm9NVGgyTVRrd2JDMDBOV010TkM0MElEQXRPQzB6TGpJdE9DMDRWakl6TUdNd0xUUXVDQXpMak10T0NBNExUaG9ORFZySWlCbWFXeDVQU0lqTkRBMERBMEFJaTgrUEhCaGRpQmtQU0pOT1RBZ01UY3dZeTB4TXk0eklEQXRNalFnTWpBdE1qUWdOVEJvTkRoak1DMHpNQzB4TUM0M0xUVXdMVElwTFRVd2VtMHpNeXdnTUhNdE1UTXVNeUF3TFRJMENBMHhOUzB5TkNBMU1HZzBPR013TFRNd0xURXdMamd0TlRBdE1qUXROVDFwSWdabWJHeDAPS0pFTlRWMU5XVWlQajR3WVhSb0lHUTlFazE0T0NBek9EUm9NelV5ZGpJMFNERTRNSG9pSUdabWJHeDAPS0pFTlRWMU5XVWlQancvYzNaM2EwPSIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
 
   <style>
     :root {
-      /* Slate Dark Gray / Black Theme */
+      /* Base Colors */
       --bg-base: #050505;
-      --bg-surface: #121212;
-      --bg-surface-elevated: #1a1a1a;
-      --bg-surface-active: #171717;
-      --border-subtle: #262626;
-      --border-active: #525252;
+      
+      /* Glassmorphism Surface (Replaces solid slate) */
+      --bg-surface: rgba(18, 18, 18, 0.65);
+      --bg-surface-elevated: rgba(30, 30, 30, 0.7);
+      --bg-surface-active: rgba(23, 23, 23, 0.85);
+      
+      --border-subtle: rgba(255, 255, 255, 0.1);
+      --border-active: rgba(82, 82, 82, 0.8);
+      
       --text-primary: #f5f5f5;
       --text-secondary: #a3a3a3;
       --text-muted: #737373;
       --accent-primary: #e5e5e5;
       --accent-highlight: #d4d4d4;
-      --accent-glow: rgba(255, 255, 255, 0.08);
 
-      /* Status Indicators: Green (Tick) & Red (Cross) */
-      --badge-ok-bg: rgba(52, 211, 153, 0.15);
+      /* Status Indicators */
+      --badge-ok-bg: rgba(52, 211, 153, 0.2);
       --badge-ok-color: #34d399; 
-      --badge-haram-bg: rgba(244, 63, 94, 0.15);
+      --badge-haram-bg: rgba(244, 63, 94, 0.2);
       --badge-haram-color: #fb7185; 
 
       --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -62,13 +60,12 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
       background-color: var(--bg-base);
       color: var(--text-primary);
       font-family: var(--font-stack);
-      height: 100dvh; /* Dynamic Viewport Height fixes iOS bottom bar issues */
+      height: 100dvh; 
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
       
-      /* Safe Area Paddings for Notches and Swipe Bars */
       padding-top: calc(env(safe-area-inset-top, 20px) + 16px);
       padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 12px);
       padding-left: max(12px, env(safe-area-inset-left));
@@ -76,6 +73,28 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
       
       -webkit-font-smoothing: antialiased;
       overflow: hidden; 
+      position: relative;
+    }
+
+    /* Astronomical Sky Background Layer */
+    #sky-bg {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: -2;
+      transition: background 3s ease;
+      background: var(--bg-base);
+    }
+
+    /* Sun / Moon Element */
+    #celestial-body {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      z-index: -1;
+      transform: translate(-50%, -50%);
+      transition: top 2s ease-out, left 2s ease-out, box-shadow 3s ease, background 3s ease;
+      opacity: 0; /* Hidden until activated */
     }
 
     .app-wrapper {
@@ -85,17 +104,18 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
       display: flex;
       flex-direction: column;
       gap: 12px;
-      overflow: hidden; /* Prevents stretching */
+      overflow: hidden; 
+      z-index: 10;
     }
 
-    /* Fixed Header */
+    /* Header */
     .header-bar {
       display: flex;
       flex-direction: column;
       gap: 10px;
       padding-bottom: 8px;
       border-bottom: 1px solid var(--border-subtle);
-      flex-shrink: 0; /* Locks to top */
+      flex-shrink: 0; 
     }
 
     .header-top {
@@ -116,6 +136,7 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
       height: 34px;
       border-radius: 8px;
       background: var(--bg-surface-elevated);
+      backdrop-filter: blur(8px);
       border: 1px solid var(--border-subtle);
       padding: 5px;
       display: flex;
@@ -139,9 +160,31 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
       margin: 0;
     }
 
+    .controls-cluster {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .icon-btn {
+      background: var(--bg-surface);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      border-radius: 6px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
     .lang-switcher {
       display: flex;
       background-color: var(--bg-surface);
+      backdrop-filter: blur(8px);
       border: 1px solid var(--border-subtle);
       border-radius: 6px;
       padding: 2px;
@@ -163,12 +206,13 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
       color: var(--text-primary);
     }
 
-    /* Header Bottom Row (Date & Badge) */
+    /* Header Bottom Row (Date & District Dropdown) */
     .header-bottom {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(26, 26, 26, 0.4);
+      background: var(--bg-surface);
+      backdrop-filter: blur(8px);
       padding: 6px 10px;
       border-radius: 6px;
       border: 1px solid var(--border-subtle);
@@ -183,21 +227,40 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
       text-overflow: ellipsis;
     }
 
-    .district-badge {
-      font-size: 0.65rem;
-      font-weight: 600;
-      color: var(--text-primary);
+    .district-select-wrapper {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .district-select {
+      appearance: none;
       background-color: var(--bg-surface-elevated);
       border: 1px solid var(--border-active);
-      padding: 2px 6px;
+      color: var(--text-primary);
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 2px 20px 2px 8px;
       border-radius: 4px;
-      white-space: nowrap;
-      flex-shrink: 0; 
+      outline: none;
+      cursor: pointer;
+      font-family: var(--font-stack);
+    }
+
+    .district-select-wrapper::after {
+      content: "▼";
+      font-size: 0.45rem;
+      color: var(--text-primary);
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
     }
 
     /* Fixed Hero Section */
     .hero-tracker {
-      background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(20, 20, 20, 0.95) 100%);
+      background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(10, 10, 10, 0.8) 100%);
+      backdrop-filter: blur(16px);
       border: 1px solid var(--border-subtle);
       border-radius: 14px;
       padding: 16px 20px;
@@ -206,18 +269,7 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
       gap: 12px;
       position: relative;
       overflow: hidden;
-      flex-shrink: 0; /* Locks to top under header */
-    }
-
-    .hero-tracker::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 150px;
-      height: 100%;
-      background: radial-gradient(circle at top right, var(--accent-glow) 0%, transparent 80%);
-      pointer-events: none;
+      flex-shrink: 0; 
     }
 
     .hero-top-row {
@@ -288,9 +340,9 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
       flex-direction: column;
       gap: 8px;
       width: 100%;
-      flex-grow: 1; /* Takes up remaining middle space */
-      overflow-y: auto; /* Allows scrolling */
-      -webkit-overflow-scrolling: touch; /* Smooth iOS scroll */
+      flex-grow: 1; 
+      overflow-y: auto; 
+      -webkit-overflow-scrolling: touch; 
       padding-bottom: 12px;
     }
 
@@ -301,61 +353,39 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
       border-radius: 10px;
       transition: all 0.2s ease;
       width: 100%;
-      flex-shrink: 0; /* Prevents rows from squishing inside scroll view */
+      flex-shrink: 0; 
+      backdrop-filter: blur(12px);
     }
 
-    .prayer-row:active {
-      transform: scale(0.98);
-    }
-
-    /* Primary Fardhu Row Styling */
     .prayer-row.is-fardhu {
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       padding: 12px 14px;
     }
 
-    /* Secondary Row Styling (Imsak, Syuruk, Duha) */
     .prayer-row.is-secondary {
-      background: rgba(18, 18, 18, 0.4);
+      background: rgba(10, 10, 10, 0.4);
       border: 1px dashed var(--border-subtle);
       padding: 8px 14px;
     }
 
     .prayer-row.is-active {
-      background: linear-gradient(90deg, var(--bg-surface-active) 0%, var(--bg-surface) 100%);
+      background: linear-gradient(90deg, var(--bg-surface-active) 0%, rgba(10,10,10,0.6) 100%);
       border: 1px solid var(--border-active);
       box-shadow: inset 3px 0 0 var(--accent-primary);
     }
 
     .prayer-row.is-past {
-      opacity: 0.35;
+      opacity: 0.4;
       filter: grayscale(1);
     }
 
-    /* Name Formatting */
-    .row-left-fardhu {
-      width: 80px;
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .row-left-sec {
-      width: 80px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
+    .row-left-fardhu { width: 80px; font-size: 1.05rem; font-weight: 700; color: var(--text-primary); }
+    .row-left-sec { width: 80px; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
 
     .prayer-row.is-active .row-left-fardhu,
-    .prayer-row.is-active .row-left-sec {
-      color: var(--accent-primary);
-    }
+    .prayer-row.is-active .row-left-sec { color: var(--accent-primary); }
 
-    /* Badges */
     .row-mid {
       flex: 1;
       display: flex;
@@ -374,37 +404,12 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
       letter-spacing: 0.04em;
     }
 
-    .fiqh-badge.is-ok {
-      background-color: var(--badge-ok-bg);
-      color: var(--badge-ok-color);
-    }
+    .fiqh-badge.is-ok { background-color: var(--badge-ok-bg); color: var(--badge-ok-color); }
+    .fiqh-badge.is-haram { background-color: var(--badge-haram-bg); color: var(--badge-haram-color); }
 
-    .fiqh-badge.is-haram {
-      background-color: var(--badge-haram-bg);
-      color: var(--badge-haram-color);
-    }
-
-    /* Time Formatting */
-    .row-right-fardhu {
-      font-size: 1.15rem;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      color: var(--text-primary);
-      text-align: right;
-    }
-
-    .row-right-sec {
-      font-size: 0.95rem;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      color: var(--text-muted);
-      text-align: right;
-    }
-
-    .prayer-row.is-active .row-right-fardhu,
-    .prayer-row.is-active .row-right-sec {
-      color: #ffffff;
-    }
+    .row-right-fardhu { font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-primary); text-align: right; }
+    .row-right-sec { font-size: 0.95rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; }
+    .prayer-row.is-active .row-right-fardhu, .prayer-row.is-active .row-right-sec { color: #ffffff; }
 
     /* Fixed Footer */
     .site-footer {
@@ -412,23 +417,24 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
       font-size: 0.7rem;
       color: var(--text-muted);
       line-height: 1.4;
-      flex-shrink: 0; /* Locks to bottom */
+      flex-shrink: 0; 
       padding-top: 4px;
       border-top: 1px solid var(--border-subtle);
       margin-top: auto;
     }
 
-    .site-footer a {
-      color: var(--text-secondary);
-      text-decoration: none;
-    }
+    .site-footer a { color: var(--text-secondary); text-decoration: none; }
   </style>
 </head>
 <body>
 
+  <!-- Visual Layers -->
+  <div id="sky-bg"></div>
+  <div id="celestial-body"></div>
+
   <div class="app-wrapper">
     <header class="header-bar">
-      <!-- Top Row: Logo, Title, Toggle -->
+      <!-- Top Row -->
       <div class="header-top">
         <div class="brand-cluster">
           <div class="brand-logo" aria-hidden="true">
@@ -447,16 +453,26 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
           </div>
         </div>
 
-        <div class="lang-switcher">
-          <button id="lang-btn-ms" class="lang-btn active" onclick="setLanguage('ms')">BM</button>
-          <button id="lang-btn-en" class="lang-btn" onclick="setLanguage('en')">EN</button>
+        <div class="controls-cluster">
+          <button class="icon-btn" id="visuals-toggle" onclick="toggleVisuals()">☀️</button>
+          <div class="lang-switcher">
+            <button id="lang-btn-ms" class="lang-btn active" onclick="setLanguage('ms')">BM</button>
+            <button id="lang-btn-en" class="lang-btn" onclick="setLanguage('en')">EN</button>
+          </div>
         </div>
       </div>
 
-      <!-- Bottom Row: Date & Badge -->
+      <!-- Bottom Row -->
       <div class="header-bottom">
         <span class="date-text" id="gregorian-date">-</span>
-        <span class="district-badge" id="ui-district-badge">Brunei-Muara</span>
+        <div class="district-select-wrapper">
+          <select class="district-select" id="district-select" onchange="handleDistrictChange()">
+            <option value="0">Brunei-Muara</option>
+            <option value="3">Belait (+3 min)</option>
+            <option value="1">Tutong (+1 min)</option>
+            <option value="0">Temburong</option>
+          </select>
+        </div>
       </div>
     </header>
 
@@ -474,7 +490,7 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
       </div>
     </section>
 
-    <!-- Unified Single Screen List (All 8 Windows) -->
+    <!-- Unified Single Screen List -->
     <main class="prayer-list" id="prayer-list-container"></main>
 
     <footer class="site-footer">
@@ -488,10 +504,22 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
   </div>
 
   <script>
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
+      });
+    }
+
     const GITHUB_JSON_URL = "https://raw.githubusercontent.com/naqiuddinihsan/waktu-solat-brunei/main/brunei_prayers.json";
-    const BASE_DISTRICT_OFFSET = 0;
     
     let currentLang = "ms";
+    let visualsEnabled = true;
+
+    // Check Local Storage for settings
+    if (localStorage.getItem('bwn_visuals') === 'false') {
+      visualsEnabled = false;
+    }
 
     function setText(id, text) {
       const el = document.getElementById(id);
@@ -504,64 +532,48 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
         nowLabel: "Sekarang:",
         enteredAt: "Masuk pada",
         toNext: "ke",
-        districtBadge: "Brunei-Muara",
         localeDate: "ms-MY",
         yesterdaySuffix: "(Malam Tadi)",
         tomorrowSuffix: "(Esok)",
+        districts: [
+          { val: 0, text: "Brunei-Muara" },
+          { val: 3, text: "Belait (+3 min)" },
+          { val: 1, text: "Tutong (+1 min)" },
+          { val: 0, text: "Temburong" }
+        ],
         prayers: {
-          imsak: "Imsak",
-          subuh: "Subuh",
-          syuruk: "Syuruk",
-          duha: "Duha",
-          zuhur: "Zuhur",
-          asar: "Asar",
-          maghrib: "Maghrib",
-          isya: "Isya'"
+          imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha",
+          zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'"
         },
-        fiqh: {
-          qabliyyah: "Qabliyyah",
-          ba_diyyah: "Ba'diyyah",
-          witir: "Witir"
-        }
+        fiqh: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir" }
       },
       en: {
         appTitle: "Waktu Solat BWN",
         nowLabel: "Now:",
         enteredAt: "Entered at",
         toNext: "to",
-        districtBadge: "Brunei-Muara",
         localeDate: "en-GB",
         yesterdaySuffix: "(Last Night)",
         tomorrowSuffix: "(Tomorrow)",
+        districts: [
+          { val: 0, text: "Brunei-Muara" },
+          { val: 3, text: "Belait (+3 min)" },
+          { val: 1, text: "Tutong (+1 min)" },
+          { val: 0, text: "Temburong" }
+        ],
         prayers: {
-          imsak: "Imsak",
-          subuh: "Fajr",
-          syuruk: "Sunrise",
-          duha: "Dhuha",
-          zuhur: "Zuhr",
-          asar: "Asr",
-          maghrib: "Maghrib",
-          isya: "Isha'"
+          imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha",
+          zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'"
         },
-        fiqh: {
-          qabliyyah: "Qabliyyah",
-          ba_diyyah: "Ba'diyyah",
-          witir: "Witir"
-        }
+        fiqh: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir" }
       }
     };
 
     const ALL_KEYS = ["imsak", "subuh", "syuruk", "duha", "zuhur", "asar", "maghrib", "isya"];
 
     let cachedSchedule = {
-      imsak: "04:42",
-      subuh: "04:52",
-      syuruk: "06:09",
-      duha: "06:31",
-      zuhur: "12:13",
-      asar: "15:22",
-      maghrib: "18:15",
-      isya: "19:24"
+      imsak: "04:42", subuh: "04:52", syuruk: "06:09", duha: "06:31",
+      zuhur: "12:13", asar: "15:22", maghrib: "18:15", isya: "19:24"
     };
     let hijrahString = "14 Rabiulakhir 1448 H";
 
@@ -581,18 +593,42 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
       return displayH + ":" + displayM + " " + period;
     }
 
+    function populateDistricts() {
+      const sel = document.getElementById("district-select");
+      const currentVal = sel.value || "0";
+      sel.innerHTML = "";
+      I18N[currentLang].districts.forEach(d => {
+        let opt = document.createElement("option");
+        opt.value = d.val;
+        opt.textContent = d.text;
+        if (d.val == currentVal && d.text === sel.options[sel.selectedIndex]?.text) opt.selected = true;
+        sel.appendChild(opt);
+      });
+    }
+
+    function handleDistrictChange() {
+      updateTick();
+    }
+
+    function toggleVisuals() {
+      visualsEnabled = !visualsEnabled;
+      localStorage.setItem('bwn_visuals', visualsEnabled);
+      document.getElementById('visuals-toggle').textContent = visualsEnabled ? "☀️" : "🌙";
+      updateTick();
+    }
+
     function setLanguage(lang) {
       currentLang = lang;
-      const msBtn = document.getElementById("lang-btn-ms");
-      const enBtn = document.getElementById("lang-btn-en");
-      if (msBtn) msBtn.classList.toggle("active", lang === "ms");
-      if (enBtn) enBtn.classList.toggle("active", lang === "en");
+      document.getElementById("lang-btn-ms").classList.toggle("active", lang === "ms");
+      document.getElementById("lang-btn-en").classList.toggle("active", lang === "en");
 
       const t = I18N[currentLang];
       setText("ui-app-title", t.appTitle);
-      document.title = t.appTitle;
       setText("ui-now-label", t.nowLabel);
-      setText("ui-district-badge", t.districtBadge);
+      
+      let savedIndex = document.getElementById("district-select").selectedIndex;
+      populateDistricts();
+      document.getElementById("district-select").selectedIndex = savedIndex > -1 ? savedIndex : 0;
 
       setDateHeaders();
       updateTick();
@@ -600,9 +636,10 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
 
     function getAdjustedSchedule() {
       const adjusted = {};
+      const offset = parseInt(document.getElementById("district-select").value || 0);
       ALL_KEYS.forEach(function(key) {
         let baseMins = timeStringToMinutes(cachedSchedule[key]);
-        adjusted[key] = baseMins + BASE_DISTRICT_OFFSET;
+        adjusted[key] = baseMins + offset;
       });
       return adjusted;
     }
@@ -618,44 +655,13 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
 
       const sequence = [
         { key: "imsak", type: "secondary" },
-        {
-          key: "subuh", type: "fardhu",
-          badges: [
-            { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
-            { text: t.fiqh.ba_diyyah + " &#10007;", type: "is-haram" }
-          ]
-        },
+        { key: "subuh", type: "fardhu", badges: [{ text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" }, { text: t.fiqh.ba_diyyah + " &#10007;", type: "is-haram" }] },
         { key: "syuruk", type: "secondary" },
         { key: "duha", type: "secondary" },
-        {
-          key: "zuhur", type: "fardhu",
-          badges: [
-            { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
-            { text: t.fiqh.ba_diyyah + " &#10003;", type: "is-ok" }
-          ]
-        },
-        {
-          key: "asar", type: "fardhu",
-          badges: [
-            { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
-            { text: t.fiqh.ba_diyyah + " &#10007;", type: "is-haram" }
-          ]
-        },
-        {
-          key: "maghrib", type: "fardhu",
-          badges: [
-            { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
-            { text: t.fiqh.ba_diyyah + " &#10003;", type: "is-ok" }
-          ]
-        },
-        {
-          key: "isya", type: "fardhu",
-          badges: [
-            { text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" },
-            { text: t.fiqh.ba_diyyah + " &#10003;", type: "is-ok" },
-            { text: t.fiqh.witir + " &#10003;", type: "is-ok" }
-          ]
-        }
+        { key: "zuhur", type: "fardhu", badges: [{ text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" }, { text: t.fiqh.ba_diyyah + " &#10003;", type: "is-ok" }] },
+        { key: "asar", type: "fardhu", badges: [{ text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" }, { text: t.fiqh.ba_diyyah + " &#10007;", type: "is-haram" }] },
+        { key: "maghrib", type: "fardhu", badges: [{ text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" }, { text: t.fiqh.ba_diyyah + " &#10003;", type: "is-ok" }] },
+        { key: "isya", type: "fardhu", badges: [{ text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" }, { text: t.fiqh.ba_diyyah + " &#10003;", type: "is-ok" }, { text: t.fiqh.witir + " &#10003;", type: "is-ok" }] }
       ];
 
       sequence.forEach(function(item) {
@@ -673,9 +679,7 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
 
         let badgesHtml = '';
         if (item.badges) {
-          item.badges.forEach(function(b) {
-            badgesHtml += '<span class="fiqh-badge ' + b.type + '">' + b.text + '</span>';
-          });
+          item.badges.forEach(b => { badgesHtml += '<span class="fiqh-badge ' + b.type + '">' + b.text + '</span>'; });
         }
 
         const nameClass = item.type === "fardhu" ? "row-left-fardhu" : "row-left-sec";
@@ -696,59 +700,90 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
       const currentSecs = now.getSeconds();
       const t = I18N[currentLang];
 
-      const sequence = ALL_KEYS.map(function(key) {
-        return { key: key, mins: adjustedTimes[key] };
-      });
+      const sequence = ALL_KEYS.map(key => ({ key: key, mins: adjustedTimes[key] }));
 
       let activeItem = null;
       let nextItem = null;
 
       if (currentMins < sequence[0].mins) {
-        activeItem = {
-          key: "isya",
-          name: t.prayers["isya"] + " " + t.yesterdaySuffix,
-          mins: sequence[sequence.length - 1].mins - 1440
-        };
-        nextItem = {
-          key: sequence[0].key,
-          name: t.prayers[sequence[0].key],
-          mins: sequence[0].mins
-        };
+        activeItem = { key: "isya", name: t.prayers["isya"] + " " + t.yesterdaySuffix, mins: sequence[sequence.length - 1].mins - 1440 };
+        nextItem = { key: sequence[0].key, name: t.prayers[sequence[0].key], mins: sequence[0].mins };
       } else {
         for (let i = 0; i < sequence.length; i++) {
           if (i === sequence.length - 1) {
-            activeItem = {
-              key: sequence[i].key,
-              name: t.prayers[sequence[i].key],
-              mins: sequence[i].mins
-            };
-            nextItem = {
-              key: sequence[0].key,
-              name: t.prayers[sequence[0].key] + " " + t.tomorrowSuffix,
-              mins: sequence[0].mins + 1440
-            };
+            activeItem = { key: sequence[i].key, name: t.prayers[sequence[i].key], mins: sequence[i].mins };
+            nextItem = { key: sequence[0].key, name: t.prayers[sequence[0].key] + " " + t.tomorrowSuffix, mins: sequence[0].mins + 1440 };
           } else if (currentMins >= sequence[i].mins && currentMins < sequence[i + 1].mins) {
-            activeItem = {
-              key: sequence[i].key,
-              name: t.prayers[sequence[i].key],
-              mins: sequence[i].mins
-            };
-            nextItem = {
-              key: sequence[i + 1].key,
-              name: t.prayers[sequence[i + 1].key],
-              mins: sequence[i + 1].mins
-            };
+            activeItem = { key: sequence[i].key, name: t.prayers[sequence[i].key], mins: sequence[i].mins };
+            nextItem = { key: sequence[i + 1].key, name: t.prayers[sequence[i + 1].key], mins: sequence[i + 1].mins };
             break;
           }
         }
       }
 
-      return {
-        active: activeItem,
-        next: nextItem,
-        currentMinutes: currentMins,
-        currentSeconds: currentSecs
-      };
+      return { active: activeItem, next: nextItem, currentMinutes: currentMins, currentSeconds: currentSecs };
+    }
+
+    function updateSkyVisuals(adjustedTimes, currentMins) {
+      const skyBg = document.getElementById("sky-bg");
+      const celestial = document.getElementById("celestial-body");
+      document.getElementById('visuals-toggle').textContent = visualsEnabled ? "☀️" : "🌙";
+
+      if (!visualsEnabled) {
+        skyBg.style.background = "var(--bg-base)";
+        celestial.style.opacity = "0";
+        return;
+      }
+
+      const subuhMins = adjustedTimes.subuh;
+      const maghribMins = adjustedTimes.maghrib;
+      
+      let isDay = currentMins >= subuhMins && currentMins < maghribMins;
+      celestial.style.opacity = "1";
+
+      if (isDay) {
+        // Daytime Engine (Sun)
+        let dayProgress = (currentMins - subuhMins) / (maghribMins - subuhMins);
+        
+        celestial.style.background = "radial-gradient(circle, #fffdf2 0%, #ffe484 50%, transparent 100%)";
+        celestial.style.boxShadow = "0 0 40px 20px rgba(255, 228, 132, 0.4)";
+        celestial.style.left = (10 + (dayProgress * 80)) + "vw";
+        // Parabolic arc for sun height
+        let heightMultiplier = Math.sin(dayProgress * Math.PI); 
+        celestial.style.top = (85 - (heightMultiplier * 60)) + "vh";
+
+        // Dynamic Gradients
+        if (dayProgress < 0.15) {
+          skyBg.style.background = "linear-gradient(to bottom, #0f172a 0%, #312e81 60%, #701a75 100%)"; // Dawn
+        } else if (dayProgress < 0.3) {
+          skyBg.style.background = "linear-gradient(to bottom, #1e3a8a 0%, #7c2d12 60%, #b45309 100%)"; // Morning
+        } else if (dayProgress < 0.7) {
+          skyBg.style.background = "linear-gradient(to bottom, #0ea5e9 0%, #38bdf8 100%)"; // Noon
+        } else if (dayProgress < 0.9) {
+          skyBg.style.background = "linear-gradient(to bottom, #1d4ed8 0%, #c2410c 100%)"; // Afternoon
+        } else {
+          skyBg.style.background = "linear-gradient(to bottom, #1e1b4b 0%, #831843 60%, #ea580c 100%)"; // Sunset
+        }
+
+      } else {
+        // Nighttime Engine (Moon)
+        let nightDuration = (1440 - maghribMins) + subuhMins;
+        let elapsedNight = currentMins >= maghribMins ? (currentMins - maghribMins) : ((1440 - maghribMins) + currentMins);
+        let nightProgress = elapsedNight / nightDuration;
+
+        celestial.style.background = "radial-gradient(circle, #ffffff 0%, #e2e8f0 50%, transparent 100%)";
+        celestial.style.boxShadow = "0 0 30px 10px rgba(255, 255, 255, 0.2)";
+        celestial.style.left = (10 + (nightProgress * 80)) + "vw";
+        let heightMultiplier = Math.sin(nightProgress * Math.PI); 
+        celestial.style.top = (75 - (heightMultiplier * 40)) + "vh";
+
+        // Night Sky
+        if (nightProgress < 0.1) {
+          skyBg.style.background = "linear-gradient(to bottom, #020617 0%, #172554 100%)"; // Dusk settling
+        } else {
+          skyBg.style.background = "linear-gradient(to bottom, #000000 0%, #020617 100%)"; // Deep night
+        }
+      }
     }
 
     function updateTick() {
@@ -794,6 +829,7 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
       if (progressFill) progressFill.style.width = progressPercent.toFixed(1) + "%";
 
       renderPrayerList(adjustedTimes, state.active.key);
+      updateSkyVisuals(adjustedTimes, state.currentMinutes);
     }
 
     function setDateHeaders() {
@@ -810,21 +846,13 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
       const dateKey = day + "-" + month + "-" + year;
 
       fetch(GITHUB_JSON_URL)
-        .then(function(res) {
-          if (!res.ok) throw new Error("HTTP error");
-          return res.json();
-        })
-        .then(function(data) {
+        .then(res => { if (!res.ok) throw new Error(); return res.json(); })
+        .then(data => {
           if (data && data[dateKey]) {
             cachedSchedule = {
-              imsak: data[dateKey].imsak,
-              subuh: data[dateKey].subuh,
-              syuruk: data[dateKey].syuruk,
-              duha: data[dateKey].duha,
-              zuhur: data[dateKey].zuhur,
-              asar: data[dateKey].asar,
-              maghrib: data[dateKey].maghrib,
-              isya: data[dateKey].isya
+              imsak: data[dateKey].imsak, subuh: data[dateKey].subuh, syuruk: data[dateKey].syuruk,
+              duha: data[dateKey].duha, zuhur: data[dateKey].zuhur, asar: data[dateKey].asar,
+              maghrib: data[dateKey].maghrib, isya: data[dateKey].isya
             };
             if (data[dateKey].date_hijrah) {
               hijrahString = data[dateKey].date_hijrah;
@@ -833,11 +861,10 @@ Description: "Waktu Solat BWN" rebrand. English translations mapped (Fajr, Sunri
             updateTick();
           }
         })
-        .catch(function(err) {
-          console.warn("Using internal fallback schedule");
-        });
+        .catch(() => console.warn("Using offline fallback schedule"));
     }
 
+    document.getElementById("visuals-toggle").textContent = visualsEnabled ? "☀️" : "🌙";
     setLanguage("ms");
     fetchRemoteData();
     setInterval(updateTick, 1000);
