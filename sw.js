@@ -1,7 +1,8 @@
-const CACHE_NAME = 'waktu-solat-v3.0.0';
+const CACHE_NAME = 'waktu-solat-v3.3.0';
 const ASSETS = [
   './',
   './index.html',
+  './styles.css',
   './manifest.json',
   './icon.svg'
 ];
