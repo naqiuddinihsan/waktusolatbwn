@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 5.1.0
-Description: Seamless edge-to-edge layout. Root background flows behind the home indicator to permanently eliminate the bottom black bar.
+Version: 5.2.0
+Description: Resolves iOS PWA chin gap by shifting root height to 100vh and ensuring fixed sky/cloud layers span the true device viewport.
 */
 
 :root {
@@ -37,30 +37,20 @@ Description: Seamless edge-to-edge layout. Root background flows behind the home
   touch-action: manipulation; 
 }
 
-/* Forces root canvas to match app base color completely edge-to-edge */
-html {
-  background-color: var(--bg-base);
-  width: 100vw;
-  height: 100dvh;
-  overflow: hidden;
-}
-
-body {
+/* Using 100vh prevents the iOS PWA 59px chin gap bug */
+html, body {
   background-color: var(--bg-base);
   color: var(--text-primary);
   font-family: var(--font-stack);
   width: 100vw;
-  height: 100dvh;
+  height: 100vh;
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Background layers pinned to screen */
+/* Astronomical Background Layers mapped to 100vh */
 #sky-bg {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -68,7 +58,7 @@ body {
   transition: background 3s ease;
   background: var(--bg-base);
   width: 100vw;
-  height: 100dvh;
+  height: 100vh;
 }
 
 #celestial-body {
@@ -91,7 +81,7 @@ body {
   transition: opacity 2s ease;
   overflow: hidden;
   width: 100vw;
-  height: 100dvh;
+  height: 100vh;
 }
 
 .cloud {
@@ -112,18 +102,20 @@ body {
   100% { transform: translateX(calc(100vw + 400px)); }
 }
 
-/* App Wrapper handles safe areas cleanly */
+/* App Wrapper takes full viewport height cleanly */
 .app-wrapper {
-  width: 100%;
+  width: 100vw;
+  height: 100vh;
   max-width: 600px;
-  height: 100dvh;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
   z-index: 10;
   
   padding-top: calc(env(safe-area-inset-top, 40px) + 8px);
-  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  /* Uses safe area padding so content respects the home bar without cutting off the background */
+  padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 8px);
   padding-left: max(12px, env(safe-area-inset-left));
   padding-right: max(12px, env(safe-area-inset-right));
 }
@@ -446,7 +438,7 @@ body {
 .row-right-sec { font-size: 0.95rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; }
 .prayer-row.is-active .row-right-fardhu, .prayer-row.is-active .row-right-sec { color: #ffffff; }
 
-/* Seamless Footer with safe-area padding extending down naturally */
+/* Seamless Footer */
 .site-footer {
   display: flex;
   justify-content: center;
