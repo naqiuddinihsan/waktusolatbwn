@@ -1,4 +1,4 @@
-const CACHE_NAME = 'waktu-solat-v5.6.0';
+const CACHE_NAME = 'waktu-solat-v5.7.0';
 const ASSETS = [
   './',
   './index.html',
