@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 12.0.0
-Description: Minimalist PTR container and dynamic translation hooks for modals.
+Version: 1.0.12
+Description: Updated developer URLs and Wake Lock integration.
 -->
 <!DOCTYPE html>
 <html lang="ms">
@@ -24,6 +24,7 @@ Description: Minimalist PTR container and dynamic translation hooks for modals.
 </head>
 <body>
 
+  <!-- Background Engine -->
   <div id="sky-bg"></div>
   <div id="celestial-body"></div>
   <div id="clouds-layer">
@@ -121,7 +122,12 @@ Description: Minimalist PTR container and dynamic translation hooks for modals.
         <h3 id="about-title">-</h3>
         <button class="modal-close-btn" id="modal-close-btn-2" type="button">&times;</button>
       </div>
-      <div class="modal-body about-body" id="about-body-content"></div>
+      <div class="modal-body about-body" id="about-body-content">
+        <!-- Fallback static content before JS loads -->
+        <p><strong>Sumber Data Rasmi:</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">Kementerian Hal Ehwal Ugama (KHEU) Brunei</a></p>
+        <p><strong>Dibangunkan oleh:</strong><br><a href="https://www.qwamii.com" target="_blank">Qwamii</a> / <a href="https://www.behance.net/naqiuddinihsan" target="_blank">Naqiuddin Ihsan</a></p>
+        <p class="about-version">Versi 1.0.12</p>
+      </div>
     </div>
   </div>
 
