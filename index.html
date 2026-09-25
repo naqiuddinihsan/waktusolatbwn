@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 6.1.0
-Description: Modularized HTML structure linking external script.js and styles.css.
+Version: 7.0.0
+Description: Added landscape Nightstand Mode container and tactile UI elements.
 -->
 <!DOCTYPE html>
 <html lang="ms">
@@ -13,10 +13,7 @@ Description: Modularized HTML structure linking external script.js and styles.cs
 
   <title>Waktu Solat BWN</title>
 
-  <!-- External Stylesheet -->
   <link rel="stylesheet" href="styles.css">
-
-  <!-- PWA Core Meta Tags -->
   <link rel="manifest" href="manifest.json">
   <meta name="application-name" content="Waktu BWN">
   <meta name="apple-mobile-web-app-title" content="Waktu BWN">
@@ -27,7 +24,7 @@ Description: Modularized HTML structure linking external script.js and styles.cs
 </head>
 <body>
 
-  <!-- Visual Layers -->
+  <!-- Background Engine -->
   <div id="sky-bg"></div>
   <div id="celestial-body"></div>
   <div id="clouds-layer">
@@ -36,9 +33,9 @@ Description: Modularized HTML structure linking external script.js and styles.cs
     <div class="cloud c3"></div>
   </div>
 
+  <!-- Primary Application Wrapper -->
   <div class="app-wrapper">
     <header class="header-bar">
-      <!-- Top Row -->
       <div class="header-top">
         <div class="brand-cluster">
           <div class="brand-logo" aria-hidden="true">
@@ -66,7 +63,6 @@ Description: Modularized HTML structure linking external script.js and styles.cs
         </div>
       </div>
 
-      <!-- Bottom Row -->
       <div class="header-bottom">
         <span class="date-text" id="gregorian-date">-</span>
         <div class="district-select-wrapper">
@@ -94,10 +90,8 @@ Description: Modularized HTML structure linking external script.js and styles.cs
       </div>
     </section>
 
-    <!-- Unified Single Screen List -->
     <main class="prayer-list" id="prayer-list-container"></main>
 
-    <!-- Minimalist Transparent Footer -->
     <footer class="site-footer">
       <a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank" rel="noopener noreferrer">Sumber Data: KHEU</a>
       <span class="footer-divider"></span>
@@ -105,7 +99,7 @@ Description: Modularized HTML structure linking external script.js and styles.cs
     </footer>
   </div>
 
-  <!-- INTERACTIVE INFO MODAL -->
+  <!-- Interactive Modal -->
   <div class="modal-backdrop" id="info-modal" onclick="closeModal(event)">
     <div class="modal-card" onclick="event.stopPropagation()">
       <div class="modal-header">
@@ -116,7 +110,13 @@ Description: Modularized HTML structure linking external script.js and styles.cs
     </div>
   </div>
 
-  <!-- External Script Logic -->
+  <!-- LANDSCAPE NIGHTSTAND MODE -->
+  <div id="nightstand-mode">
+    <div id="ns-time">00:00</div>
+    <div id="ns-date">-</div>
+    <div id="ns-next">-</div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
