@@ -1,4 +1,4 @@
-const CACHE_NAME = 'waktu-solat-v8.0.0';
+const CACHE_NAME = 'waktu-solat-v8.1.0';
 const ASSETS = [
   './',
   './index.html',
@@ -25,7 +25,6 @@ self.addEventListener('activate', (e) => {
   return self.clients.claim();
 });
 
-// NETWORK-FIRST STRATEGY: Forces your iPhone to fetch the latest fixes immediately
 self.addEventListener('fetch', (e) => {
   e.respondWith(
     fetch(e.request)
