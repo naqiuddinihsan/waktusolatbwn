@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 5.5.0
-Description: Precision celestial engine mapped directly to daily prayer intervals (Subuh/Maghrib arcs). Seamless viewport scaling.
+Version: 5.6.0
+Description: Synchronized visual toggle state on boot. Precision celestial engine and touch-zoom disabled.
 -->
 <!DOCTYPE html>
 <html lang="ms">
@@ -122,6 +122,12 @@ Description: Precision celestial engine mapped directly to daily prayer interval
     } else {
       localStorage.setItem('bwn_visuals', 'false');
     }
+
+    // Synchronize UI button state on boot
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('visuals-toggle');
+      if (btn) btn.textContent = visualsEnabled ? "☀️" : "🌙";
+    });
 
     function setText(id, text) {
       const el = document.getElementById(id);
@@ -327,13 +333,10 @@ Description: Precision celestial engine mapped directly to daily prayer interval
       return { active: activeItem, next: nextItem, currentMinutes: currentMins, currentSeconds: currentSecs };
     }
 
-    // PRECISION CELESTIAL ENGINE MAPPED TO PRAYER TIMES
     function updateSkyVisuals(adjustedTimes, currentMins) {
       const skyBg = document.getElementById("sky-bg");
       const celestial = document.getElementById("celestial-body");
       const cloudsLayer = document.getElementById("clouds-layer");
-      
-      document.getElementById('visuals-toggle').textContent = visualsEnabled ? "☀️" : "🌙";
 
       if (!visualsEnabled) {
         skyBg.style.background = "var(--bg-base)";
@@ -358,30 +361,22 @@ Description: Precision celestial engine mapped directly to daily prayer interval
         let dayDuration = maghribMins - subuhMins;
         let dayProgress = (currentMins - subuhMins) / dayDuration;
 
-        // Sun styling
         celestial.style.background = "radial-gradient(circle, #fffdf2 0%, #ffe484 50%, transparent 100%)";
         celestial.style.boxShadow = "0 0 50px 25px rgba(255, 228, 132, 0.45)";
         celestial.style.left = (5 + (dayProgress * 90)) + "vw";
         
-        // Parabolic Arc matching Prayer checkpoints (Subuh=horizon, Zuhur=zenith, Maghrib=horizon)
         let heightMultiplier = Math.sin(dayProgress * Math.PI); 
         celestial.style.top = (85 - (heightMultiplier * 70)) + "vh";
 
-        // Precise atmospheric transitions matching prayer blocks
         if (currentMins >= subuhMins && currentMins < syurukMins) {
-          // Dawn / Fajr to Sunrise
           skyBg.style.background = "linear-gradient(to bottom, #0f172a 0%, #312e81 50%, #db2777 100%)"; 
         } else if (currentMins >= syurukMins && currentMins < zuhurMins) {
-          // Morning / Duha
           skyBg.style.background = "linear-gradient(to bottom, #0284c7 0%, #38bdf8 60%, #bae6fd 100%)"; 
         } else if (currentMins >= zuhurMins && currentMins < asarMins) {
-          // Midday Peak
           skyBg.style.background = "linear-gradient(to bottom, #0369a1 0%, #0ea5e9 100%)"; 
         } else if (currentMins >= asarMins && currentMins < maghribMins - 30) {
-          // Afternoon
           skyBg.style.background = "linear-gradient(to bottom, #0284c7 0%, #60a5fa 100%)"; 
         } else {
-          // Sunset / Maghrib approach
           skyBg.style.background = "linear-gradient(to bottom, #4338ca 0%, #c2410c 65%, #9a3412 100%)"; 
         }
 
@@ -392,7 +387,6 @@ Description: Precision celestial engine mapped directly to daily prayer interval
         let elapsedNight = currentMins >= maghribMins ? (currentMins - maghribMins) : ((1440 - maghribMins) + currentMins);
         let nightProgress = elapsedNight / nightDuration;
 
-        // Moon styling
         celestial.style.background = "radial-gradient(circle, #ffffff 0%, #cbd5e1 60%, transparent 100%)";
         celestial.style.boxShadow = "0 0 35px 12px rgba(255, 255, 255, 0.25)";
         celestial.style.left = (5 + (nightProgress * 90)) + "vw";
@@ -400,10 +394,8 @@ Description: Precision celestial engine mapped directly to daily prayer interval
         celestial.style.top = (80 - (heightMultiplier * 50)) + "vh";
 
         if (currentMins >= maghribMins && currentMins < isyaMins) {
-          // Twilight / Dusk after Maghrib
           skyBg.style.background = "linear-gradient(to bottom, #090d16 0%, #1e1b4b 60%, #31102b 100%)"; 
         } else {
-          // Deep Night
           skyBg.style.background = "linear-gradient(to bottom, #020617 0%, #000000 100%)"; 
         }
       }
@@ -487,7 +479,6 @@ Description: Precision celestial engine mapped directly to daily prayer interval
         .catch(() => console.warn("Using offline fallback schedule"));
     }
 
-    document.getElementById("visuals-toggle").textContent = visualsEnabled ? "☀️" : "🌙";
     setLanguage("ms");
     fetchRemoteData();
     setInterval(updateTick, 1000);
