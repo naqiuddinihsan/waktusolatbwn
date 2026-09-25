@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 5.6.0
-Description: Fully disabled double-tap zoom via touch-action manipulation. Preserved edge-to-edge layout, celestial engine, and taller Fardhu rows.
+Version: 5.7.0
+Description: Increased top notch clearance buffer. Preserved edge-to-edge layout, celestial engine, and taller Fardhu rows.
 */
 
 :root {
@@ -35,7 +35,7 @@ Description: Fully disabled double-tap zoom via touch-action manipulation. Prese
   -webkit-user-select: none; 
   -ms-user-select: none; 
   user-select: none; 
-  touch-action: manipulation; /* Kills 300ms tap delay and double-tap zoom */
+  touch-action: manipulation; 
 }
 
 /* Root lockdown to prevent iOS black bars */
@@ -104,7 +104,7 @@ html, body {
   100% { transform: translateX(calc(100vw + 400px)); }
 }
 
-/* App Wrapper */
+/* App Wrapper - Increased top padding for notch safety */
 .app-wrapper {
   width: 100vw;
   height: 100vh;
@@ -115,7 +115,8 @@ html, body {
   gap: 8px;
   z-index: 10;
   
-  padding-top: calc(env(safe-area-inset-top, 40px) + 8px);
+  /* Increased buffer to clear iPhone notch / Dynamic Island blur zone */
+  padding-top: calc(env(safe-area-inset-top, 50px) + 16px);
   padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 8px);
   padding-left: max(12px, env(safe-area-inset-left));
   padding-right: max(12px, env(safe-area-inset-right));
