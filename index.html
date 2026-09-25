@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 10.0.0
-Description: Integrated Pull-to-Refresh container, Info vector button, and About Modal.
+Version: 11.0.0
+Description: Moved district selector to hero card, centered calendar, fixed info button bindings.
 -->
 <!DOCTYPE html>
 <html lang="ms">
@@ -56,16 +56,24 @@ Description: Integrated Pull-to-Refresh container, Info vector button, and About
         <div class="controls-cluster">
           <button class="icon-btn" id="visuals-toggle" type="button">BG OFF</button>
           <div class="lang-switcher">
-            <button id="lang-btn-ms" class="lang-btn active" onclick="setLanguage('ms')" type="button">BM</button>
-            <button id="lang-btn-en" class="lang-btn" onclick="setLanguage('en')" type="button">EN</button>
+            <button id="lang-btn-ms" class="lang-btn active" type="button">BM</button>
+            <button id="lang-btn-en" class="lang-btn" type="button">EN</button>
           </div>
         </div>
       </div>
 
-      <div class="header-bottom">
+      <!-- CENTERED CALENDAR -->
+      <div class="header-bottom" style="justify-content: center;">
         <span class="date-text" id="gregorian-date">-</span>
+      </div>
+    </header>
+
+    <section class="hero-tracker">
+      <!-- DROPDOWN MOVED HERE -->
+      <div class="hero-top-bar">
+        <div class="hero-now-label" id="ui-now-label">Sekarang:</div>
         <div class="district-select-wrapper">
-          <select class="district-select" id="district-select" onchange="handleDistrictChange()">
+          <select class="district-select" id="district-select">
             <option value="0">Brunei-Muara</option>
             <option value="3">Belait (+3 min)</option>
             <option value="1">Tutong (+1 min)</option>
@@ -73,14 +81,8 @@ Description: Integrated Pull-to-Refresh container, Info vector button, and About
           </select>
         </div>
       </div>
-    </header>
-
-    <section class="hero-tracker">
-      <div class="hero-top-row">
-        <div class="hero-now-label" id="ui-now-label">Sekarang:</div>
-        <div class="hero-name" id="hero-current-name">-</div>
-        <div class="hero-time" id="hero-current-range">-</div>
-      </div>
+      <div class="hero-name" id="hero-current-name">-</div>
+      <div class="hero-time" id="hero-current-range">-</div>
       <div class="progress-container">
         <div class="progress-countdown" id="hero-countdown-text">-</div>
         <div class="progress-track">
@@ -94,9 +96,9 @@ Description: Integrated Pull-to-Refresh container, Info vector button, and About
 
     <main class="prayer-list" id="prayer-list-container"></main>
 
-    <!-- HIDDEN COPYRIGHT / INFO BUTTON -->
+    <!-- INFO BUTTON -->
     <footer class="site-footer">
-      <button class="info-btn" onclick="openAboutModal()" aria-label="Informasi Aplikasi" type="button">
+      <button class="info-btn" id="info-btn-trigger" aria-label="Informasi Aplikasi" type="button">
         <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"></circle>
           <line x1="12" y1="16" x2="12" y2="12"></line>
@@ -107,27 +109,27 @@ Description: Integrated Pull-to-Refresh container, Info vector button, and About
   </div>
 
   <!-- PRAYER INFO MODAL -->
-  <div class="modal-backdrop" id="info-modal" onclick="closeModal(event)">
-    <div class="modal-card" onclick="event.stopPropagation()">
+  <div class="modal-backdrop" id="info-modal">
+    <div class="modal-card" id="info-modal-card">
       <div class="modal-header">
         <h3 id="modal-title">-</h3>
-        <button class="modal-close-btn" onclick="closeModal()" type="button">&times;</button>
+        <button class="modal-close-btn" id="modal-close-btn-1" type="button">&times;</button>
       </div>
       <div class="modal-body" id="modal-body-content"></div>
     </div>
   </div>
 
   <!-- ABOUT / COPYRIGHT MODAL -->
-  <div class="modal-backdrop" id="about-modal" onclick="closeAboutModal(event)">
-    <div class="modal-card" onclick="event.stopPropagation()">
+  <div class="modal-backdrop" id="about-modal">
+    <div class="modal-card" id="about-modal-card">
       <div class="modal-header">
         <h3 id="about-title">Maklumat Aplikasi</h3>
-        <button class="modal-close-btn" onclick="closeAboutModal()" type="button">&times;</button>
+        <button class="modal-close-btn" id="modal-close-btn-2" type="button">&times;</button>
       </div>
       <div class="modal-body about-body">
         <p><strong>Sumber Data Rasmi:</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">Kementerian Hal Ehwal Ugama (KHEU) Brunei</a></p>
         <p><strong>Dibangunkan oleh:</strong><br><a href="https://github.com/naqiuddinihsan" target="_blank">Qwamii / Naqiuddin Ihsan</a></p>
-        <p class="about-version">Versi 10.0.0</p>
+        <p class="about-version">Versi 11.0.0</p>
       </div>
     </div>
   </div>
