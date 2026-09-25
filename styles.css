@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 4.0.0
-Description: Restored the proven 3.6.0 structural hack (100vh + position:fixed) to permanently kill iOS black bars. Maintained taller Fardhu rows and forced transparent footer.
+Version: 4.1.0
+Description: Exact 3.6.0 structural restore. Fixed HTML/Body viewport lock with absolute bottom-anchored footer and taller Fardhu rows.
 */
 
 :root {
@@ -37,13 +37,13 @@ Description: Restored the proven 3.6.0 structural hack (100vh + position:fixed) 
   touch-action: manipulation; 
 }
 
-/* THE 3.6.0 HACK: Forces the app to the physical edges of the glass */
+/* EXACT 3.6.0 HARD LOCK */
 html, body {
   background-color: var(--bg-base);
   color: var(--text-primary);
   font-family: var(--font-stack);
   width: 100vw;
-  height: 100vh; /* 100vh combined with fixed position forces iOS to obey bounds */
+  height: 100vh; 
   margin: 0;
   padding: 0; 
   position: fixed; 
@@ -100,7 +100,7 @@ html, body {
   100% { transform: translateX(calc(100vw + 400px)); }
 }
 
-/* 3.6.0 App Wrapper */
+/* App Wrapper */
 .app-wrapper {
   position: absolute;
   top: 0; bottom: 0; left: 0; right: 0;
@@ -363,7 +363,7 @@ html, body {
 .prayer-list {
   display: flex;
   flex-direction: column;
-  gap: 8px; /* Tighter gap to offset taller rows */
+  gap: 8px; 
   width: 100%;
   flex-grow: 1; 
   overflow-y: auto; 
@@ -381,7 +381,6 @@ html, body {
   backdrop-filter: blur(12px);
 }
 
-/* TALLER ROW HEIGHTS PRESERVED */
 .prayer-row.is-fardhu {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
@@ -436,10 +435,7 @@ html, body {
 .row-right-sec { font-size: 0.95rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; }
 .prayer-row.is-active .row-right-fardhu, .prayer-row.is-active .row-right-sec { color: #ffffff; }
 
-/* 
-  TRUE BOTTOM FOOTER (From 3.6.0) 
-  Anchored absolute bottom, completely transparent.
-*/
+/* 3.6.0 FOOTER RESTORED */
 .site-footer {
   position: absolute;
   bottom: env(safe-area-inset-bottom, 8px); 
@@ -453,7 +449,6 @@ html, body {
   color: var(--text-muted);
   z-index: 20;
   
-  /* GUARANTEE NO BACKGROUND */
   background: transparent !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
