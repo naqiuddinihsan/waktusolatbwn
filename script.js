@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 11.0.0
-Description: Integrated Dhuha badge, pure JS event bindings to fix Info button blocking, and added Pull-to-Refresh.
+Version: 12.0.0
+Description: Vector-only Pull-to-Refresh, full UI translation binding, and unified I18N payloads.
 */
 
 if ('serviceWorker' in navigator) {
@@ -14,6 +14,11 @@ const GITHUB_JSON_URL = "https://raw.githubusercontent.com/naqiuddinihsan/waktu-
 
 let currentLang = "ms";
 let visualsEnabled = localStorage.getItem('bwn_visuals') === 'true';
+
+// Pure SVG Strings for PTR
+const PTR_ARROW_DOWN = `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s;"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
+const PTR_ARROW_UP = `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s; transform: rotate(180deg);"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
+const PTR_SPINNER = `<span class="ptr-spinner"></span>`;
 
 function vibrateTap() {
   if (navigator.vibrate) {
@@ -35,9 +40,7 @@ const I18N = {
     localeDate: "ms-MY",
     yesterdaySuffix: "(Malam Tadi)",
     tomorrowSuffix: "(Esok)",
-    ptrPull: "Tarik ke bawah...",
-    ptrRelease: "Lepaskan untuk kemas kini",
-    ptrRefreshing: "Menyegarkan...",
+    badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir", sunat: "Sunat" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
       { val: 3, text: "Belait (+3 min)" },
@@ -48,7 +51,13 @@ const I18N = {
       imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha",
       zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'"
     },
-    fiqh: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir" },
+    about: {
+      title: "Maklumat Aplikasi",
+      sourceLabel: "Sumber Data Rasmi:",
+      sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei",
+      devLabel: "Dibangunkan oleh:",
+      version: "Versi 12.0.0"
+    },
     details: {
       subuh: { desc: "Solat Sunat Qabliyah Subuh amat dituntut.", benefit: "'Dua rakaat Fajar lebih baik dari dunia dan seisinya' (HR. Muslim).", source: "Hadis Sahih Muslim, No. 725" },
       zuhur: { desc: "Bermula bila matahari tergelincir dari puncak langit.", benefit: "Allah haramkan api neraka bagi yang memelihara 4 rakaat sebelum dan selepas Zuhur.", source: "Sunan Tirmizi, No. 428" },
@@ -68,9 +77,7 @@ const I18N = {
     localeDate: "en-GB",
     yesterdaySuffix: "(Last Night)",
     tomorrowSuffix: "(Tomorrow)",
-    ptrPull: "Pull down to refresh...",
-    ptrRelease: "Release to update",
-    ptrRefreshing: "Refreshing...",
+    badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witr", sunat: "Sunnah" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
       { val: 3, text: "Belait (+3 min)" },
@@ -81,7 +88,13 @@ const I18N = {
       imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha",
       zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'"
     },
-    fiqh: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir" },
+    about: {
+      title: "App Information",
+      sourceLabel: "Official Data Source:",
+      sourceName: "Ministry of Religious Affairs (MORA) Brunei",
+      devLabel: "Developed by:",
+      version: "Version 12.0.0"
+    },
     details: {
       subuh: { desc: "Fajr marks the true dawn light on the horizon.", benefit: "'Two rak'ahs before Fajr are better than the entire world' (Sahih Muslim).", source: "Sahih Muslim, No. 725" },
       zuhur: { desc: "Starts after the sun passes its highest point.", benefit: "Maintaining Sunnah prayers around Zuhr shields against the Hellfire.", source: "Sunan Tirmidhi, No. 428" },
@@ -177,6 +190,17 @@ function setLanguage(lang) {
   populateDistricts();
   if (sel) sel.selectedIndex = savedIndex > -1 ? savedIndex : 0;
 
+  // Sync About Modal Translations
+  setText("about-title", t.about.title);
+  const aboutBody = document.getElementById("about-body-content");
+  if (aboutBody) {
+    aboutBody.innerHTML = `
+      <p><strong>${t.about.sourceLabel}</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">${t.about.sourceName}</a></p>
+      <p><strong>${t.about.devLabel}</strong><br><a href="https://github.com/naqiuddinihsan" target="_blank">Qwamii / Naqiuddin Ihsan</a></p>
+      <p class="about-version">${t.about.version}</p>
+    `;
+  }
+
   setDateHeaders();
   updateTick();
 }
@@ -221,8 +245,6 @@ function openPrayerModal(key) {
 
 function openAboutModal() {
   vibrateTap();
-  const title = document.getElementById("about-title");
-  if (title) title.textContent = currentLang === 'ms' ? "Maklumat Aplikasi" : "App Information";
   const modal = document.getElementById("about-modal");
   if (modal) modal.classList.add("is-visible");
 }
@@ -244,17 +266,17 @@ function renderPrayerList(adjustedTimes, activeKey) {
 
   const now = new Date();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const b = I18N[currentLang].badges;
 
-  // DHUHA BADGE ADDED HERE
   const sequence = [
     { key: "imsak", type: "secondary" },
-    { key: "subuh", type: "fardhu", badges: [{ text: "Qabliyyah &#10003;", type: "is-ok" }, { text: "Ba'diyyah &#10007;", type: "is-haram" }] },
+    { key: "subuh", type: "fardhu", badges: [{ text: b.qabliyyah + " &#10003;", type: "is-ok" }, { text: b.ba_diyyah + " &#10007;", type: "is-haram" }] },
     { key: "syuruk", type: "secondary" },
-    { key: "duha", type: "secondary", badges: [{ text: "Sunat &#10003;", type: "is-ok" }] },
-    { key: "zuhur", type: "fardhu", badges: [{ text: "Qabliyyah &#10003;", type: "is-ok" }, { text: "Ba'diyyah &#10003;", type: "is-ok" }] },
-    { key: "asar", type: "fardhu", badges: [{ text: "Qabliyyah &#10003;", type: "is-ok" }, { text: "Ba'diyyah &#10007;", type: "is-haram" }] },
-    { key: "maghrib", type: "fardhu", badges: [{ text: "Qabliyyah &#10003;", type: "is-ok" }, { text: "Ba'diyyah &#10003;", type: "is-ok" }] },
-    { key: "isya", type: "fardhu", badges: [{ text: "Qabliyyah &#10003;", type: "is-ok" }, { text: "Ba'diyyah &#10003;", type: "is-ok" }, { text: "Witir &#10003;", type: "is-ok" }] }
+    { key: "duha", type: "secondary", badges: [{ text: b.sunat + " &#10003;", type: "is-ok" }] },
+    { key: "zuhur", type: "fardhu", badges: [{ text: b.qabliyyah + " &#10003;", type: "is-ok" }, { text: b.ba_diyyah + " &#10003;", type: "is-ok" }] },
+    { key: "asar", type: "fardhu", badges: [{ text: b.qabliyyah + " &#10003;", type: "is-ok" }, { text: b.ba_diyyah + " &#10007;", type: "is-haram" }] },
+    { key: "maghrib", type: "fardhu", badges: [{ text: b.qabliyyah + " &#10003;", type: "is-ok" }, { text: b.ba_diyyah + " &#10003;", type: "is-ok" }] },
+    { key: "isya", type: "fardhu", badges: [{ text: b.qabliyyah + " &#10003;", type: "is-ok" }, { text: b.ba_diyyah + " &#10003;", type: "is-ok" }, { text: b.witir + " &#10003;", type: "is-ok" }] }
   ];
 
   sequence.forEach(function(item) {
@@ -274,8 +296,8 @@ function renderPrayerList(adjustedTimes, activeKey) {
 
     let badgesHtml = '';
     if (item.badges) {
-      item.badges.forEach(b => {
-        badgesHtml += '<span class="fiqh-badge ' + b.type + '">' + b.text + '</span>';
+      item.badges.forEach(badge => {
+        badgesHtml += `<span class="fiqh-badge ${badge.type}">${badge.text}</span>`;
       });
     }
 
@@ -283,9 +305,9 @@ function renderPrayerList(adjustedTimes, activeKey) {
     const timeClass = item.type === "fardhu" ? "row-right-fardhu" : "row-right-sec";
 
     row.innerHTML =
-      '<div class="' + nameClass + '">' + prayerName + '</div>' +
-      '<div class="row-mid">' + badgesHtml + '</div>' +
-      '<div class="' + timeClass + '">' + minutesToDisplay(prayerMins) + '</div>';
+      `<div class="${nameClass}">${prayerName}</div>` +
+      `<div class="row-mid">${badgesHtml}</div>` +
+      `<div class="${timeClass}">${minutesToDisplay(prayerMins)}</div>`;
 
     list.appendChild(row);
   });
@@ -502,9 +524,9 @@ function initPullToRefresh() {
       ptr.style.height = ptrHeight + 'px';
       
       if (ptrHeight >= 55) {
-        ptr.innerHTML = I18N[currentLang].ptrRelease;
+        ptr.innerHTML = PTR_ARROW_UP;
       } else {
-        ptr.innerHTML = I18N[currentLang].ptrPull;
+        ptr.innerHTML = PTR_ARROW_DOWN;
       }
     }
   }, { passive: true });
@@ -518,7 +540,7 @@ function initPullToRefresh() {
     
     if (currentHeight >= 55) {
       ptr.style.height = '40px';
-      ptr.innerHTML = `<span class="ptr-spinner"></span> ${I18N[currentLang].ptrRefreshing}`;
+      ptr.innerHTML = PTR_SPINNER;
       vibrateTap();
       
       fetchRemoteData().then(() => {
