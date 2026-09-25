@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 6.0.0
-Description: Added glassmorphism modal styles for prayer details, benefits, and sources. Preserved notch clearance, dynamic sky engine, and touch-zoom locks.
+Version: 6.1.0
+Description: Externalized stylesheet supporting interactive modal cards, dynamic sky engine, notch safety, and touch-zoom locks.
 */
 
 :root {
