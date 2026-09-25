@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 8.0.0
-Description: Sleek portrait-matching Nightstand mode with blinking colons, foolproof toggle opacity handling, and tactile physics.
+Version: 8.2.0
+Description: Complete stylesheet. Fixed dynamic background toggle via pure CSS opacity, added tactile physics, disabled touch-zoom, and polished Nightstand mode.
 */
 
 :root {
@@ -34,9 +34,10 @@ Description: Sleek portrait-matching Nightstand mode with blinking colons, foolp
   -webkit-user-select: none; 
   -ms-user-select: none; 
   user-select: none; 
-  touch-action: manipulation; 
+  touch-action: manipulation; /* Disables double-tap zoom */
 }
 
+/* Root lockdown to prevent iOS black bars */
 html, body {
   background-color: var(--bg-base);
   color: var(--text-primary);
@@ -57,7 +58,7 @@ html, body {
   background: var(--bg-base);
   width: 100vw;
   height: 100vh;
-  transition: background 3s ease, opacity 1s ease;
+  transition: background 3s ease, opacity 0.5s ease;
 }
 
 #celestial-body {
@@ -68,7 +69,7 @@ html, body {
   z-index: -2;
   transform: translate(-50%, -50%);
   pointer-events: none;
-  transition: top 2s ease-out, left 2s ease-out, opacity 1s ease;
+  transition: top 2s ease-out, left 2s ease-out, opacity 0.5s ease;
 }
 
 #clouds-layer {
@@ -79,7 +80,7 @@ html, body {
   overflow: hidden;
   width: 100vw;
   height: 100vh;
-  transition: opacity 1s ease;
+  transition: opacity 0.5s ease;
 }
 
 .cloud {
@@ -99,7 +100,14 @@ html, body {
   100% { transform: translateX(calc(100vw + 400px)); }
 }
 
-/* App Wrapper */
+/* VISUAL TOGGLE FIX: Forces layers to hide when toggle is switched off */
+body.visuals-off #sky-bg,
+body.visuals-off #celestial-body,
+body.visuals-off #clouds-layer {
+  opacity: 0 !important;
+}
+
+/* App Wrapper - Safe Area Spacing */
 .app-wrapper {
   width: 100vw;
   height: 100vh;
@@ -475,7 +483,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: var(--text-primary); /* Matches portrait white */
+  color: var(--text-primary); 
 }
 
 #ns-time {
@@ -487,6 +495,7 @@ html, body {
   color: var(--text-primary);
 }
 
+/* Blinking Colon Animation */
 .blink-colon {
   animation: blink 1s step-start infinite;
 }
@@ -497,7 +506,7 @@ html, body {
 
 #ns-date {
   font-size: 5vmin;
-  color: var(--text-secondary); /* Matches portrait grey */
+  color: var(--text-secondary); 
   margin-top: 1vh;
   font-weight: 500;
   text-transform: uppercase;
@@ -509,12 +518,13 @@ html, body {
   color: var(--text-primary); 
   margin-top: 3vh;
   font-weight: 600;
-  background: var(--bg-surface-elevated); /* Soft glass pill */
+  background: var(--bg-surface-elevated); 
   padding: 1.5vh 4vw;
   border-radius: 99px;
   border: 1px solid var(--border-subtle);
 }
 
+/* Landscape Trigger */
 @media (orientation: landscape) and (max-height: 500px) {
   .app-wrapper, .modal-backdrop, #sky-bg, #celestial-body, #clouds-layer {
     display: none !important;
