@@ -1,4 +1,10 @@
-const CACHE_NAME = 'waktu-solat-v8.2.0';
+/*
+File Name: sw.js
+Version: 8.3.0
+Description: Network-first service worker to guarantee updates propagate instantly.
+*/
+
+const CACHE_NAME = 'waktu-solat-v8.3.0';
 const ASSETS = [
   './',
   './index.html',
@@ -9,7 +15,7 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (e) => {
-  self.skipWaiting(); 
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {
@@ -17,7 +23,7 @@ self.addEventListener('activate', (e) => {
     caches.keys().then((keyList) => {
       return Promise.all(keyList.map((key) => {
         if (key !== CACHE_NAME) {
-          return caches.delete(key); 
+          return caches.delete(key);
         }
       }));
     })
