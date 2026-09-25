@@ -1,45 +1,120 @@
-/*
-File Name: sw.js
+<!--
+Page Name: index.html
 Version: 8.3.0
-Description: Network-first service worker to guarantee updates propagate instantly.
-*/
+Description: Final verified production markup.
+-->
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#050505">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-const CACHE_NAME = 'waktu-solat-v8.3.0';
-const ASSETS = [
-  './',
-  './index.html',
-  './styles.css',
-  './script.js',
-  './manifest.json',
-  './icon.svg'
-];
+  <title>Waktu Solat BWN</title>
 
-self.addEventListener('install', (e) => {
-  self.skipWaiting();
-});
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="application-name" content="Waktu BWN">
+  <meta name="apple-mobile-web-app-title" content="Waktu BWN">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+</head>
+<body>
 
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((keyList) => {
-      return Promise.all(keyList.map((key) => {
-        if (key !== CACHE_NAME) {
-          return caches.delete(key);
-        }
-      }));
-    })
-  );
-  return self.clients.claim();
-});
+  <!-- Background Engine -->
+  <div id="sky-bg"></div>
+  <div id="celestial-body"></div>
+  <div id="clouds-layer">
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+    <div class="cloud c3"></div>
+  </div>
 
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    fetch(e.request)
-      .then((networkResponse) => {
-        return caches.open(CACHE_NAME).then((cache) => {
-          cache.put(e.request, networkResponse.clone());
-          return networkResponse;
-        });
-      })
-      .catch(() => caches.match(e.request))
-  );
-});
+  <div class="app-wrapper">
+    <header class="header-bar">
+      <div class="header-top">
+        <div class="brand-cluster">
+          <div class="brand-logo" aria-hidden="true">
+            <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M256 52c-2.8 14.3-9.8 27.4-20.2 37.7-10.3 10.3-23.4 17.4-37.7 20.2 14.3 2.8 27.4 9.8 37.7 20.2 10.3 10.3 17.4 23.4 20.2 37.7 2.8-14.3 9.8-27.4 20.2-37.7 10.3-10.3 23.4-17.4 37.7-20.2-14.3-2.8-27.4-9.8-37.7-20.2-10.4-10.3-17.4-23.4-20.2-37.7z" fill="#e5e5e5"/>
+              <path d="M256 140c-58.8 0-112 38.5-128 100h256c-16-61.5-69.2-100-128-100z" fill="#e5e5e5"/>
+              <path d="M128 240v172c0 6.6 5.4 12 12 12h60v-92c0-31 14-56 56-56s56 25 56 56v92h60c6.6 0 12-5.4 12-12V240H128z" fill="#262626"/>
+              <path d="M224 332c0-22.1 14.3-40 32-40s32 17.9 32 40v92h-64v-92z" fill="#e5e5e5"/>
+              <path d="M81 222h18v190H36c-4.4 0-8-3.6-8-8V230c0-4.4 3.6-8 8-8h45zm332 0h18v190h-45c-4.4 0-8-3.6-8-8V230c0-4.4 3.6-8 8-8h45z" fill="#404040"/>
+              <path d="M90 170c-13.3 0-24 20-24 50h48c0-30-10.7-50-24-50zm332 0c-13.3 0-24 20-24 50h48c0-30-10.7-50-24-50z" fill="#e5e5e5"/>
+              <path d="M80 384h352v24H80z" fill="#e5e5e5"/>
+            </svg>
+          </div>
+          <div class="header-title-box">
+            <h1 id="ui-app-title">Waktu Solat BWN</h1>
+          </div>
+        </div>
+
+        <div class="controls-cluster">
+          <button class="icon-btn" id="visuals-toggle" type="button">🌙</button>
+          <div class="lang-switcher">
+            <button id="lang-btn-ms" class="lang-btn active" onclick="setLanguage('ms')" type="button">BM</button>
+            <button id="lang-btn-en" class="lang-btn" onclick="setLanguage('en')" type="button">EN</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-bottom">
+        <span class="date-text" id="gregorian-date">-</span>
+        <div class="district-select-wrapper">
+          <select class="district-select" id="district-select" onchange="handleDistrictChange()">
+            <option value="0">Brunei-Muara</option>
+            <option value="3">Belait (+3 min)</option>
+            <option value="1">Tutong (+1 min)</option>
+            <option value="0">Temburong</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero-tracker">
+      <div class="hero-top-row">
+        <div class="hero-now-label" id="ui-now-label">Sekarang:</div>
+        <div class="hero-name" id="hero-current-name">-</div>
+        <div class="hero-time" id="hero-current-range">-</div>
+      </div>
+      <div class="progress-container">
+        <div class="progress-countdown" id="hero-countdown-text">-</div>
+        <div class="progress-track">
+          <div class="progress-fill" id="hero-progress-fill"></div>
+        </div>
+      </div>
+    </section>
+
+    <main class="prayer-list" id="prayer-list-container"></main>
+
+    <footer class="site-footer">
+      <a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank" rel="noopener noreferrer">Sumber Data: KHEU</a>
+      <span class="footer-divider"></span>
+      <a href="https://github.com/naqiuddinihsan" target="_blank" rel="noopener noreferrer">&copy; Qwamii / Naqiuddin Ihsan</a>
+    </footer>
+  </div>
+
+  <div class="modal-backdrop" id="info-modal" onclick="closeModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 id="modal-title">-</h3>
+        <button class="modal-close-btn" onclick="closeModal()" type="button">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body-content"></div>
+    </div>
+  </div>
+
+  <!-- LANDSCAPE NIGHTSTAND MODE -->
+  <div id="nightstand-mode">
+    <div id="ns-time">00<span class="blink-colon">:</span>00</div>
+    <div id="ns-date">-</div>
+    <div id="ns-next">-</div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
