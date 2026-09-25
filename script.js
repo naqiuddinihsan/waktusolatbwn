@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 6.1.0
-Description: Core logic for Waktu Solat BWN. Handles prayer calculations, district offsets, i18n localization, dynamic celestial sky rendering, and interactive modal displays.
+Version: 7.0.0
+Description: Core logic. Fixed visual toggle via CSS classing, added tactile haptic feedback, and drives Nightstand Mode clock data.
 */
 
 if ('serviceWorker' in navigator) {
@@ -24,7 +24,14 @@ if (localStorage.getItem('bwn_visuals') !== null) {
 document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('visuals-toggle');
   if (btn) btn.textContent = visualsEnabled ? "☀️" : "🌙";
+  
+  // Apply initial visual state via class
+  document.body.classList.toggle('visuals-off', !visualsEnabled);
 });
+
+function vibrateTap() {
+  if (navigator.vibrate) navigator.vibrate(15);
+}
 
 function setText(id, text) {
   const el = document.getElementById(id);
@@ -200,16 +207,21 @@ function handleDistrictChange() {
 }
 
 function toggleVisuals() {
+  vibrateTap();
   visualsEnabled = !visualsEnabled;
   localStorage.setItem('bwn_visuals', visualsEnabled ? 'true' : 'false');
   
   const btn = document.getElementById('visuals-toggle');
   if (btn) btn.textContent = visualsEnabled ? "☀️" : "🌙";
   
+  // Toggle the CSS class to fade engine in/out smoothly without breaking transitions
+  document.body.classList.toggle('visuals-off', !visualsEnabled);
+  
   updateTick();
 }
 
 function setLanguage(lang) {
+  vibrateTap();
   currentLang = lang;
   document.getElementById("lang-btn-ms").classList.toggle("active", lang === "ms");
   document.getElementById("lang-btn-en").classList.toggle("active", lang === "en");
@@ -238,6 +250,7 @@ function getAdjustedSchedule() {
 }
 
 function openPrayerModal(key) {
+  vibrateTap();
   const t = I18N[currentLang];
   const prayerName = t.prayers[key];
   const detail = t.details[key];
@@ -351,13 +364,7 @@ function updateSkyVisuals(adjustedTimes, currentMins) {
   const celestial = document.getElementById("celestial-body");
   const cloudsLayer = document.getElementById("clouds-layer");
 
-  if (!visualsEnabled) {
-    skyBg.style.background = "var(--bg-base)";
-    celestial.style.opacity = "0";
-    if (cloudsLayer) cloudsLayer.style.opacity = "0";
-    return;
-  }
-
+  // We ALWAYS calculate the styles. CSS handles visibility via .visuals-off class.
   const subuhMins = adjustedTimes.subuh;
   const syurukMins = adjustedTimes.syuruk;
   const zuhurMins = adjustedTimes.zuhur;
@@ -366,11 +373,8 @@ function updateSkyVisuals(adjustedTimes, currentMins) {
   const isyaMins = adjustedTimes.isya;
   
   let isDay = currentMins >= subuhMins && currentMins < maghribMins;
-  celestial.style.opacity = "1";
 
   if (isDay) {
-    if (cloudsLayer) cloudsLayer.style.opacity = "0.7"; 
-    
     let dayDuration = maghribMins - subuhMins;
     let dayProgress = (currentMins - subuhMins) / dayDuration;
 
@@ -392,10 +396,7 @@ function updateSkyVisuals(adjustedTimes, currentMins) {
     } else {
       skyBg.style.background = "linear-gradient(to bottom, #4338ca 0%, #c2410c 65%, #9a3412 100%)"; 
     }
-
   } else {
-    if (cloudsLayer) cloudsLayer.style.opacity = "0.15"; 
-    
     let nightDuration = (1440 - maghribMins) + subuhMins;
     let elapsedNight = currentMins >= maghribMins ? (currentMins - maghribMins) : ((1440 - maghribMins) + currentMins);
     let nightProgress = elapsedNight / nightDuration;
@@ -456,6 +457,13 @@ function updateTick() {
   const progressFill = document.getElementById("hero-progress-fill");
   if (progressFill) progressFill.style.width = progressPercent.toFixed(1) + "%";
 
+  // Update Landscape Nightstand Clocks
+  const now = new Date();
+  const nhh = String(now.getHours()).padStart(2, '0');
+  const nmm = String(now.getMinutes()).padStart(2, '0');
+  setText("ns-time", nhh + ":" + nmm);
+  setText("ns-next", countdownString);
+
   renderPrayerList(adjustedTimes, state.active.key);
   updateSkyVisuals(adjustedTimes, state.currentMinutes);
 }
@@ -463,7 +471,9 @@ function updateTick() {
 function setDateHeaders() {
   const now = new Date();
   const gregorianOptions = { weekday: "short", day: "numeric", month: "short", year: "numeric" };
-  setText("gregorian-date", now.toLocaleDateString(I18N[currentLang].localeDate, gregorianOptions) + " | " + hijrahString);
+  const dateStr = now.toLocaleDateString(I18N[currentLang].localeDate, gregorianOptions) + " | " + hijrahString;
+  setText("gregorian-date", dateStr);
+  setText("ns-date", dateStr);
 }
 
 function fetchRemoteData() {
