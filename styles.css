@@ -1,14 +1,14 @@
 /*
 File Name: styles.css
-Version: 6.1.0
-Description: Externalized stylesheet supporting interactive modal cards, dynamic sky engine, notch safety, and touch-zoom locks.
+Version: 7.0.0
+Description: Added tactile click physics, separated visual toggle logic to pure opacity for stability, and implemented iOS StandBy Nightstand mode.
 */
 
 :root {
   --bg-base: #050505;
   --bg-surface: rgba(18, 18, 18, 0.65);
   --bg-surface-elevated: rgba(30, 30, 30, 0.7);
-  --bg-surface-active: rgba(23, 23, 23, 0.85);
+  --bg-surface-active: rgba(25, 25, 25, 0.95);
   --border-subtle: rgba(255, 255, 255, 0.1);
   --border-active: rgba(82, 82, 82, 0.8);
   --text-primary: #f5f5f5;
@@ -49,15 +49,15 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Astronomical Background Layers */
+/* Background Layers */
 #sky-bg {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   z-index: -3;
-  transition: background 3s ease;
   background: var(--bg-base);
   width: 100vw;
   height: 100vh;
+  transition: opacity 1.5s ease-in-out;
 }
 
 #celestial-body {
@@ -67,9 +67,8 @@ html, body {
   border-radius: 50%;
   z-index: -2;
   transform: translate(-50%, -50%);
-  transition: top 2s ease-out, left 2s ease-out, box-shadow 3s ease, background 3s ease;
-  opacity: 0; 
   pointer-events: none;
+  transition: top 2s ease-out, left 2s ease-out, opacity 1.5s ease-in-out;
 }
 
 #clouds-layer {
@@ -77,11 +76,10 @@ html, body {
   top: 0; left: 0; right: 0; bottom: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 2s ease;
   overflow: hidden;
   width: 100vw;
   height: 100vh;
+  transition: opacity 1.5s ease-in-out;
 }
 
 .cloud {
@@ -102,6 +100,13 @@ html, body {
   100% { transform: translateX(calc(100vw + 400px)); }
 }
 
+/* VISUAL TOGGLE FIX: Flawless fade out via CSS Class */
+body.visuals-off #sky-bg,
+body.visuals-off #celestial-body,
+body.visuals-off #clouds-layer {
+  opacity: 0 !important;
+}
+
 /* App Wrapper */
 .app-wrapper {
   width: 100vw;
@@ -112,7 +117,6 @@ html, body {
   flex-direction: column;
   gap: 8px;
   z-index: 10;
-  
   padding-top: calc(env(safe-area-inset-top, 50px) + 16px);
   padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 8px);
   padding-left: max(12px, env(safe-area-inset-left));
@@ -191,7 +195,9 @@ html, body {
   justify-content: center;
   font-size: 0.85rem;
   cursor: pointer;
+  transition: transform 0.1s ease;
 }
+.icon-btn:active { transform: scale(0.9); }
 
 .lang-switcher {
   display: flex;
@@ -234,9 +240,6 @@ html, body {
   font-size: 0.7rem;
   font-weight: 500;
   color: var(--text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .district-select-wrapper {
@@ -256,8 +259,6 @@ html, body {
   outline: none;
   cursor: pointer;
   font-family: var(--font-stack);
-  -webkit-user-select: auto; 
-  user-select: auto;
 }
 
 .district-select-wrapper::after {
@@ -360,7 +361,7 @@ html, body {
   transition: width 0.8s ease;
 }
 
-/* Prayer List (Scrollable & Interactive) */
+/* Prayer List */
 .prayer-list {
   display: flex;
   flex-direction: column;
@@ -371,20 +372,34 @@ html, body {
   -webkit-overflow-scrolling: touch; 
 }
 
+/* TACTILE UI/UX FEEDBACK */
 .prayer-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-radius: 10px;
-  transition: all 0.2s ease;
   width: 100%;
   flex-shrink: 0; 
   backdrop-filter: blur(12px);
   cursor: pointer;
+  
+  /* Smooth physics for tapping */
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.15s ease, opacity 0.15s ease;
+  transform-origin: center;
 }
 
+/* Subtle mouse hover for desktop */
+@media (hover: hover) {
+  .prayer-row:hover {
+    background-color: var(--bg-surface-elevated) !important;
+    transform: scale(0.99);
+  }
+}
+
+/* Hard physical press for mobile */
 .prayer-row:active {
-  transform: scale(0.98);
+  transform: scale(0.96) !important;
+  background-color: var(--bg-surface-active) !important;
   opacity: 0.85;
 }
 
@@ -411,8 +426,8 @@ html, body {
   filter: grayscale(1);
 }
 
-.row-left-fardhu { width: 80px; font-size: 1.05rem; font-weight: 700; color: var(--text-primary); }
-.row-left-sec { width: 80px; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+.row-left-fardhu { width: 80px; font-size: 1.05rem; font-weight: 700; color: var(--text-primary); pointer-events: none;}
+.row-left-sec { width: 80px; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; pointer-events: none;}
 
 .prayer-row.is-active .row-left-fardhu,
 .prayer-row.is-active .row-left-sec { color: var(--accent-primary); }
@@ -424,6 +439,7 @@ html, body {
   flex-wrap: wrap;
   justify-content: flex-start;
   padding: 0 4px;
+  pointer-events: none;
 }
 
 .fiqh-badge {
@@ -438,8 +454,8 @@ html, body {
 .fiqh-badge.is-ok { background-color: var(--badge-ok-bg); color: var(--badge-ok-color); }
 .fiqh-badge.is-haram { background-color: var(--badge-haram-bg); color: var(--badge-haram-color); }
 
-.row-right-fardhu { font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-primary); text-align: right; }
-.row-right-sec { font-size: 0.95rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; }
+.row-right-fardhu { font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-primary); text-align: right; pointer-events: none;}
+.row-right-sec { font-size: 0.95rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; pointer-events: none;}
 .prayer-row.is-active .row-right-fardhu, .prayer-row.is-active .row-right-sec { color: #ffffff; }
 
 /* MODAL STYLING */
@@ -516,9 +532,7 @@ html, body {
   line-height: 1.4;
 }
 
-.modal-desc {
-  color: var(--text-secondary);
-}
+.modal-desc { color: var(--text-secondary); }
 
 .modal-benefit-box {
   background: rgba(52, 211, 153, 0.1);
@@ -557,15 +571,8 @@ html, body {
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
 }
 
-.site-footer a { 
-  color: var(--text-secondary); 
-  text-decoration: none; 
-  transition: color 0.2s;
-}
-
-.site-footer a:hover {
-  color: var(--accent-primary);
-}
+.site-footer a { color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+.site-footer a:hover { color: var(--accent-primary); }
 
 .footer-divider {
   width: 3px;
@@ -573,4 +580,53 @@ html, body {
   border-radius: 50%;
   background: var(--border-active);
   box-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+/* =========================================
+   NIGHTSTAND MODE (LANDSCAPE IPHONE)
+   ========================================= */
+#nightstand-mode {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #000000; /* Pure black for OLED */
+  z-index: 9999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ff3b30; /* iOS Nightstand Red */
+}
+
+#ns-time {
+  font-size: 28vmin; /* Massive scaling text */
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+#ns-date {
+  font-size: 5vmin;
+  color: #ff9f0a; /* iOS Nightstand Orange */
+  margin-top: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+#ns-next {
+  font-size: 6vmin;
+  color: #a3a3a3;
+  margin-top: 20px;
+  font-weight: 500;
+}
+
+/* Trigger when phone is flipped sideways */
+@media (orientation: landscape) and (max-height: 500px) {
+  .app-wrapper, .modal-backdrop, #sky-bg, #celestial-body, #clouds-layer {
+    display: none !important;
+  }
+  #nightstand-mode {
+    display: flex;
+  }
 }
