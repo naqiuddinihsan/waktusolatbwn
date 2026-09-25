@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 8.0.0
-Description: Fixed dynamic toggle logic, integrated blinking colon for Nightstand mode, and network-first sync.
+Version: 8.1.0
+Description: Fixed dead button bug (removed DOMContentLoaded race condition) and decoupled background calculation from visibility.
 */
 
 if ('serviceWorker' in navigator) {
@@ -13,22 +13,21 @@ if ('serviceWorker' in navigator) {
 const GITHUB_JSON_URL = "https://raw.githubusercontent.com/naqiuddinihsan/waktu-solat-brunei/main/brunei_prayers.json";
 
 let currentLang = "ms";
-let visualsEnabled = false; 
+let visualsEnabled = localStorage.getItem('bwn_visuals') === 'true';
 
-if (localStorage.getItem('bwn_visuals') !== null) {
-  visualsEnabled = localStorage.getItem('bwn_visuals') === 'true';
-} else {
-  localStorage.setItem('bwn_visuals', 'false');
+// HARD-BIND THE BUTTON DIRECTLY (No DOMContentLoaded wrapper to fail)
+const toggleBtn = document.getElementById('visuals-toggle');
+if (toggleBtn) {
+  toggleBtn.textContent = visualsEnabled ? "☀️" : "🌙";
+  toggleBtn.onclick = toggleVisuals;
 }
 
-// Hard-bind events once the DOM is ready to prevent inline HTML failures
-document.addEventListener('DOMContentLoaded', () => {
-  const toggleBtn = document.getElementById('visuals-toggle');
-  if (toggleBtn) {
-    toggleBtn.textContent = visualsEnabled ? "☀️" : "🌙";
-    toggleBtn.addEventListener('click', toggleVisuals);
-  }
-});
+// APPLY INITIAL VISUAL STATE TO BODY
+if (!visualsEnabled) {
+  document.body.classList.add('visuals-off');
+} else {
+  document.body.classList.remove('visuals-off');
+}
 
 function vibrateTap() {
   if (navigator.vibrate) navigator.vibrate(15);
@@ -53,7 +52,16 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    details: { /* Fiqh text unchanged for brevity */ }
+    details: {
+      subuh: { desc: "Solat Sunat Qabliyah Subuh amat dituntut.", benefit: "'Dua rakaat Fajar lebih baik dari dunia' (HR Muslim).", source: "Sahih Muslim" },
+      zuhur: { desc: "Bermula bila matahari tergelincir.", benefit: "Pahala besar menjaga solat sunat.", source: "Tirmizi" },
+      asar: { desc: "Solat asar adalah waktu yang disejukkan.", benefit: "Siapa solat Asar & Subuh masuk syurga.", source: "Bukhari" },
+      maghrib: { desc: "Bermula sejurus matahari terbenam.", benefit: "Sempurnakan ibadah malam.", source: "Fiqh Syafii" },
+      isya: { desc: "Bermula hilangnya mega merah.", benefit: "Tutuplah malam dengan Witir.", source: "Bukhari" },
+      syuruk: { desc: "Matahari terbit, haram solat fardhu.", benefit: "Duduk berzikir hingga Duha.", source: "Mufti Brunei" },
+      duha: { desc: "Waktu matahari meninggi.", benefit: "Cukup sedekah seluruh sendi.", source: "Muslim" },
+      imsak: { desc: "Waktu berjaga sedia puasa.", benefit: "Berhenti makan dengan yakin.", source: "KHEU" }
+    }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -68,30 +76,17 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    details: { /* Fiqh text unchanged for brevity */ }
+    details: {
+      subuh: { desc: "Fajr is the true dawn.", benefit: "'Two rak'ahs before Fajr are better than the world' (Muslim).", source: "Sahih Muslim" },
+      zuhur: { desc: "Starts post-zenith.", benefit: "Great reward for Sunnah.", source: "Tirmidhi" },
+      asar: { desc: "The mid-afternoon prayer.", benefit: "Whoever prays Fajr and Asr enters Paradise.", source: "Bukhari" },
+      maghrib: { desc: "Begins exactly at sunset.", benefit: "Brings light to the house.", source: "Fiqh Shafii" },
+      isya: { desc: "Twilight vanishes.", benefit: "End the night with Witr.", source: "Bukhari" },
+      syuruk: { desc: "Sunrise. Prayer prohibited.", benefit: "Dhikr until Dhuha brings reward.", source: "Mufti Brunei" },
+      duha: { desc: "Morning prayer.", benefit: "Charity for every joint.", source: "Muslim" },
+      imsak: { desc: "Precautionary fasting buffer.", benefit: "Finish eating with certainty.", source: "KHEU" }
+    }
   }
-};
-
-// Simplified localization payload (kept short for script efficiency, add your full details block back in)
-I18N.ms.details = {
-  subuh: { desc: "Solat Sunat Qabliyah Subuh amat dituntut.", benefit: "'Dua rakaat Fajar lebih baik dari dunia' (HR Muslim).", source: "Sahih Muslim" },
-  zuhur: { desc: "Bermula bila matahari tergelincir.", benefit: "Pahala besar menjaga solat sunat.", source: "Tirmizi" },
-  asar: { desc: "Solat asar adalah waktu yang disejukkan.", benefit: "Siapa solat Asar & Subuh masuk syurga.", source: "Bukhari" },
-  maghrib: { desc: "Bermula sejurus matahari terbenam.", benefit: "Sempurnakan ibadah malam.", source: "Fiqh Syafii" },
-  isya: { desc: "Bermula hilangnya mega merah.", benefit: "Tutuplah malam dengan Witir.", source: "Bukhari" },
-  syuruk: { desc: "Matahari terbit, haram solat fardhu.", benefit: "Duduk berzikir hingga Duha.", source: "Mufti Brunei" },
-  duha: { desc: "Waktu matahari meninggi.", benefit: "Cukup sedekah seluruh sendi.", source: "Muslim" },
-  imsak: { desc: "Waktu berjaga sedia puasa.", benefit: "Berhenti makan dengan yakin.", source: "KHEU" }
-};
-I18N.en.details = {
-  subuh: { desc: "Fajr is the true dawn.", benefit: "'Two rak'ahs before Fajr are better than the world' (Muslim).", source: "Sahih Muslim" },
-  zuhur: { desc: "Starts post-zenith.", benefit: "Great reward for Sunnah.", source: "Tirmidhi" },
-  asar: { desc: "The mid-afternoon prayer.", benefit: "Whoever prays Fajr and Asr enters Paradise.", source: "Bukhari" },
-  maghrib: { desc: "Begins exactly at sunset.", benefit: "Brings light to the house.", source: "Fiqh Shafii" },
-  isya: { desc: "Twilight vanishes.", benefit: "End the night with Witr.", source: "Bukhari" },
-  syuruk: { desc: "Sunrise. Prayer prohibited.", benefit: "Dhikr until Dhuha brings reward.", source: "Mufti Brunei" },
-  duha: { desc: "Morning prayer.", benefit: "Charity for every joint.", source: "Muslim" },
-  imsak: { desc: "Precautionary fasting buffer.", benefit: "Finish eating with certainty.", source: "KHEU" }
 };
 
 const ALL_KEYS = ["imsak", "subuh", "syuruk", "duha", "zuhur", "asar", "maghrib", "isya"];
@@ -132,17 +127,20 @@ function handleDistrictChange() {
   updateTick();
 }
 
-// FIXED DYNAMIC TOGGLE LOGIC
+// BULLETPROOF TOGGLE LOGIC
 function toggleVisuals() {
   vibrateTap();
   visualsEnabled = !visualsEnabled;
   localStorage.setItem('bwn_visuals', visualsEnabled ? 'true' : 'false');
   
-  const btn = document.getElementById('visuals-toggle');
-  if (btn) btn.textContent = visualsEnabled ? "☀️" : "🌙";
+  if (toggleBtn) toggleBtn.textContent = visualsEnabled ? "☀️" : "🌙";
   
-  // Instantly force UI redraw
-  updateTick();
+  // Physically toggle the CSS class that hides the backgrounds
+  if (!visualsEnabled) {
+    document.body.classList.add('visuals-off');
+  } else {
+    document.body.classList.remove('visuals-off');
+  }
 }
 
 function setLanguage(lang) {
@@ -284,19 +282,11 @@ function determinePrayerState(adjustedTimes) {
   return { active: activeItem, next: nextItem, currentMinutes: currentMins, currentSeconds: currentSecs };
 }
 
+// Engine always runs mathematically in the background, CSS controls visibility
 function updateSkyVisuals(adjustedTimes, currentMins) {
   const skyBg = document.getElementById("sky-bg");
   const celestial = document.getElementById("celestial-body");
-  const cloudsLayer = document.getElementById("clouds-layer");
-
-  // FAILSAFE TOGGLE: If off, force black canvas and hide layers.
-  if (!visualsEnabled) {
-    skyBg.style.background = "var(--bg-base)";
-    celestial.style.opacity = "0";
-    cloudsLayer.style.opacity = "0";
-    return; // Exit calculation completely
-  }
-
+  
   const subuhMins = adjustedTimes.subuh;
   const syurukMins = adjustedTimes.syuruk;
   const zuhurMins = adjustedTimes.zuhur;
@@ -305,10 +295,8 @@ function updateSkyVisuals(adjustedTimes, currentMins) {
   const isyaMins = adjustedTimes.isya;
   
   let isDay = currentMins >= subuhMins && currentMins < maghribMins;
-  celestial.style.opacity = "1";
 
   if (isDay) {
-    cloudsLayer.style.opacity = "0.7"; 
     let dayDuration = maghribMins - subuhMins;
     let dayProgress = (currentMins - subuhMins) / dayDuration;
 
@@ -331,7 +319,6 @@ function updateSkyVisuals(adjustedTimes, currentMins) {
       skyBg.style.background = "linear-gradient(to bottom, #4338ca 0%, #c2410c 65%, #9a3412 100%)"; 
     }
   } else {
-    cloudsLayer.style.opacity = "0.15"; 
     let nightDuration = (1440 - maghribMins) + subuhMins;
     let elapsedNight = currentMins >= maghribMins ? (currentMins - maghribMins) : ((1440 - maghribMins) + currentMins);
     let nightProgress = elapsedNight / nightDuration;
