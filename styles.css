@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 3.7.1
-Description: Reverted to condensed layout for headers/hero, with specifically increased heights for the prayer list rows.
+Version: 3.8.0
+Description: Complete layout reset to clean Flexbox + 100dvh. Eliminates iOS black bars natively without hacky absolute positioning. Taller prayer rows preserved.
 */
 
 :root {
@@ -37,24 +37,28 @@ Description: Reverted to condensed layout for headers/hero, with specifically in
   touch-action: manipulation; 
 }
 
-html, body {
+body {
   background-color: var(--bg-base);
   color: var(--text-primary);
   font-family: var(--font-stack);
   width: 100vw;
-  height: 100vh; 
-  margin: 0;
-  padding: 0; 
-  position: fixed; 
-  top: 0; left: 0; right: 0; bottom: 0;
+  height: 100dvh; /* Pure dynamic viewport height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   overflow: hidden; 
   -webkit-font-smoothing: antialiased;
 }
 
-/* Astronomical Layers */
-#sky-bg {
-  position: absolute;
+/* Backgrounds are pinned to the edges of the physical screen */
+#sky-bg, #clouds-layer {
+  position: fixed; 
   top: 0; left: 0; right: 0; bottom: 0;
+  width: 100vw;
+  height: 100dvh;
+}
+
+#sky-bg {
   z-index: -3;
   transition: background 3s ease;
   background: var(--bg-base);
@@ -72,13 +76,10 @@ html, body {
 }
 
 #clouds-layer {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
   z-index: -1;
   pointer-events: none;
   opacity: 0;
   transition: opacity 2s ease;
-  overflow: hidden;
 }
 
 .cloud {
@@ -99,34 +100,31 @@ html, body {
   100% { transform: translateX(calc(100vw + 400px)); }
 }
 
-/* App Wrapper */
+/* The wrapper holds the layout and stretches natively */
 .app-wrapper {
-  position: absolute;
-  top: 0; bottom: 0; left: 0; right: 0;
-  margin: 0 auto; 
   width: 100%;
   max-width: 600px;
+  flex-grow: 1; /* Pushes the bounds cleanly */
   display: flex;
   flex-direction: column;
-  gap: 8px; /* REVERTED to condensed */
+  gap: 10px; 
   z-index: 10;
   
-  /* Kept large top padding for iPhone notch safety */
-  padding-top: calc(env(safe-area-inset-top, 50px) + 12px); 
-  padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 36px); 
+  /* Top padding ensures Notch/Island safety */
+  padding-top: calc(env(safe-area-inset-top, 45px) + 12px);
   padding-left: max(12px, env(safe-area-inset-left));
   padding-right: max(12px, env(safe-area-inset-right));
+  padding-bottom: 0; /* Let footer handle the bottom spacing */
 }
 
-/* Condensed Header */
+/* Header */
 .header-bar {
   display: flex;
   flex-direction: column;
-  gap: 8px; /* REVERTED */
-  padding-bottom: 6px; /* REVERTED */
+  gap: 8px;
+  padding-bottom: 6px;
   border-bottom: 1px solid var(--border-subtle);
   flex-shrink: 0; 
-  width: 100%;
 }
 
 .header-top {
@@ -143,7 +141,7 @@ html, body {
 }
 
 .brand-logo {
-  width: 30px; /* REVERTED */
+  width: 30px; 
   height: 30px;
   border-radius: 8px;
   background: var(--bg-surface-elevated);
@@ -162,7 +160,7 @@ html, body {
 }
 
 .header-title-box h1 {
-  font-size: 1.05rem; /* REVERTED */
+  font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--text-primary);
@@ -183,7 +181,7 @@ html, body {
   border: 1px solid var(--border-subtle);
   color: var(--text-primary);
   border-radius: 6px;
-  width: 26px; /* REVERTED */
+  width: 26px; 
   height: 26px;
   display: flex;
   align-items: center;
@@ -205,7 +203,7 @@ html, body {
   background: none;
   border: none;
   color: var(--text-muted);
-  font-size: 0.65rem; /* REVERTED */
+  font-size: 0.65rem; 
   font-weight: 600;
   padding: 4px 6px;
   border-radius: 4px;
@@ -223,14 +221,14 @@ html, body {
   align-items: center;
   background: var(--bg-surface);
   backdrop-filter: blur(8px);
-  padding: 4px 10px; /* REVERTED */
+  padding: 4px 10px; 
   border-radius: 6px;
   border: 1px solid var(--border-subtle);
   width: 100%;
 }
 
 .date-text {
-  font-size: 0.7rem; /* REVERTED */
+  font-size: 0.7rem; 
   font-weight: 500;
   color: var(--text-secondary);
   white-space: nowrap;
@@ -248,7 +246,7 @@ html, body {
   background-color: transparent;
   border: 1px solid var(--border-active);
   color: var(--text-primary);
-  font-size: 0.65rem; /* REVERTED */
+  font-size: 0.65rem; 
   font-weight: 600;
   padding: 2px 18px 2px 6px;
   border-radius: 4px;
@@ -270,16 +268,16 @@ html, body {
   pointer-events: none;
 }
 
-/* Condensed Hero Section */
+/* Hero Section */
 .hero-tracker {
   background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(10, 10, 10, 0.8) 100%);
   backdrop-filter: blur(16px);
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
-  padding: 12px 16px; /* REVERTED */
+  padding: 12px 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px; /* REVERTED */
+  gap: 8px;
   position: relative;
   overflow: hidden;
   flex-shrink: 0; 
@@ -313,7 +311,7 @@ html, body {
 }
 
 .hero-name {
-  font-size: 1.8rem; /* REVERTED */
+  font-size: 1.8rem;
   font-weight: 800;
   letter-spacing: -0.02em;
   color: #ffffff;
@@ -359,11 +357,11 @@ html, body {
   transition: width 0.8s ease;
 }
 
-/* Scrollable Prayer List */
+/* Prayer List */
 .prayer-list {
   display: flex;
   flex-direction: column;
-  gap: 8px; /* Tighter gap to offset taller rows */
+  gap: 8px; 
   width: 100%;
   flex-grow: 1; 
   overflow-y: auto; 
@@ -381,17 +379,17 @@ html, body {
   backdrop-filter: blur(12px);
 }
 
-/* INCREASED ROW HEIGHTS */
+/* Taller Row Heights Preserved */
 .prayer-row.is-fardhu {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  padding: 16px 14px; /* Taller top/bottom padding */
+  padding: 16px 14px; 
 }
 
 .prayer-row.is-secondary {
   background: rgba(10, 10, 10, 0.4);
   border: 1px dashed var(--border-subtle);
-  padding: 12px 14px; /* Taller top/bottom padding */
+  padding: 12px 14px; 
 }
 
 .prayer-row.is-active {
@@ -436,19 +434,24 @@ html, body {
 .row-right-sec { font-size: 0.95rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; }
 .prayer-row.is-active .row-right-fardhu, .prayer-row.is-active .row-right-sec { color: #ffffff; }
 
-/* Fixed Transparent Footer */
+/* 
+  FOOTER FIX: 
+  Sits naturally at the end of the flex wrapper.
+  Padding bottom extends to the home indicator.
+  Forced transparent. Zero borders.
+*/
 .site-footer {
-  position: absolute;
-  bottom: env(safe-area-inset-bottom, 8px); 
-  left: 0;
-  right: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 12px;
   font-size: 0.65rem;
   color: var(--text-muted);
-  z-index: 20;
+  flex-shrink: 0; 
+  
+  /* Padding pushes content safely above swipe bar, extending to the very edge */
+  padding-top: 8px;
+  padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 8px);
   
   background: transparent !important;
   backdrop-filter: none !important;
