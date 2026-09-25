@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 8.2.0
-Description: Complete stylesheet. Fixed dynamic background toggle via pure CSS opacity, added tactile physics, disabled touch-zoom, and polished Nightstand mode.
+Version: 8.3.0
+Description: Dynamic background transparency rules, tactile touches, StandBy Nightstand mode, and safe area anchors.
 */
 
 :root {
@@ -34,10 +34,9 @@ Description: Complete stylesheet. Fixed dynamic background toggle via pure CSS o
   -webkit-user-select: none; 
   -ms-user-select: none; 
   user-select: none; 
-  touch-action: manipulation; /* Disables double-tap zoom */
+  touch-action: manipulation;
 }
 
-/* Root lockdown to prevent iOS black bars */
 html, body {
   background-color: var(--bg-base);
   color: var(--text-primary);
@@ -50,15 +49,15 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Astronomical Background Layers */
+/* Sky and Celestial Layers */
 #sky-bg {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   z-index: -3;
-  background: var(--bg-base);
   width: 100vw;
   height: 100vh;
   transition: background 3s ease, opacity 0.5s ease;
+  pointer-events: none;
 }
 
 #celestial-body {
@@ -88,6 +87,7 @@ html, body {
   background: #ffffff;
   border-radius: 50%;
   filter: blur(40px);
+  opacity: 0.2;
   animation: floatCloud linear infinite;
 }
 
@@ -100,14 +100,18 @@ html, body {
   100% { transform: translateX(calc(100vw + 400px)); }
 }
 
-/* VISUAL TOGGLE FIX: Forces layers to hide when toggle is switched off */
-body.visuals-off #sky-bg,
+/* Visual toggle suppression rule */
+body.visuals-off #sky-bg {
+  background: #050505 !important;
+}
+
 body.visuals-off #celestial-body,
 body.visuals-off #clouds-layer {
   opacity: 0 !important;
+  visibility: hidden;
 }
 
-/* App Wrapper - Safe Area Spacing */
+/* App Wrapper */
 .app-wrapper {
   width: 100vw;
   height: 100vh;
@@ -153,6 +157,7 @@ body.visuals-off #clouds-layer {
   border-radius: 8px;
   background: var(--bg-surface-elevated);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--border-subtle);
   padding: 4px;
   display: flex;
@@ -185,6 +190,7 @@ body.visuals-off #clouds-layer {
 .icon-btn {
   background: var(--bg-surface);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--border-subtle);
   color: var(--text-primary);
   border-radius: 6px;
@@ -197,12 +203,16 @@ body.visuals-off #clouds-layer {
   cursor: pointer;
   transition: transform 0.1s ease;
 }
-.icon-btn:active { transform: scale(0.9); }
+
+.icon-btn:active {
+  transform: scale(0.88);
+}
 
 .lang-switcher {
   display: flex;
   background-color: var(--bg-surface);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--border-subtle);
   border-radius: 6px;
   padding: 2px;
@@ -230,6 +240,7 @@ body.visuals-off #clouds-layer {
   align-items: center;
   background: var(--bg-surface);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   padding: 4px 10px;
   border-radius: 6px;
   border: 1px solid var(--border-subtle);
@@ -276,6 +287,7 @@ body.visuals-off #clouds-layer {
 .hero-tracker {
   background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(10, 10, 10, 0.8) 100%);
   backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
   padding: 12px 16px;
@@ -372,7 +384,6 @@ body.visuals-off #clouds-layer {
   -webkit-overflow-scrolling: touch; 
 }
 
-/* TACTILE UI/UX FEEDBACK */
 .prayer-row {
   display: flex;
   align-items: center;
@@ -381,6 +392,7 @@ body.visuals-off #clouds-layer {
   width: 100%;
   flex-shrink: 0; 
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   cursor: pointer;
   transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.15s ease, opacity 0.15s ease;
   transform-origin: center;
@@ -399,26 +411,105 @@ body.visuals-off #clouds-layer {
   opacity: 0.85;
 }
 
-.prayer-row.is-fardhu { background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 16px 14px; }
-.prayer-row.is-secondary { background: rgba(10, 10, 10, 0.4); border: 1px dashed var(--border-subtle); padding: 12px 14px; }
-.prayer-row.is-active { background: linear-gradient(90deg, var(--bg-surface-active) 0%, rgba(10,10,10,0.6) 100%); border: 1px solid var(--border-active); box-shadow: inset 3px 0 0 var(--accent-primary); }
-.prayer-row.is-past { opacity: 0.4; filter: grayscale(1); }
+.prayer-row.is-fardhu {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  padding: 16px 14px;
+}
 
-.row-left-fardhu { width: 80px; font-size: 1.05rem; font-weight: 700; color: var(--text-primary); pointer-events: none;}
-.row-left-sec { width: 80px; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; pointer-events: none;}
-.prayer-row.is-active .row-left-fardhu, .prayer-row.is-active .row-left-sec { color: var(--accent-primary); }
+.prayer-row.is-secondary {
+  background: rgba(10, 10, 10, 0.4);
+  border: 1px dashed var(--border-subtle);
+  padding: 12px 14px;
+}
 
-.row-mid { flex: 1; display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-start; padding: 0 4px; pointer-events: none; }
+.prayer-row.is-active {
+  background: linear-gradient(90deg, var(--bg-surface-active) 0%, rgba(10,10,10,0.6) 100%);
+  border: 1px solid var(--border-active);
+  box-shadow: inset 3px 0 0 var(--accent-primary);
+}
 
-.fiqh-badge { font-size: 0.6rem; font-weight: 600; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
-.fiqh-badge.is-ok { background-color: var(--badge-ok-bg); color: var(--badge-ok-color); }
-.fiqh-badge.is-haram { background-color: var(--badge-haram-bg); color: var(--badge-haram-color); }
+.prayer-row.is-past {
+  opacity: 0.4;
+  filter: grayscale(1);
+}
 
-.row-right-fardhu { font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-primary); text-align: right; pointer-events: none;}
-.row-right-sec { font-size: 0.95rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; pointer-events: none;}
-.prayer-row.is-active .row-right-fardhu, .prayer-row.is-active .row-right-sec { color: #ffffff; }
+.row-left-fardhu {
+  width: 80px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  pointer-events: none;
+}
 
-/* MODAL STYLING */
+.row-left-sec {
+  width: 80px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+}
+
+.prayer-row.is-active .row-left-fardhu,
+.prayer-row.is-active .row-left-sec {
+  color: var(--accent-primary);
+}
+
+.row-mid {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  padding: 0 4px;
+  pointer-events: none;
+}
+
+.fiqh-badge {
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 3px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.fiqh-badge.is-ok {
+  background-color: var(--badge-ok-bg);
+  color: var(--badge-ok-color);
+}
+
+.fiqh-badge.is-haram {
+  background-color: var(--badge-haram-bg);
+  color: var(--badge-haram-color);
+}
+
+.row-right-fardhu {
+  font-size: 1.15rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  text-align: right;
+  pointer-events: none;
+}
+
+.row-right-sec {
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+  text-align: right;
+  pointer-events: none;
+}
+
+.prayer-row.is-active .row-right-fardhu,
+.prayer-row.is-active .row-right-sec {
+  color: #ffffff;
+}
+
+/* Modal */
 .modal-backdrop {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -435,18 +526,84 @@ body.visuals-off #clouds-layer {
   padding: 16px;
 }
 
-.modal-backdrop.is-visible { opacity: 1; pointer-events: auto; }
-.modal-card { background: rgba(24, 24, 27, 0.95); border: 1px solid var(--border-active); border-radius: 16px; width: 100%; max-width: 420px; padding: 20px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); transform: translateY(10px); transition: transform 0.25s ease; }
-.modal-backdrop.is-visible .modal-card { transform: translateY(0); }
-.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 8px; }
-.modal-header h3 { font-size: 1.15rem; font-weight: 700; color: #ffffff; }
-.modal-close-btn { background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; padding: 0 6px; line-height: 1; }
-.modal-body { display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem; color: var(--text-primary); line-height: 1.4; }
-.modal-desc { color: var(--text-secondary); }
-.modal-benefit-box { background: rgba(52, 211, 153, 0.1); border-left: 3px solid #34d399; padding: 10px 12px; border-radius: 0 8px 8px 0; color: #a7f3d0; font-size: 0.8rem; }
-.modal-source { font-size: 0.75rem; color: var(--text-muted); font-style: italic; margin-top: 4px; }
+.modal-backdrop.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
 
-/* Seamless Footer */
+.modal-card {
+  background: rgba(24, 24, 27, 0.95);
+  border: 1px solid var(--border-active);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 420px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  transform: translateY(10px);
+  transition: transform 0.25s ease;
+}
+
+.modal-backdrop.is-visible .modal-card {
+  transform: translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 8px;
+}
+
+.modal-header h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0 6px;
+  line-height: 1;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.modal-desc {
+  color: var(--text-secondary);
+}
+
+.modal-benefit-box {
+  background: rgba(52, 211, 153, 0.1);
+  border-left: 3px solid #34d399;
+  padding: 10px 12px;
+  border-radius: 0 8px 8px 0;
+  color: #a7f3d0;
+  font-size: 0.8rem;
+}
+
+.modal-source {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+/* Footer */
 .site-footer {
   display: flex;
   justify-content: center;
@@ -457,23 +614,31 @@ body.visuals-off #clouds-layer {
   flex-shrink: 0; 
   padding-top: 4px;
   margin-top: auto;
-  
   background: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
   border: none !important;
   box-shadow: none !important;
-  
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
 }
 
-.site-footer a { color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
-.site-footer a:hover { color: var(--accent-primary); }
-.footer-divider { width: 3px; height: 3px; border-radius: 50%; background: var(--border-active); box-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+.site-footer a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
 
-/* =========================================
-   SLEEK PORTRAIT-MATCHING NIGHTSTAND MODE
-   ========================================= */
+.site-footer a:hover {
+  color: var(--accent-primary);
+}
+
+.footer-divider {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--border-active);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+/* StandBy Landscape Mode */
 #nightstand-mode {
   display: none; 
   position: fixed;
@@ -483,7 +648,7 @@ body.visuals-off #clouds-layer {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: var(--text-primary); 
+  color: var(--text-primary);
 }
 
 #ns-time {
@@ -495,7 +660,6 @@ body.visuals-off #clouds-layer {
   color: var(--text-primary);
 }
 
-/* Blinking Colon Animation */
 .blink-colon {
   animation: blink 1s step-start infinite;
 }
@@ -524,7 +688,6 @@ body.visuals-off #clouds-layer {
   border: 1px solid var(--border-subtle);
 }
 
-/* Landscape Trigger */
 @media (orientation: landscape) and (max-height: 500px) {
   .app-wrapper, .modal-backdrop, #sky-bg, #celestial-body, #clouds-layer {
     display: none !important;
