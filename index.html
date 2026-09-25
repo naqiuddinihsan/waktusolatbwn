@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 8.0.0
-Description: Fixed inline bindings. Clean Nightstand mode container.
+Version: 8.3.0
+Description: Final verified production markup.
 -->
 <!DOCTYPE html>
 <html lang="ms">
@@ -54,10 +54,10 @@ Description: Fixed inline bindings. Clean Nightstand mode container.
         </div>
 
         <div class="controls-cluster">
-          <button class="icon-btn" id="visuals-toggle">🌙</button>
+          <button class="icon-btn" id="visuals-toggle" type="button">🌙</button>
           <div class="lang-switcher">
-            <button id="lang-btn-ms" class="lang-btn active" onclick="setLanguage('ms')">BM</button>
-            <button id="lang-btn-en" class="lang-btn" onclick="setLanguage('en')">EN</button>
+            <button id="lang-btn-ms" class="lang-btn active" onclick="setLanguage('ms')" type="button">BM</button>
+            <button id="lang-btn-en" class="lang-btn" onclick="setLanguage('en')" type="button">EN</button>
           </div>
         </div>
       </div>
@@ -102,7 +102,7 @@ Description: Fixed inline bindings. Clean Nightstand mode container.
     <div class="modal-card" onclick="event.stopPropagation()">
       <div class="modal-header">
         <h3 id="modal-title">-</h3>
-        <button class="modal-close-btn" onclick="closeModal()">&times;</button>
+        <button class="modal-close-btn" onclick="closeModal()" type="button">&times;</button>
       </div>
       <div class="modal-body" id="modal-body-content"></div>
     </div>
