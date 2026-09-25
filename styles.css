@@ -1,21 +1,16 @@
 /*
 File Name: styles.css
-Version: 3.4.0
-Description: Native app layout overhaul. Zero-margin body with interior safe-area padding to eliminate bottom black bars. Minimalist transparent footer with text-shadow for celestial contrast.
+Version: 5.0.0
+Description: Clean-slate architecture using modern 100svh and flexbox layout. Eliminates black bars natively and maintains taller Fardhu rows.
 */
 
 :root {
-  /* Base Colors */
   --bg-base: #050505;
-  
-  /* Glassmorphism Surface */
   --bg-surface: rgba(18, 18, 18, 0.65);
   --bg-surface-elevated: rgba(30, 30, 30, 0.7);
   --bg-surface-active: rgba(23, 23, 23, 0.85);
-  
   --border-subtle: rgba(255, 255, 255, 0.1);
   --border-active: rgba(82, 82, 82, 0.8);
-  
   --text-primary: #f5f5f5;
   --text-secondary: #a3a3a3;
   --text-muted: #737373;
@@ -23,7 +18,6 @@ Description: Native app layout overhaul. Zero-margin body with interior safe-are
   --accent-highlight: #d4d4d4;
   --accent-glow: rgba(255, 255, 255, 0.08);
 
-  /* Status Indicators */
   --badge-ok-bg: rgba(52, 211, 153, 0.2);
   --badge-ok-color: #34d399; 
   --badge-haram-bg: rgba(244, 63, 94, 0.2);
@@ -32,7 +26,6 @@ Description: Native app layout overhaul. Zero-margin body with interior safe-are
   --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-/* Disable Highlights and Double-Tap Zoom */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -44,35 +37,40 @@ Description: Native app layout overhaul. Zero-margin body with interior safe-are
   touch-action: manipulation; 
 }
 
-/* 
-  BODY FIX: Zero padding/margin on the body itself to prevent ANY 
-  background clipping or black bars. Safe area is handled inside the wrapper.
-*/
+/* Modern clean root sizing to prevent iOS WebKit rendering glitches */
+html {
+  background-color: var(--bg-base);
+  width: 100vw;
+  height: 100svh;
+  overflow: hidden;
+}
+
 body {
   background-color: var(--bg-base);
   color: var(--text-primary);
   font-family: var(--font-stack);
   width: 100vw;
-  height: 100dvh; 
+  height: 100svh;
+  margin: 0;
+  padding: 0;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  justify-content: flex-start;
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
-  overflow: hidden; 
-  position: relative;
 }
 
-/* Astronomical Sky Background Layer */
+/* Background layers locked to viewport */
 #sky-bg {
-  position: absolute;
+  position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   z-index: -3;
   transition: background 3s ease;
   background: var(--bg-base);
+  width: 100vw;
+  height: 100svh;
 }
 
-/* Sun / Moon Element */
 #celestial-body {
   position: absolute;
   width: 80px;
@@ -84,15 +82,16 @@ body {
   opacity: 0; 
 }
 
-/* Animated Clouds Layer */
 #clouds-layer {
-  position: absolute;
+  position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   z-index: -1;
   pointer-events: none;
   opacity: 0;
   transition: opacity 2s ease;
   overflow: hidden;
+  width: 100vw;
+  height: 100svh;
 }
 
 .cloud {
@@ -113,19 +112,18 @@ body {
   100% { transform: translateX(calc(100vw + 400px)); }
 }
 
-/* APP WRAPPER: Handles the safe areas so the background stays seamless */
+/* App Wrapper handles safe-area padding gracefully */
 .app-wrapper {
   width: 100%;
   max-width: 600px;
-  height: 100%;
+  height: 100svh;
   display: flex;
   flex-direction: column;
-  gap: 8px; 
-  overflow: hidden; 
+  gap: 8px;
   z-index: 10;
   
-  padding-top: calc(env(safe-area-inset-top, 40px) + 12px);
-  padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 12px);
+  padding-top: calc(env(safe-area-inset-top, 40px) + 8px);
+  padding-bottom: calc(env(safe-area-inset-bottom, 12px) + 8px);
   padding-left: max(12px, env(safe-area-inset-left));
   padding-right: max(12px, env(safe-area-inset-right));
 }
@@ -138,6 +136,7 @@ body {
   padding-bottom: 6px;
   border-bottom: 1px solid var(--border-subtle);
   flex-shrink: 0; 
+  width: 100%;
 }
 
 .header-top {
@@ -228,7 +227,6 @@ body {
   color: var(--text-primary);
 }
 
-/* Header Bottom Row */
 .header-bottom {
   display: flex;
   justify-content: space-between;
@@ -238,6 +236,7 @@ body {
   padding: 4px 10px;
   border-radius: 6px;
   border: 1px solid var(--border-subtle);
+  width: 100%;
 }
 
 .date-text {
@@ -294,6 +293,7 @@ body {
   position: relative;
   overflow: hidden;
   flex-shrink: 0; 
+  width: 100%;
 }
 
 .hero-tracker::after {
@@ -369,39 +369,39 @@ body {
   transition: width 0.8s ease;
 }
 
-/* Scrollable Unified List */
+/* Prayer List (Scrollable) */
 .prayer-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px; 
   width: 100%;
   flex-grow: 1; 
   overflow-y: auto; 
   -webkit-overflow-scrolling: touch; 
-  padding-bottom: 8px;
 }
 
 .prayer-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-radius: 8px;
+  border-radius: 10px;
   transition: all 0.2s ease;
   width: 100%;
   flex-shrink: 0; 
   backdrop-filter: blur(12px);
 }
 
+/* Taller Row Heights */
 .prayer-row.is-fardhu {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  padding: 10px 12px;
+  padding: 16px 14px; 
 }
 
 .prayer-row.is-secondary {
   background: rgba(10, 10, 10, 0.4);
   border: 1px dashed var(--border-subtle);
-  padding: 6px 12px;
+  padding: 12px 14px; 
 }
 
 .prayer-row.is-active {
@@ -415,8 +415,8 @@ body {
   filter: grayscale(1);
 }
 
-.row-left-fardhu { width: 75px; font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
-.row-left-sec { width: 75px; font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+.row-left-fardhu { width: 80px; font-size: 1.05rem; font-weight: 700; color: var(--text-primary); }
+.row-left-sec { width: 80px; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
 
 .prayer-row.is-active .row-left-fardhu,
 .prayer-row.is-active .row-left-sec { color: var(--accent-primary); }
@@ -431,9 +431,9 @@ body {
 }
 
 .fiqh-badge {
-  font-size: 0.55rem;
+  font-size: 0.6rem;
   font-weight: 600;
-  padding: 2px 5px;
+  padding: 3px 6px;
   border-radius: 4px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -442,11 +442,11 @@ body {
 .fiqh-badge.is-ok { background-color: var(--badge-ok-bg); color: var(--badge-ok-color); }
 .fiqh-badge.is-haram { background-color: var(--badge-haram-bg); color: var(--badge-haram-color); }
 
-.row-right-fardhu { font-size: 1rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-primary); text-align: right; }
-.row-right-sec { font-size: 0.85rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; }
+.row-right-fardhu { font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-primary); text-align: right; }
+.row-right-sec { font-size: 0.95rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; }
 .prayer-row.is-active .row-right-fardhu, .prayer-row.is-active .row-right-sec { color: #ffffff; }
 
-/* SEAMLESS MINIMALIST FOOTER */
+/* Seamless Footer */
 .site-footer {
   display: flex;
   justify-content: center;
@@ -455,17 +455,16 @@ body {
   font-size: 0.65rem;
   color: var(--text-muted);
   flex-shrink: 0; 
-  padding-top: 8px;
-  margin-top: auto; /* Pushes to the exact bottom of the app wrapper */
-  letter-spacing: 0.02em;
+  padding-top: 4px;
+  margin-top: auto;
   
-  /* Text shadow ensures readability when the bright sun graphics pass behind it */
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
-  
-  /* Reset backgrounds to be 100% transparent */
-  background: transparent;
-  backdrop-filter: none;
-  border: none;
 }
 
 .site-footer a { 
