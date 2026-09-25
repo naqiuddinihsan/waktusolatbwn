@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 5.7.0
-Description: Fixed dynamic visuals toggle logic and state synchronization. Precision celestial engine and touch-zoom disabled.
+Version: 6.0.0
+Description: Interactive prayer cards with detailed modals showing Sunat prayer benefits and authentic sources. Fixed dynamic toggle engine.
 -->
 <!DOCTYPE html>
 <html lang="ms">
@@ -105,6 +105,19 @@ Description: Fixed dynamic visuals toggle logic and state synchronization. Preci
     </footer>
   </div>
 
+  <!-- INTERACTIVE INFO MODAL -->
+  <div class="modal-backdrop" id="info-modal" onclick="closeModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 id="modal-title">-</h3>
+        <button class="modal-close-btn" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body-content">
+        <!-- Dynamically injected details -->
+      </div>
+    </div>
+  </div>
+
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -117,7 +130,6 @@ Description: Fixed dynamic visuals toggle logic and state synchronization. Preci
     let currentLang = "ms";
     let visualsEnabled = false; 
 
-    // Retrieve initial state safely
     if (localStorage.getItem('bwn_visuals') !== null) {
       visualsEnabled = localStorage.getItem('bwn_visuals') === 'true';
     } else {
@@ -153,7 +165,49 @@ Description: Fixed dynamic visuals toggle logic and state synchronization. Preci
           imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha",
           zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'"
         },
-        fiqh: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir" }
+        fiqh: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir" },
+        details: {
+          subuh: {
+            desc: "Waktu Subuh menandakan fajar صادق (Sadiq) menerangi ufuk. Solat Sunat Rawatib Qabliyah Subuh (2 rakaat) mempunyai keutamaan yang sangat besar.",
+            benefit: "Daripada Aisyah R.anha, Nabi SAW bersabda: 'Dua rakaat Fajar (Subuh) adalah lebih baik daripada dunia dan sekelilingnya.' (HR. Muslim).",
+            source: "Hadis Sahih Muslim, No. 725"
+          },
+          zuhur: {
+            desc: "Waktu Zuhur bermula apabila matahari tergelincir dari zenit ke arah barat. Dianjurkan menunaikan Solat Sunat Qabliyah dan Ba'diyyah.",
+            benefit: "Siapa yang menjaga solat sunat 4 rakaat sebelum dan selepas Zuhur, Allah haramkan jasadnya daripada api neraka (HR. Tirmizi & Abu Daud).",
+            source: "Sunan Tirmizi, No. 428 (Sahih)"
+          },
+          asar: {
+            desc: "Waktu Asar bermula apabila bayang-bayang sesuatu objek sama panjang dengan objek tersebut ditambah bayang tergelincir.",
+            benefit: "Sabda Nabi SAW: 'Sesiapa yang solat pada dua kes sejuk (Subuh dan Asar), dia akan masuk syurga.' (HR. Bukhari & Muslim).",
+            source: "Sahih al-Bukhari, No. 574"
+          },
+          maghrib: {
+            desc: "Waktu Maghrib bermula sejurus terbenamnya matahari hingga hilang cahaya mega merah di ufuk.",
+            benefit: "Menunaikan Solat Sunat Ba'diyyah Maghrib (2 rakaat) menyempurnakan pahala malam dan mendatangkan keberkatan rumah.",
+            source: "Al-Fiqh al-Manhaji ala Madhhab al-Imam al-Syafii"
+          },
+          isya: {
+            desc: "Waktu Isya' bermula selepas hilangnya mega merah. Digalakkan menutup malam dengan Solat Sunat Witir (ganjil).",
+            benefit: "Nabi SAW bersabda: 'Jadikan solat malam kamu yang terakhir adalah Witir.' (HR. Bukhari & Muslim). Witir adalah penutup ibadah malam yang sangat dianjurkan.",
+            source: "Sahih al-Bukhari, No. 998"
+          },
+          syuruk: {
+            desc: "Waktu Syuruk adalah detik terbitnya matahari. Haram menunaikan solat fardhu atau sunat mutlak pada detik ini.",
+            benefit: "Dianjurkan duduk berzikir hingga terbit matahari sepenuhnya, disusuli solat sunat Duha.",
+            source: "Himpunan Irsyad Al-Fatwa, Pejabat Mufti Kerajaan Brunei"
+          },
+          duha: {
+            desc: "Waktu Solat Sunat Duha bermula dari tinggi matahari selemparan lembing (selepas Syuruk) hingga menjelang Zohor.",
+            benefit: "Solat Duha mencukupkan sedekah bagi seluruh sendi tubuh badan manusia (HR. Muslim).",
+            source: "Hadis Sahih Muslim, No. 720"
+          },
+          imsak: {
+            desc: "Waktu Imsak adalah masa berjaga-jaga (sunat kira-kira 10 minit sebelum Subuh) sebagai persediaan bersahur.",
+            benefit: "Membantu umat Islam berhenti makan dan minum sebelum masuk azan Subuh dengan yakin.",
+            source: "Panduan Imsakiah KHEU Brunei"
+          }
+        }
       },
       en: {
         appTitle: "Waktu Solat BWN",
@@ -173,7 +227,49 @@ Description: Fixed dynamic visuals toggle logic and state synchronization. Preci
           imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha",
           zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'"
         },
-        fiqh: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir" }
+        fiqh: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir" },
+        details: {
+          subuh: {
+            desc: "Fajr marks the true dawn light on the horizon. Performing Qabliyyah Fajr (2 Sunnah rak'ahs before Fajr) carries immense spiritual reward.",
+            benefit: "The Prophet SAW said: 'The two rak'ahs before Fajr are better than this world and all that it contains.' (Sahih Muslim).",
+            source: "Sahih Muslim, No. 725"
+          },
+          zuhur: {
+            desc: "Zuhr begins when the sun passes its zenith. Emphasized Sunnah prayers include Rawatib before and after Zuhr.",
+            benefit: "Whoever maintains 4 rak'ahs before and 4 after Zuhr, Allah forbids the Fire from touching them (Tirmidhi & Abu Dawud).",
+            source: "Sunan Tirmidhi, No. 428 (Sahih)"
+          },
+          asar: {
+            desc: "Asr begins when an object's shadow matches its length plus its noon shadow.",
+            benefit: "The Prophet SAW said: 'Whoever prays the two cool prayers (Fajr and Asr) will enter Paradise.' (Bukhari & Muslim).",
+            source: "Sahih al-Bukhari, No. 574"
+          },
+          maghrib: {
+            desc: "Maghrib begins immediately after sunset until twilight disappears.",
+            benefit: "Performing 2 Sunnah rak'ahs after Maghrib brings divine light and blessings into the household.",
+            source: "Al-Fiqh al-Manhaji ala Madhhab al-Imam al-Syafii"
+          },
+          isya: {
+            desc: "Isha begins after twilight fades. It is highly recommended to conclude the night with Witr prayer.",
+            benefit: "The Prophet SAW said: 'Make Witr the last of your prayers at night.' (Bukhari & Muslim).",
+            source: "Sahih al-Bukhari, No. 998"
+          },
+          syuruk: {
+            desc: "Sunrise marks the moment the upper limb of the sun appears. Prayer is prohibited at this exact moment.",
+            benefit: "Sitting in remembrance of Allah until sunrise, followed by Dhuha prayer, carries the reward of Hajj and Umrah.",
+            source: "Brunei State Mufti Fatwa Office Guidance"
+          },
+          duha: {
+            desc: "Dhuha prayer time spans from after sunrise until shortly before Zuhr.",
+            benefit: "Performing Dhuha suffices as charity for every joint in the human body (Sahih Muslim).",
+            source: "Sahih Muslim, No. 720"
+          },
+          imsak: {
+            desc: "Imsak serves as a precautionary buffer (~10 minutes before Fajr) to finish Sahur.",
+            benefit: "Ensures believers finish eating and drinking with certainty before the Fajr call to prayer.",
+            source: "KHEU Brunei Official Imsakiah Guide"
+          }
+        }
       }
     };
 
@@ -256,6 +352,34 @@ Description: Fixed dynamic visuals toggle logic and state synchronization. Preci
       return adjusted;
     }
 
+    // INTERACTIVE MODAL CONTROLS
+    function openPrayerModal(key) {
+      const t = I18N[currentLang];
+      const prayerName = t.prayers[key];
+      const detail = t.details[key];
+      const adjustedTimes = getAdjustedSchedule();
+      const timeStr = minutesToDisplay(adjustedTimes[key]);
+
+      document.getElementById("modal-title").textContent = prayerName + " (" + timeStr + ")";
+      
+      let bodyHtml = 
+        '<p class="modal-desc"><strong>Waktu:</strong> ' + timeStr + '</p>' +
+        '<p class="modal-desc">' + detail.desc + '</p>' +
+        '<div class="modal-benefit-box">' +
+          '<strong>Kelebihan / Fadilat:</strong><br>' + detail.benefit +
+        '</div>' +
+        '<p class="modal-source"><strong>Sumber Rujukan:</strong> ' + detail.source + '</p>';
+
+      document.getElementById("modal-body-content").innerHTML = bodyHtml;
+      document.getElementById("info-modal").classList.add("is-visible");
+    }
+
+    function closeModal(event) {
+      if (!event || event.target.id === "info-modal" || event.target.classList.contains("modal-close-btn")) {
+        document.getElementById("info-modal").classList.remove("is-visible");
+      }
+    }
+
     function renderPrayerList(adjustedTimes, activeKey) {
       const list = document.getElementById("prayer-list-container");
       if (!list) return;
@@ -288,6 +412,9 @@ Description: Fixed dynamic visuals toggle logic and state synchronization. Preci
         } else if (prayerMins < currentMinutes) {
           row.classList.add("is-past");
         }
+
+        // Add interactive click listener to show modal details
+        row.onclick = () => openPrayerModal(item.key);
 
         let badgesHtml = '';
         if (item.badges) {
