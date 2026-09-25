@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 9.0.0
-Description: Hardcoded badge arrays to prevent JSON crashes, and pure text button toggles.
+Version: 10.0.0
+Description: Pull-to-refresh logic injected, About modal bindings added, and promise-based data fetching.
 */
 
 if ('serviceWorker' in navigator) {
@@ -35,13 +35,20 @@ const I18N = {
     localeDate: "ms-MY",
     yesterdaySuffix: "(Malam Tadi)",
     tomorrowSuffix: "(Esok)",
+    ptrPull: "Tarik ke bawah...",
+    ptrRelease: "Lepaskan untuk kemas kini",
+    ptrRefreshing: "Menyegarkan...",
     districts: [
       { val: 0, text: "Brunei-Muara" },
       { val: 3, text: "Belait (+3 min)" },
       { val: 1, text: "Tutong (+1 min)" },
       { val: 0, text: "Temburong" }
     ],
-    prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
+    prayers: {
+      imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha",
+      zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'"
+    },
+    fiqh: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir" },
     details: {
       subuh: { desc: "Solat Sunat Qabliyah Subuh amat dituntut.", benefit: "'Dua rakaat Fajar lebih baik dari dunia dan seisinya' (HR. Muslim).", source: "Hadis Sahih Muslim, No. 725" },
       zuhur: { desc: "Bermula bila matahari tergelincir dari puncak langit.", benefit: "Allah haramkan api neraka bagi yang memelihara 4 rakaat sebelum dan selepas Zuhur.", source: "Sunan Tirmizi, No. 428" },
@@ -61,13 +68,20 @@ const I18N = {
     localeDate: "en-GB",
     yesterdaySuffix: "(Last Night)",
     tomorrowSuffix: "(Tomorrow)",
+    ptrPull: "Pull down to refresh...",
+    ptrRelease: "Release to update",
+    ptrRefreshing: "Refreshing...",
     districts: [
       { val: 0, text: "Brunei-Muara" },
       { val: 3, text: "Belait (+3 min)" },
       { val: 1, text: "Tutong (+1 min)" },
       { val: 0, text: "Temburong" }
     ],
-    prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
+    prayers: {
+      imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha",
+      zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'"
+    },
+    fiqh: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir" },
     details: {
       subuh: { desc: "Fajr marks the true dawn light on the horizon.", benefit: "'Two rak'ahs before Fajr are better than the entire world' (Sahih Muslim).", source: "Sahih Muslim, No. 725" },
       zuhur: { desc: "Starts after the sun passes its highest point.", benefit: "Maintaining Sunnah prayers around Zuhr shields against the Hellfire.", source: "Sunan Tirmidhi, No. 428" },
@@ -83,7 +97,10 @@ const I18N = {
 
 const ALL_KEYS = ["imsak", "subuh", "syuruk", "duha", "zuhur", "asar", "maghrib", "isya"];
 
-let cachedSchedule = { imsak: "04:42", subuh: "04:52", syuruk: "06:09", duha: "06:31", zuhur: "12:13", asar: "15:22", maghrib: "18:15", isya: "19:24" };
+let cachedSchedule = {
+  imsak: "04:42", subuh: "04:52", syuruk: "06:09", duha: "06:31",
+  zuhur: "12:13", asar: "15:22", maghrib: "18:15", isya: "19:24"
+};
 let hijrahString = "13 Rabiulakhir 1448 H";
 
 function timeStringToMinutes(str) {
@@ -175,6 +192,7 @@ function getAdjustedSchedule() {
   return adjusted;
 }
 
+// MODAL CONTROLS
 function openPrayerModal(key) {
   vibrateTap();
   const t = I18N[currentLang];
@@ -208,6 +226,20 @@ function closeModal(event) {
   }
 }
 
+function openAboutModal() {
+  vibrateTap();
+  document.getElementById("about-title").textContent = currentLang === 'ms' ? "Maklumat Aplikasi" : "App Information";
+  const modal = document.getElementById("about-modal");
+  if (modal) modal.classList.add("is-visible");
+}
+
+function closeAboutModal(event) {
+  if (!event || event.target.id === "about-modal" || event.target.classList.contains("modal-close-btn")) {
+    const modal = document.getElementById("about-modal");
+    if (modal) modal.classList.remove("is-visible");
+  }
+}
+
 function renderPrayerList(adjustedTimes, activeKey) {
   const list = document.getElementById("prayer-list-container");
   if (!list) return;
@@ -215,9 +247,7 @@ function renderPrayerList(adjustedTimes, activeKey) {
 
   const now = new Date();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
-  const t = I18N[currentLang];
 
-  // Crash-Proof Hardcoded Fiqh Badges
   const sequence = [
     { key: "imsak", type: "secondary" },
     { key: "subuh", type: "fardhu", badges: [{ text: "Qabliyyah &#10003;", type: "is-ok" }, { text: "Ba'diyyah &#10007;", type: "is-haram" }] },
@@ -234,7 +264,7 @@ function renderPrayerList(adjustedTimes, activeKey) {
     row.className = "prayer-row is-" + item.type;
 
     const prayerMins = adjustedTimes[item.key];
-    const prayerName = t.prayers[item.key];
+    const prayerName = I18N[currentLang].prayers[item.key];
 
     if (item.key === activeKey) {
       row.classList.add("is-active");
@@ -429,7 +459,8 @@ function fetchRemoteData() {
   const year = now.getFullYear();
   const dateKey = day + "-" + month + "-" + year;
 
-  fetch(GITHUB_JSON_URL)
+  // Returning the fetch promise for Pull-to-Refresh sync
+  return fetch(GITHUB_JSON_URL)
     .then(res => { if (!res.ok) throw new Error(); return res.json(); })
     .then(data => {
       if (data && data[dateKey]) {
@@ -448,6 +479,62 @@ function fetchRemoteData() {
     .catch(() => console.warn("Using offline fallback schedule"));
 }
 
+function initPullToRefresh() {
+  const list = document.getElementById("prayer-list-container");
+  const ptr = document.getElementById("ptr-indicator");
+  if (!list || !ptr) return;
+
+  let startY = 0;
+  let isPulling = false;
+
+  list.addEventListener('touchstart', (e) => {
+    if (list.scrollTop === 0) {
+      startY = e.touches[0].clientY;
+      isPulling = true;
+      ptr.style.transition = 'none';
+    }
+  }, { passive: true });
+
+  list.addEventListener('touchmove', (e) => {
+    if (!isPulling) return;
+    const currentY = e.touches[0].clientY;
+    const dist = currentY - startY;
+    
+    if (dist > 0 && list.scrollTop === 0) {
+      let ptrHeight = Math.min(dist * 0.4, 65);
+      ptr.style.height = ptrHeight + 'px';
+      
+      if (ptrHeight >= 55) {
+        ptr.innerHTML = I18N[currentLang].ptrRelease;
+      } else {
+        ptr.innerHTML = I18N[currentLang].ptrPull;
+      }
+    }
+  }, { passive: true });
+
+  list.addEventListener('touchend', () => {
+    if (!isPulling) return;
+    isPulling = false;
+    const currentHeight = parseInt(ptr.style.height || '0');
+    
+    ptr.style.transition = 'height 0.3s ease';
+    
+    if (currentHeight >= 55) {
+      ptr.style.height = '40px';
+      ptr.innerHTML = `<span class="ptr-spinner"></span> ${I18N[currentLang].ptrRefreshing}`;
+      vibrateTap();
+      
+      fetchRemoteData().then(() => {
+        setTimeout(() => { ptr.style.height = '0px'; }, 600);
+      }).catch(() => {
+        setTimeout(() => { ptr.style.height = '0px'; }, 600);
+      });
+    } else {
+      ptr.style.height = '0px';
+    }
+  });
+}
+
 function initApp() {
   const toggleBtn = document.getElementById('visuals-toggle');
   if (toggleBtn) {
@@ -456,6 +543,7 @@ function initApp() {
   applyVisualState();
   setLanguage("ms");
   fetchRemoteData();
+  initPullToRefresh();
   setInterval(updateTick, 1000);
 }
 
