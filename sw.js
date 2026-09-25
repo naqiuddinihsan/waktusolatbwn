@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 13.0.0
-Description: Network-first service worker to instantly sync the SVG PTR and Gradient Masking.
+Version: 1.0.12
+Description: Network-first service worker to instantly sync the Wake Lock API, Android fixes, and URL updates.
 */
 
-const CACHE_NAME = 'waktu-solat-v13.0.0';
+const CACHE_NAME = 'waktu-solat-v1.0.12';
 const ASSETS = [
   './',
   './index.html',
