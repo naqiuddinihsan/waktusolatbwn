@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 7.0.0
-Description: Added landscape Nightstand Mode container and tactile UI elements.
+Version: 8.0.0
+Description: Fixed inline bindings. Clean Nightstand mode container.
 -->
 <!DOCTYPE html>
 <html lang="ms">
@@ -33,7 +33,6 @@ Description: Added landscape Nightstand Mode container and tactile UI elements.
     <div class="cloud c3"></div>
   </div>
 
-  <!-- Primary Application Wrapper -->
   <div class="app-wrapper">
     <header class="header-bar">
       <div class="header-top">
@@ -55,7 +54,7 @@ Description: Added landscape Nightstand Mode container and tactile UI elements.
         </div>
 
         <div class="controls-cluster">
-          <button class="icon-btn" id="visuals-toggle" onclick="toggleVisuals()">🌙</button>
+          <button class="icon-btn" id="visuals-toggle">🌙</button>
           <div class="lang-switcher">
             <button id="lang-btn-ms" class="lang-btn active" onclick="setLanguage('ms')">BM</button>
             <button id="lang-btn-en" class="lang-btn" onclick="setLanguage('en')">EN</button>
@@ -99,7 +98,6 @@ Description: Added landscape Nightstand Mode container and tactile UI elements.
     </footer>
   </div>
 
-  <!-- Interactive Modal -->
   <div class="modal-backdrop" id="info-modal" onclick="closeModal(event)">
     <div class="modal-card" onclick="event.stopPropagation()">
       <div class="modal-header">
@@ -112,7 +110,7 @@ Description: Added landscape Nightstand Mode container and tactile UI elements.
 
   <!-- LANDSCAPE NIGHTSTAND MODE -->
   <div id="nightstand-mode">
-    <div id="ns-time">00:00</div>
+    <div id="ns-time">00<span class="blink-colon">:</span>00</div>
     <div id="ns-date">-</div>
     <div id="ns-next">-</div>
   </div>
