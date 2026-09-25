@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 5.3.0
-Description: Fully cleaned HTML structure with duplicate status bar tags removed. Paired with styles.css for seamless edge-to-edge iOS PWA rendering.
+Version: 5.5.0
+Description: Precision celestial engine mapped directly to daily prayer intervals (Subuh/Maghrib arcs). Seamless viewport scaling.
 -->
 <!DOCTYPE html>
 <html lang="ms">
@@ -327,6 +327,7 @@ Description: Fully cleaned HTML structure with duplicate status bar tags removed
       return { active: activeItem, next: nextItem, currentMinutes: currentMins, currentSeconds: currentSecs };
     }
 
+    // PRECISION CELESTIAL ENGINE MAPPED TO PRAYER TIMES
     function updateSkyVisuals(adjustedTimes, currentMins) {
       const skyBg = document.getElementById("sky-bg");
       const celestial = document.getElementById("celestial-body");
@@ -342,7 +343,11 @@ Description: Fully cleaned HTML structure with duplicate status bar tags removed
       }
 
       const subuhMins = adjustedTimes.subuh;
+      const syurukMins = adjustedTimes.syuruk;
+      const zuhurMins = adjustedTimes.zuhur;
+      const asarMins = adjustedTimes.asar;
       const maghribMins = adjustedTimes.maghrib;
+      const isyaMins = adjustedTimes.isya;
       
       let isDay = currentMins >= subuhMins && currentMins < maghribMins;
       celestial.style.opacity = "1";
@@ -350,23 +355,34 @@ Description: Fully cleaned HTML structure with duplicate status bar tags removed
       if (isDay) {
         if (cloudsLayer) cloudsLayer.style.opacity = "0.7"; 
         
-        let dayProgress = (currentMins - subuhMins) / (maghribMins - subuhMins);
-        celestial.style.background = "radial-gradient(circle, #fffdf2 0%, #ffe484 50%, transparent 100%)";
-        celestial.style.boxShadow = "0 0 40px 20px rgba(255, 228, 132, 0.4)";
-        celestial.style.left = (10 + (dayProgress * 80)) + "vw";
-        let heightMultiplier = Math.sin(dayProgress * Math.PI); 
-        celestial.style.top = (85 - (heightMultiplier * 60)) + "vh";
+        let dayDuration = maghribMins - subuhMins;
+        let dayProgress = (currentMins - subuhMins) / dayDuration;
 
-        if (dayProgress < 0.15) {
-          skyBg.style.background = "linear-gradient(to bottom, #0f172a 0%, #312e81 60%, #701a75 100%)"; 
-        } else if (dayProgress < 0.3) {
-          skyBg.style.background = "linear-gradient(to bottom, #1e3a8a 0%, #7c2d12 60%, #b45309 100%)"; 
-        } else if (dayProgress < 0.7) {
-          skyBg.style.background = "linear-gradient(to bottom, #0ea5e9 0%, #38bdf8 100%)"; 
-        } else if (dayProgress < 0.9) {
-          skyBg.style.background = "linear-gradient(to bottom, #1d4ed8 0%, #c2410c 100%)"; 
+        // Sun styling
+        celestial.style.background = "radial-gradient(circle, #fffdf2 0%, #ffe484 50%, transparent 100%)";
+        celestial.style.boxShadow = "0 0 50px 25px rgba(255, 228, 132, 0.45)";
+        celestial.style.left = (5 + (dayProgress * 90)) + "vw";
+        
+        // Parabolic Arc matching Prayer checkpoints (Subuh=horizon, Zuhur=zenith, Maghrib=horizon)
+        let heightMultiplier = Math.sin(dayProgress * Math.PI); 
+        celestial.style.top = (85 - (heightMultiplier * 70)) + "vh";
+
+        // Precise atmospheric transitions matching prayer blocks
+        if (currentMins >= subuhMins && currentMins < syurukMins) {
+          // Dawn / Fajr to Sunrise
+          skyBg.style.background = "linear-gradient(to bottom, #0f172a 0%, #312e81 50%, #db2777 100%)"; 
+        } else if (currentMins >= syurukMins && currentMins < zuhurMins) {
+          // Morning / Duha
+          skyBg.style.background = "linear-gradient(to bottom, #0284c7 0%, #38bdf8 60%, #bae6fd 100%)"; 
+        } else if (currentMins >= zuhurMins && currentMins < asarMins) {
+          // Midday Peak
+          skyBg.style.background = "linear-gradient(to bottom, #0369a1 0%, #0ea5e9 100%)"; 
+        } else if (currentMins >= asarMins && currentMins < maghribMins - 30) {
+          // Afternoon
+          skyBg.style.background = "linear-gradient(to bottom, #0284c7 0%, #60a5fa 100%)"; 
         } else {
-          skyBg.style.background = "linear-gradient(to bottom, #1e1b4b 0%, #831843 60%, #ea580c 100%)"; 
+          // Sunset / Maghrib approach
+          skyBg.style.background = "linear-gradient(to bottom, #4338ca 0%, #c2410c 65%, #9a3412 100%)"; 
         }
 
       } else {
@@ -376,16 +392,19 @@ Description: Fully cleaned HTML structure with duplicate status bar tags removed
         let elapsedNight = currentMins >= maghribMins ? (currentMins - maghribMins) : ((1440 - maghribMins) + currentMins);
         let nightProgress = elapsedNight / nightDuration;
 
-        celestial.style.background = "radial-gradient(circle, #ffffff 0%, #e2e8f0 50%, transparent 100%)";
-        celestial.style.boxShadow = "0 0 30px 10px rgba(255, 255, 255, 0.2)";
-        celestial.style.left = (10 + (nightProgress * 80)) + "vw";
+        // Moon styling
+        celestial.style.background = "radial-gradient(circle, #ffffff 0%, #cbd5e1 60%, transparent 100%)";
+        celestial.style.boxShadow = "0 0 35px 12px rgba(255, 255, 255, 0.25)";
+        celestial.style.left = (5 + (nightProgress * 90)) + "vw";
         let heightMultiplier = Math.sin(nightProgress * Math.PI); 
-        celestial.style.top = (75 - (heightMultiplier * 40)) + "vh";
+        celestial.style.top = (80 - (heightMultiplier * 50)) + "vh";
 
-        if (nightProgress < 0.1) {
-          skyBg.style.background = "linear-gradient(to bottom, #020617 0%, #172554 100%)"; 
+        if (currentMins >= maghribMins && currentMins < isyaMins) {
+          // Twilight / Dusk after Maghrib
+          skyBg.style.background = "linear-gradient(to bottom, #090d16 0%, #1e1b4b 60%, #31102b 100%)"; 
         } else {
-          skyBg.style.background = "linear-gradient(to bottom, #000000 0%, #020617 100%)"; 
+          // Deep Night
+          skyBg.style.background = "linear-gradient(to bottom, #020617 0%, #000000 100%)"; 
         }
       }
     }
