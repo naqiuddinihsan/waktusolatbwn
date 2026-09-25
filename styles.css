@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 3.7.0
-Description: "Uncondensed" UI update. Increased top safe-area buffer to permanently clear iOS notch blur. Expanded paddings, gaps, and typography for a spacious premium feel.
+Version: 3.7.1
+Description: Reverted to condensed layout for headers/hero, with specifically increased heights for the prayer list rows.
 */
 
 :root {
@@ -108,22 +108,22 @@ html, body {
   max-width: 600px;
   display: flex;
   flex-direction: column;
-  gap: 16px; /* UNCONDENSED: increased from 8px */
+  gap: 8px; /* REVERTED to condensed */
   z-index: 10;
   
-  /* FIXED: Greatly increased top padding for Notch/Island clearance */
-  padding-top: calc(env(safe-area-inset-top, 50px) + 24px); 
-  padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 40px); 
-  padding-left: max(16px, env(safe-area-inset-left));
-  padding-right: max(16px, env(safe-area-inset-right));
+  /* Kept large top padding for iPhone notch safety */
+  padding-top: calc(env(safe-area-inset-top, 50px) + 12px); 
+  padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 36px); 
+  padding-left: max(12px, env(safe-area-inset-left));
+  padding-right: max(12px, env(safe-area-inset-right));
 }
 
-/* Header */
+/* Condensed Header */
 .header-bar {
   display: flex;
   flex-direction: column;
-  gap: 12px; /* UNCONDENSED */
-  padding-bottom: 12px; /* UNCONDENSED */
+  gap: 8px; /* REVERTED */
+  padding-bottom: 6px; /* REVERTED */
   border-bottom: 1px solid var(--border-subtle);
   flex-shrink: 0; 
   width: 100%;
@@ -139,17 +139,17 @@ html, body {
 .brand-cluster {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .brand-logo {
-  width: 36px; /* Enlarged */
-  height: 36px;
-  border-radius: 10px;
+  width: 30px; /* REVERTED */
+  height: 30px;
+  border-radius: 8px;
   background: var(--bg-surface-elevated);
   backdrop-filter: blur(8px);
   border: 1px solid var(--border-subtle);
-  padding: 5px;
+  padding: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -162,7 +162,7 @@ html, body {
 }
 
 .header-title-box h1 {
-  font-size: 1.2rem; /* Enlarged */
+  font-size: 1.05rem; /* REVERTED */
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--text-primary);
@@ -173,7 +173,7 @@ html, body {
 
 .controls-cluster {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
 }
 
@@ -182,13 +182,13 @@ html, body {
   backdrop-filter: blur(8px);
   border: 1px solid var(--border-subtle);
   color: var(--text-primary);
-  border-radius: 8px;
-  width: 30px; /* Enlarged */
-  height: 30px;
+  border-radius: 6px;
+  width: 26px; /* REVERTED */
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 0.85rem;
   cursor: pointer;
 }
 
@@ -197,18 +197,18 @@ html, body {
   background-color: var(--bg-surface);
   backdrop-filter: blur(8px);
   border: 1px solid var(--border-subtle);
-  border-radius: 8px;
-  padding: 3px;
+  border-radius: 6px;
+  padding: 2px;
 }
 
 .lang-btn {
   background: none;
   border: none;
   color: var(--text-muted);
-  font-size: 0.75rem; /* Enlarged */
+  font-size: 0.65rem; /* REVERTED */
   font-weight: 600;
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 4px 6px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
@@ -223,14 +223,14 @@ html, body {
   align-items: center;
   background: var(--bg-surface);
   backdrop-filter: blur(8px);
-  padding: 6px 12px; /* UNCONDENSED */
-  border-radius: 8px;
+  padding: 4px 10px; /* REVERTED */
+  border-radius: 6px;
   border: 1px solid var(--border-subtle);
   width: 100%;
 }
 
 .date-text {
-  font-size: 0.8rem;
+  font-size: 0.7rem; /* REVERTED */
   font-weight: 500;
   color: var(--text-secondary);
   white-space: nowrap;
@@ -248,10 +248,10 @@ html, body {
   background-color: transparent;
   border: 1px solid var(--border-active);
   color: var(--text-primary);
-  font-size: 0.75rem; /* Enlarged */
+  font-size: 0.65rem; /* REVERTED */
   font-weight: 600;
-  padding: 4px 22px 4px 8px;
-  border-radius: 6px;
+  padding: 2px 18px 2px 6px;
+  border-radius: 4px;
   outline: none;
   cursor: pointer;
   font-family: var(--font-stack);
@@ -261,25 +261,25 @@ html, body {
 
 .district-select-wrapper::after {
   content: "▼";
-  font-size: 0.5rem;
+  font-size: 0.45rem;
   color: var(--text-primary);
   position: absolute;
-  right: 8px;
+  right: 6px;
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
 }
 
-/* Hero Section */
+/* Condensed Hero Section */
 .hero-tracker {
   background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(10, 10, 10, 0.8) 100%);
   backdrop-filter: blur(16px);
   border: 1px solid var(--border-subtle);
-  border-radius: 16px;
-  padding: 20px 24px; /* UNCONDENSED */
+  border-radius: 12px;
+  padding: 12px 16px; /* REVERTED */
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px; /* REVERTED */
   position: relative;
   overflow: hidden;
   flex-shrink: 0; 
@@ -291,7 +291,7 @@ html, body {
   position: absolute;
   top: 0;
   right: 0;
-  width: 180px;
+  width: 150px;
   height: 100%;
   background: radial-gradient(circle at top right, var(--accent-glow) 0%, transparent 80%);
   pointer-events: none;
@@ -300,12 +300,12 @@ html, body {
 .hero-top-row {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0px;
   z-index: 1;
 }
 
 .hero-now-label {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -313,30 +313,30 @@ html, body {
 }
 
 .hero-name {
-  font-size: 2.1rem; /* Breathes better */
+  font-size: 1.8rem; /* REVERTED */
   font-weight: 800;
   letter-spacing: -0.02em;
   color: #ffffff;
-  line-height: 1.1;
+  line-height: 1;
 }
 
 .hero-time {
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   color: var(--text-secondary);
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .progress-container {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   z-index: 1;
-  margin-top: 6px;
+  margin-top: 2px;
 }
 
 .progress-countdown {
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--text-primary);
@@ -344,7 +344,7 @@ html, body {
 
 .progress-track {
   width: 100%;
-  height: 8px; /* Slightly thicker */
+  height: 6px;
   background-color: var(--border-subtle);
   border-radius: 999px;
   overflow: hidden;
@@ -355,7 +355,7 @@ html, body {
   width: 0%;
   background: var(--accent-primary);
   border-radius: 999px;
-  box-shadow: 0 0 12px var(--accent-primary);
+  box-shadow: 0 0 10px var(--accent-primary);
   transition: width 0.8s ease;
 }
 
@@ -363,7 +363,7 @@ html, body {
 .prayer-list {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* UNCONDENSED */
+  gap: 8px; /* Tighter gap to offset taller rows */
   width: 100%;
   flex-grow: 1; 
   overflow-y: auto; 
@@ -374,29 +374,30 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-radius: 12px;
+  border-radius: 10px;
   transition: all 0.2s ease;
   width: 100%;
   flex-shrink: 0; 
   backdrop-filter: blur(12px);
 }
 
+/* INCREASED ROW HEIGHTS */
 .prayer-row.is-fardhu {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  padding: 16px 18px; /* UNCONDENSED: Taller cards for Fardhu */
+  padding: 16px 14px; /* Taller top/bottom padding */
 }
 
 .prayer-row.is-secondary {
   background: rgba(10, 10, 10, 0.4);
   border: 1px dashed var(--border-subtle);
-  padding: 10px 18px; /* UNCONDENSED */
+  padding: 12px 14px; /* Taller top/bottom padding */
 }
 
 .prayer-row.is-active {
   background: linear-gradient(90deg, var(--bg-surface-active) 0%, rgba(10,10,10,0.6) 100%);
   border: 1px solid var(--border-active);
-  box-shadow: inset 4px 0 0 var(--accent-primary);
+  box-shadow: inset 3px 0 0 var(--accent-primary);
 }
 
 .prayer-row.is-past {
@@ -404,8 +405,8 @@ html, body {
   filter: grayscale(1);
 }
 
-.row-left-fardhu { width: 90px; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
-.row-left-sec { width: 90px; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+.row-left-fardhu { width: 80px; font-size: 1.05rem; font-weight: 700; color: var(--text-primary); }
+.row-left-sec { width: 80px; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
 
 .prayer-row.is-active .row-left-fardhu,
 .prayer-row.is-active .row-left-sec { color: var(--accent-primary); }
@@ -413,17 +414,17 @@ html, body {
 .row-mid {
   flex: 1;
   display: flex;
-  gap: 6px;
+  gap: 4px;
   flex-wrap: wrap;
   justify-content: flex-start;
-  padding: 0 8px;
+  padding: 0 4px;
 }
 
 .fiqh-badge {
   font-size: 0.6rem;
   font-weight: 600;
-  padding: 4px 8px; /* UNCONDENSED */
-  border-radius: 6px;
+  padding: 3px 6px;
+  border-radius: 4px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -431,7 +432,7 @@ html, body {
 .fiqh-badge.is-ok { background-color: var(--badge-ok-bg); color: var(--badge-ok-color); }
 .fiqh-badge.is-haram { background-color: var(--badge-haram-bg); color: var(--badge-haram-color); }
 
-.row-right-fardhu { font-size: 1.2rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-primary); text-align: right; }
+.row-right-fardhu { font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-primary); text-align: right; }
 .row-right-sec { font-size: 0.95rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; }
 .prayer-row.is-active .row-right-fardhu, .prayer-row.is-active .row-right-sec { color: #ffffff; }
 
@@ -445,7 +446,7 @@ html, body {
   justify-content: center;
   align-items: center;
   gap: 12px;
-  font-size: 0.7rem; /* slightly larger */
+  font-size: 0.65rem;
   color: var(--text-muted);
   z-index: 20;
   
