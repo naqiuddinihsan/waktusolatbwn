@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 8.3.0
-Description: Final verified production markup.
+Version: 10.0.0
+Description: Integrated Pull-to-Refresh container, Info vector button, and About Modal.
 -->
 <!DOCTYPE html>
 <html lang="ms">
@@ -54,7 +54,7 @@ Description: Final verified production markup.
         </div>
 
         <div class="controls-cluster">
-          <button class="icon-btn" id="visuals-toggle" type="button">🌙</button>
+          <button class="icon-btn" id="visuals-toggle" type="button">BG OFF</button>
           <div class="lang-switcher">
             <button id="lang-btn-ms" class="lang-btn active" onclick="setLanguage('ms')" type="button">BM</button>
             <button id="lang-btn-en" class="lang-btn" onclick="setLanguage('en')" type="button">EN</button>
@@ -89,15 +89,24 @@ Description: Final verified production markup.
       </div>
     </section>
 
+    <!-- PULL TO REFRESH INDICATOR -->
+    <div id="ptr-indicator" class="ptr-container"></div>
+
     <main class="prayer-list" id="prayer-list-container"></main>
 
+    <!-- HIDDEN COPYRIGHT / INFO BUTTON -->
     <footer class="site-footer">
-      <a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank" rel="noopener noreferrer">Sumber Data: KHEU</a>
-      <span class="footer-divider"></span>
-      <a href="https://github.com/naqiuddinihsan" target="_blank" rel="noopener noreferrer">&copy; Qwamii / Naqiuddin Ihsan</a>
+      <button class="info-btn" onclick="openAboutModal()" aria-label="Informasi Aplikasi" type="button">
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+      </button>
     </footer>
   </div>
 
+  <!-- PRAYER INFO MODAL -->
   <div class="modal-backdrop" id="info-modal" onclick="closeModal(event)">
     <div class="modal-card" onclick="event.stopPropagation()">
       <div class="modal-header">
@@ -105,6 +114,21 @@ Description: Final verified production markup.
         <button class="modal-close-btn" onclick="closeModal()" type="button">&times;</button>
       </div>
       <div class="modal-body" id="modal-body-content"></div>
+    </div>
+  </div>
+
+  <!-- ABOUT / COPYRIGHT MODAL -->
+  <div class="modal-backdrop" id="about-modal" onclick="closeAboutModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 id="about-title">Maklumat Aplikasi</h3>
+        <button class="modal-close-btn" onclick="closeAboutModal()" type="button">&times;</button>
+      </div>
+      <div class="modal-body about-body">
+        <p><strong>Sumber Data Rasmi:</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">Kementerian Hal Ehwal Ugama (KHEU) Brunei</a></p>
+        <p><strong>Dibangunkan oleh:</strong><br><a href="https://github.com/naqiuddinihsan" target="_blank">Qwamii / Naqiuddin Ihsan</a></p>
+        <p class="about-version">Versi 10.0.0</p>
+      </div>
     </div>
   </div>
 
