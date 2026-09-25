@@ -1,6 +1,6 @@
 {
   "name": "Waktu Solat BWN",
-  "short_name": "Waktu BWN",
+  "short_name": "Waktu Solat BWN",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#050505",
