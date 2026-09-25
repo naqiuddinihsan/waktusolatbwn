@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 13.0.0
-Description: Added linear-gradient CSS mask to prayer list for seamless fade (no harsh cuts during PTR or scroll).
+Version: 1.0.12
+Description: Tabular-nums fixed width for Nightstand countdown. Increased max-height media query for Android landscape support.
 */
 
 :root {
@@ -101,18 +101,15 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 .progress-track { width: 100%; height: 6px; background-color: var(--border-subtle); border-radius: 999px; overflow: hidden; }
 .progress-fill { height: 100%; width: 0%; background: var(--accent-primary); border-radius: 999px; box-shadow: 0 0 10px var(--accent-primary); transition: width 0.8s ease; }
 
-/* SVG PULL TO REFRESH */
 .ptr-container { width: 100%; height: 0px; overflow: hidden; display: flex; align-items: center; justify-content: center; pointer-events: none; }
 .ptr-spinner { width: 18px; height: 18px; border: 2.5px solid var(--text-secondary); border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; display: block; margin: auto; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
-/* GRADIENT MASK: Creates seamless fade for the list */
 .prayer-list {
   display: flex; flex-direction: column; gap: 8px; width: 100%; flex-grow: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0px, black 12px, black calc(100% - 12px), transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0px, black 12px, black calc(100% - 12px), transparent 100%);
-  padding-top: 4px; padding-bottom: 4px;
-  scrollbar-width: none; /* Hide scrollbar for clean fade */
+  padding-top: 4px; padding-bottom: 4px; scrollbar-width: none;
 }
 .prayer-list::-webkit-scrollbar { display: none; }
 
@@ -168,9 +165,12 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 .blink-colon { animation: blink 1s step-start infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 #ns-date { font-size: 5vmin; color: var(--text-secondary); margin-top: 1vh; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
-#ns-next { font-size: 6vmin; color: var(--text-primary); margin-top: 3vh; font-weight: 600; background: var(--bg-surface-elevated); padding: 1.5vh 4vw; border-radius: 99px; border: 1px solid var(--border-subtle); }
 
-@media (orientation: landscape) and (max-height: 500px) {
+/* FIX: Tabular Nums for Nightstand Countdown */
+#ns-next { font-size: 6vmin; color: var(--text-primary); margin-top: 3vh; font-weight: 600; background: var(--bg-surface-elevated); padding: 1.5vh 4vw; border-radius: 99px; border: 1px solid var(--border-subtle); font-variant-numeric: tabular-nums; }
+
+/* FIX: Android max-height increased to 600px for landscape */
+@media (orientation: landscape) and (max-height: 600px) {
   .app-wrapper, .modal-backdrop, #sky-bg, #celestial-body, #clouds-layer { display: none !important; }
   #nightstand-mode { display: flex; }
 }
