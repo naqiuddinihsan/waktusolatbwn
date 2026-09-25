@@ -1,4 +1,4 @@
-const CACHE_NAME = 'waktu-solat-v7.0.0';
+const CACHE_NAME = 'waktu-solat-v8.0.0';
 const ASSETS = [
   './',
   './index.html',
@@ -9,7 +9,6 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
   self.skipWaiting(); 
 });
 
@@ -26,8 +25,16 @@ self.addEventListener('activate', (e) => {
   return self.clients.claim();
 });
 
+// NETWORK-FIRST STRATEGY: Forces your iPhone to fetch the latest fixes immediately
 self.addEventListener('fetch', (e) => {
   e.respondWith(
-    caches.match(e.request).then((response) => response || fetch(e.request))
+    fetch(e.request)
+      .then((networkResponse) => {
+        return caches.open(CACHE_NAME).then((cache) => {
+          cache.put(e.request, networkResponse.clone());
+          return networkResponse;
+        });
+      })
+      .catch(() => caches.match(e.request))
   );
 });
