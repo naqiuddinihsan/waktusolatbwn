@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 13.0.0
-Description: SVG Vector-only Pull-to-Refresh (text removed), completely translated Modals.
+Version: 1.0.12
+Description: Screen Wake Lock API for Always-On Display, updated developer URLs, tabular countdowns.
 */
 
 if ('serviceWorker' in navigator) {
@@ -14,8 +14,26 @@ const GITHUB_JSON_URL = "https://raw.githubusercontent.com/naqiuddinihsan/waktu-
 
 let currentLang = "ms";
 let visualsEnabled = localStorage.getItem('bwn_visuals') === 'true';
+let wakeLock = null;
 
-// SVG Vectors for PTR
+// REQUEST ALWAYS-ON DISPLAY WAKE LOCK
+async function requestWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      wakeLock = await navigator.wakeLock.request('screen');
+    }
+  } catch (err) {
+    console.warn('Wake Lock failed:', err.message);
+  }
+}
+
+// Re-acquire Wake Lock when app becomes visible
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && wakeLock !== null) {
+    requestWakeLock();
+  }
+});
+
 const SVG_PULL = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--text-secondary)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s;"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
 const SVG_RELEASE = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--text-secondary)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s; transform: rotate(180deg);"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
 const SVG_SPINNER = `<span class="ptr-spinner"></span>`;
@@ -56,7 +74,7 @@ const I18N = {
       sourceLabel: "Sumber Data Rasmi:",
       sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei",
       devLabel: "Dibangunkan oleh:",
-      version: "Versi 13.0.0"
+      version: "Versi 1.0.12"
     },
     details: {
       subuh: { desc: "Solat Sunat Qabliyah Subuh amat dituntut.", benefit: "'Dua rakaat Fajar lebih baik dari dunia dan seisinya' (HR. Muslim).", source: "Hadis Sahih Muslim, No. 725" },
@@ -93,7 +111,7 @@ const I18N = {
       sourceLabel: "Official Data Source:",
       sourceName: "Ministry of Religious Affairs (MORA) Brunei",
       devLabel: "Developed by:",
-      version: "Version 13.0.0"
+      version: "Version 1.0.12"
     },
     details: {
       subuh: { desc: "Fajr marks the true dawn light on the horizon.", benefit: "'Two rak'ahs before Fajr are better than the entire world' (Sahih Muslim).", source: "Sahih Muslim, No. 725" },
@@ -194,7 +212,7 @@ function setLanguage(lang) {
   if (aboutBody) {
     aboutBody.innerHTML = `
       <p><strong>${t.about.sourceLabel}</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">${t.about.sourceName}</a></p>
-      <p><strong>${t.about.devLabel}</strong><br><a href="https://github.com/naqiuddinihsan" target="_blank">Qwamii / Naqiuddin Ihsan</a></p>
+      <p><strong>${t.about.devLabel}</strong><br><a href="https://www.qwamii.com" target="_blank">Qwamii</a> / <a href="https://www.behance.net/naqiuddinihsan" target="_blank">Naqiuddin Ihsan</a></p>
       <p class="about-version">${t.about.version}</p>
     `;
   }
@@ -520,7 +538,6 @@ function initPullToRefresh() {
       let ptrHeight = Math.min(dist * 0.4, 65);
       ptr.style.height = ptrHeight + 'px';
       
-      // Vector arrow flips dynamically
       if (ptrHeight >= 55) {
         ptr.innerHTML = SVG_RELEASE;
       } else {
@@ -584,6 +601,9 @@ function bindEvents() {
   document.querySelectorAll('.modal-card').forEach(card => {
     card.addEventListener('click', (e) => e.stopPropagation());
   });
+
+  // WAKE LOCK INITIALIZER ON FIRST TAP
+  document.addEventListener('click', requestWakeLock, { once: true });
 }
 
 function initApp() {
