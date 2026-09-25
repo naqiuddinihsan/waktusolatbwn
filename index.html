@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 11.0.0
-Description: Moved district selector to hero card, centered calendar, fixed info button bindings.
+Version: 12.0.0
+Description: Minimalist PTR container and dynamic translation hooks for modals.
 -->
 <!DOCTYPE html>
 <html lang="ms">
@@ -24,7 +24,6 @@ Description: Moved district selector to hero card, centered calendar, fixed info
 </head>
 <body>
 
-  <!-- Background Engine -->
   <div id="sky-bg"></div>
   <div id="celestial-body"></div>
   <div id="clouds-layer">
@@ -62,16 +61,14 @@ Description: Moved district selector to hero card, centered calendar, fixed info
         </div>
       </div>
 
-      <!-- CENTERED CALENDAR -->
       <div class="header-bottom" style="justify-content: center;">
         <span class="date-text" id="gregorian-date">-</span>
       </div>
     </header>
 
     <section class="hero-tracker">
-      <!-- DROPDOWN MOVED HERE -->
       <div class="hero-top-bar">
-        <div class="hero-now-label" id="ui-now-label">Sekarang:</div>
+        <div class="hero-now-label" id="ui-now-label">-</div>
         <div class="district-select-wrapper">
           <select class="district-select" id="district-select">
             <option value="0">Brunei-Muara</option>
@@ -91,12 +88,11 @@ Description: Moved district selector to hero card, centered calendar, fixed info
       </div>
     </section>
 
-    <!-- PULL TO REFRESH INDICATOR -->
+    <!-- Vector Only PULL TO REFRESH INDICATOR -->
     <div id="ptr-indicator" class="ptr-container"></div>
 
     <main class="prayer-list" id="prayer-list-container"></main>
 
-    <!-- INFO BUTTON -->
     <footer class="site-footer">
       <button class="info-btn" id="info-btn-trigger" aria-label="Informasi Aplikasi" type="button">
         <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -108,7 +104,6 @@ Description: Moved district selector to hero card, centered calendar, fixed info
     </footer>
   </div>
 
-  <!-- PRAYER INFO MODAL -->
   <div class="modal-backdrop" id="info-modal">
     <div class="modal-card" id="info-modal-card">
       <div class="modal-header">
@@ -119,22 +114,17 @@ Description: Moved district selector to hero card, centered calendar, fixed info
     </div>
   </div>
 
-  <!-- ABOUT / COPYRIGHT MODAL -->
+  <!-- ABOUT MODAL (Content injected via JS for translation) -->
   <div class="modal-backdrop" id="about-modal">
     <div class="modal-card" id="about-modal-card">
       <div class="modal-header">
-        <h3 id="about-title">Maklumat Aplikasi</h3>
+        <h3 id="about-title">-</h3>
         <button class="modal-close-btn" id="modal-close-btn-2" type="button">&times;</button>
       </div>
-      <div class="modal-body about-body">
-        <p><strong>Sumber Data Rasmi:</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">Kementerian Hal Ehwal Ugama (KHEU) Brunei</a></p>
-        <p><strong>Dibangunkan oleh:</strong><br><a href="https://github.com/naqiuddinihsan" target="_blank">Qwamii / Naqiuddin Ihsan</a></p>
-        <p class="about-version">Versi 11.0.0</p>
-      </div>
+      <div class="modal-body about-body" id="about-body-content"></div>
     </div>
   </div>
 
-  <!-- LANDSCAPE NIGHTSTAND MODE -->
   <div id="nightstand-mode">
     <div id="ns-time">00<span class="blink-colon">:</span>00</div>
     <div id="ns-date">-</div>
