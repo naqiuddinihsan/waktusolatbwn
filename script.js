@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 12.0.0
-Description: Vector-only Pull-to-Refresh, full UI translation binding, and unified I18N payloads.
+Version: 13.0.0
+Description: SVG Vector-only Pull-to-Refresh (text removed), completely translated Modals.
 */
 
 if ('serviceWorker' in navigator) {
@@ -15,10 +15,10 @@ const GITHUB_JSON_URL = "https://raw.githubusercontent.com/naqiuddinihsan/waktu-
 let currentLang = "ms";
 let visualsEnabled = localStorage.getItem('bwn_visuals') === 'true';
 
-// Pure SVG Strings for PTR
-const PTR_ARROW_DOWN = `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s;"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
-const PTR_ARROW_UP = `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s; transform: rotate(180deg);"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
-const PTR_SPINNER = `<span class="ptr-spinner"></span>`;
+// SVG Vectors for PTR
+const SVG_PULL = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--text-secondary)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s;"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
+const SVG_RELEASE = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--text-secondary)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s; transform: rotate(180deg);"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
+const SVG_SPINNER = `<span class="ptr-spinner"></span>`;
 
 function vibrateTap() {
   if (navigator.vibrate) {
@@ -56,7 +56,7 @@ const I18N = {
       sourceLabel: "Sumber Data Rasmi:",
       sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei",
       devLabel: "Dibangunkan oleh:",
-      version: "Versi 12.0.0"
+      version: "Versi 13.0.0"
     },
     details: {
       subuh: { desc: "Solat Sunat Qabliyah Subuh amat dituntut.", benefit: "'Dua rakaat Fajar lebih baik dari dunia dan seisinya' (HR. Muslim).", source: "Hadis Sahih Muslim, No. 725" },
@@ -93,7 +93,7 @@ const I18N = {
       sourceLabel: "Official Data Source:",
       sourceName: "Ministry of Religious Affairs (MORA) Brunei",
       devLabel: "Developed by:",
-      version: "Version 12.0.0"
+      version: "Version 13.0.0"
     },
     details: {
       subuh: { desc: "Fajr marks the true dawn light on the horizon.", benefit: "'Two rak'ahs before Fajr are better than the entire world' (Sahih Muslim).", source: "Sahih Muslim, No. 725" },
@@ -154,9 +154,8 @@ function handleDistrictChange() {
 
 function applyVisualState() {
   const toggleBtn = document.getElementById('visuals-toggle');
-  if (toggleBtn) {
-    toggleBtn.textContent = visualsEnabled ? "BG ON" : "BG OFF";
-  }
+  if (toggleBtn) toggleBtn.textContent = visualsEnabled ? "BG ON" : "BG OFF";
+  
   if (visualsEnabled) {
     document.body.classList.remove('visuals-off');
   } else {
@@ -190,7 +189,6 @@ function setLanguage(lang) {
   populateDistricts();
   if (sel) sel.selectedIndex = savedIndex > -1 ? savedIndex : 0;
 
-  // Sync About Modal Translations
   setText("about-title", t.about.title);
   const aboutBody = document.getElementById("about-body-content");
   if (aboutBody) {
@@ -216,7 +214,6 @@ function getAdjustedSchedule() {
   return adjusted;
 }
 
-// MODAL CONTROLS
 function openPrayerModal(key) {
   vibrateTap();
   const t = I18N[currentLang];
@@ -523,10 +520,11 @@ function initPullToRefresh() {
       let ptrHeight = Math.min(dist * 0.4, 65);
       ptr.style.height = ptrHeight + 'px';
       
+      // Vector arrow flips dynamically
       if (ptrHeight >= 55) {
-        ptr.innerHTML = PTR_ARROW_UP;
+        ptr.innerHTML = SVG_RELEASE;
       } else {
-        ptr.innerHTML = PTR_ARROW_DOWN;
+        ptr.innerHTML = SVG_PULL;
       }
     }
   }, { passive: true });
@@ -540,7 +538,7 @@ function initPullToRefresh() {
     
     if (currentHeight >= 55) {
       ptr.style.height = '40px';
-      ptr.innerHTML = PTR_SPINNER;
+      ptr.innerHTML = SVG_SPINNER;
       vibrateTap();
       
       fetchRemoteData().then(() => {
