@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 5.0.0
-Description: Clean-slate architecture using modern 100svh and flexbox layout. Eliminates black bars natively and maintains taller Fardhu rows.
+Version: 5.1.0
+Description: Seamless edge-to-edge layout. Root background flows behind the home indicator to permanently eliminate the bottom black bar.
 */
 
 :root {
@@ -37,11 +37,11 @@ Description: Clean-slate architecture using modern 100svh and flexbox layout. El
   touch-action: manipulation; 
 }
 
-/* Modern clean root sizing to prevent iOS WebKit rendering glitches */
+/* Forces root canvas to match app base color completely edge-to-edge */
 html {
   background-color: var(--bg-base);
   width: 100vw;
-  height: 100svh;
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -50,7 +50,7 @@ body {
   color: var(--text-primary);
   font-family: var(--font-stack);
   width: 100vw;
-  height: 100svh;
+  height: 100dvh;
   margin: 0;
   padding: 0;
   display: flex;
@@ -60,7 +60,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Background layers locked to viewport */
+/* Background layers pinned to screen */
 #sky-bg {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -68,7 +68,7 @@ body {
   transition: background 3s ease;
   background: var(--bg-base);
   width: 100vw;
-  height: 100svh;
+  height: 100dvh;
 }
 
 #celestial-body {
@@ -91,7 +91,7 @@ body {
   transition: opacity 2s ease;
   overflow: hidden;
   width: 100vw;
-  height: 100svh;
+  height: 100dvh;
 }
 
 .cloud {
@@ -112,18 +112,18 @@ body {
   100% { transform: translateX(calc(100vw + 400px)); }
 }
 
-/* App Wrapper handles safe-area padding gracefully */
+/* App Wrapper handles safe areas cleanly */
 .app-wrapper {
   width: 100%;
   max-width: 600px;
-  height: 100svh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   gap: 8px;
   z-index: 10;
   
   padding-top: calc(env(safe-area-inset-top, 40px) + 8px);
-  padding-bottom: calc(env(safe-area-inset-bottom, 12px) + 8px);
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
   padding-left: max(12px, env(safe-area-inset-left));
   padding-right: max(12px, env(safe-area-inset-right));
 }
@@ -446,7 +446,7 @@ body {
 .row-right-sec { font-size: 0.95rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; }
 .prayer-row.is-active .row-right-fardhu, .prayer-row.is-active .row-right-sec { color: #ffffff; }
 
-/* Seamless Footer */
+/* Seamless Footer with safe-area padding extending down naturally */
 .site-footer {
   display: flex;
   justify-content: center;
