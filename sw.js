@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 12.0.0
-Description: Network-first service worker to instantly sync the vector PTR and full English translations.
+Version: 13.0.0
+Description: Network-first service worker to instantly sync the SVG PTR and Gradient Masking.
 */
 
-const CACHE_NAME = 'waktu-solat-v12.0.0';
+const CACHE_NAME = 'waktu-solat-v13.0.0';
 const ASSETS = [
   './',
   './index.html',
