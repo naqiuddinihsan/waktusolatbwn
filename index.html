@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 5.6.0
-Description: Synchronized visual toggle state on boot. Precision celestial engine and touch-zoom disabled.
+Version: 5.7.0
+Description: Fixed dynamic visuals toggle logic and state synchronization. Precision celestial engine and touch-zoom disabled.
 -->
 <!DOCTYPE html>
 <html lang="ms">
@@ -117,13 +117,13 @@ Description: Synchronized visual toggle state on boot. Precision celestial engin
     let currentLang = "ms";
     let visualsEnabled = false; 
 
+    // Retrieve initial state safely
     if (localStorage.getItem('bwn_visuals') !== null) {
       visualsEnabled = localStorage.getItem('bwn_visuals') === 'true';
     } else {
       localStorage.setItem('bwn_visuals', 'false');
     }
 
-    // Synchronize UI button state on boot
     document.addEventListener('DOMContentLoaded', () => {
       const btn = document.getElementById('visuals-toggle');
       if (btn) btn.textContent = visualsEnabled ? "☀️" : "🌙";
@@ -221,7 +221,10 @@ Description: Synchronized visual toggle state on boot. Precision celestial engin
     function toggleVisuals() {
       visualsEnabled = !visualsEnabled;
       localStorage.setItem('bwn_visuals', visualsEnabled ? 'true' : 'false');
-      document.getElementById('visuals-toggle').textContent = visualsEnabled ? "☀️" : "🌙";
+      
+      const btn = document.getElementById('visuals-toggle');
+      if (btn) btn.textContent = visualsEnabled ? "☀️" : "🌙";
+      
       updateTick();
     }
 
