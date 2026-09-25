@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 8.3.0
-Description: Bulletproof dynamic background engine, tactile row feedback, modal details, and StandBy clock.
+Version: 9.0.0
+Description: Hardcoded badge arrays to prevent JSON crashes, and pure text button toggles.
 */
 
 if ('serviceWorker' in navigator) {
@@ -41,11 +41,7 @@ const I18N = {
       { val: 1, text: "Tutong (+1 min)" },
       { val: 0, text: "Temburong" }
     ],
-    prayers: {
-      imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha",
-      zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'"
-    },
-    fiqh: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir" },
+    prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
     details: {
       subuh: { desc: "Solat Sunat Qabliyah Subuh amat dituntut.", benefit: "'Dua rakaat Fajar lebih baik dari dunia dan seisinya' (HR. Muslim).", source: "Hadis Sahih Muslim, No. 725" },
       zuhur: { desc: "Bermula bila matahari tergelincir dari puncak langit.", benefit: "Allah haramkan api neraka bagi yang memelihara 4 rakaat sebelum dan selepas Zuhur.", source: "Sunan Tirmizi, No. 428" },
@@ -71,11 +67,7 @@ const I18N = {
       { val: 1, text: "Tutong (+1 min)" },
       { val: 0, text: "Temburong" }
     ],
-    prayers: {
-      imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha",
-      zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'"
-    },
-    fiqh: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir" },
+    prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
     details: {
       subuh: { desc: "Fajr marks the true dawn light on the horizon.", benefit: "'Two rak'ahs before Fajr are better than the entire world' (Sahih Muslim).", source: "Sahih Muslim, No. 725" },
       zuhur: { desc: "Starts after the sun passes its highest point.", benefit: "Maintaining Sunnah prayers around Zuhr shields against the Hellfire.", source: "Sunan Tirmidhi, No. 428" },
@@ -91,10 +83,7 @@ const I18N = {
 
 const ALL_KEYS = ["imsak", "subuh", "syuruk", "duha", "zuhur", "asar", "maghrib", "isya"];
 
-let cachedSchedule = {
-  imsak: "04:42", subuh: "04:52", syuruk: "06:09", duha: "06:31",
-  zuhur: "12:13", asar: "15:22", maghrib: "18:15", isya: "19:24"
-};
+let cachedSchedule = { imsak: "04:42", subuh: "04:52", syuruk: "06:09", duha: "06:31", zuhur: "12:13", asar: "15:22", maghrib: "18:15", isya: "19:24" };
 let hijrahString = "13 Rabiulakhir 1448 H";
 
 function timeStringToMinutes(str) {
@@ -136,7 +125,7 @@ function handleDistrictChange() {
 function applyVisualState() {
   const toggleBtn = document.getElementById('visuals-toggle');
   if (toggleBtn) {
-    toggleBtn.textContent = visualsEnabled ? "☀️" : "🌙";
+    toggleBtn.textContent = visualsEnabled ? "BG ON" : "BG OFF";
   }
   if (visualsEnabled) {
     document.body.classList.remove('visuals-off');
@@ -228,15 +217,16 @@ function renderPrayerList(adjustedTimes, activeKey) {
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
   const t = I18N[currentLang];
 
+  // Crash-Proof Hardcoded Fiqh Badges
   const sequence = [
     { key: "imsak", type: "secondary" },
-    { key: "subuh", type: "fardhu", badges: [{ text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" }, { text: t.fiqh.ba_diyyah + " &#10007;", type: "is-haram" }] },
+    { key: "subuh", type: "fardhu", badges: [{ text: "Qabliyyah &#10003;", type: "is-ok" }, { text: "Ba'diyyah &#10007;", type: "is-haram" }] },
     { key: "syuruk", type: "secondary" },
     { key: "duha", type: "secondary" },
-    { key: "zuhur", type: "fardhu", badges: [{ text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" }, { text: t.fiqh.ba_diyyah + " &#10003;", type: "is-ok" }] },
-    { key: "asar", type: "fardhu", badges: [{ text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" }, { text: t.fiqh.ba_diyyah + " &#10007;", type: "is-haram" }] },
-    { key: "maghrib", type: "fardhu", badges: [{ text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" }, { text: t.fiqh.ba_diyyah + " &#10003;", type: "is-ok" }] },
-    { key: "isya", type: "fardhu", badges: [{ text: t.fiqh.qabliyyah + " &#10003;", type: "is-ok" }, { text: t.fiqh.ba_diyyah + " &#10003;", type: "is-ok" }, { text: t.fiqh.witir + " &#10003;", type: "is-ok" }] }
+    { key: "zuhur", type: "fardhu", badges: [{ text: "Qabliyyah &#10003;", type: "is-ok" }, { text: "Ba'diyyah &#10003;", type: "is-ok" }] },
+    { key: "asar", type: "fardhu", badges: [{ text: "Qabliyyah &#10003;", type: "is-ok" }, { text: "Ba'diyyah &#10007;", type: "is-haram" }] },
+    { key: "maghrib", type: "fardhu", badges: [{ text: "Qabliyyah &#10003;", type: "is-ok" }, { text: "Ba'diyyah &#10003;", type: "is-ok" }] },
+    { key: "isya", type: "fardhu", badges: [{ text: "Qabliyyah &#10003;", type: "is-ok" }, { text: "Ba'diyyah &#10003;", type: "is-ok" }, { text: "Witir &#10003;", type: "is-ok" }] }
   ];
 
   sequence.forEach(function(item) {
