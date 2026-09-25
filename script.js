@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 10.0.0
-Description: Pull-to-refresh logic injected, About modal bindings added, and promise-based data fetching.
+Version: 11.0.0
+Description: Integrated Dhuha badge, pure JS event bindings to fix Info button blocking, and added Pull-to-Refresh.
 */
 
 if ('serviceWorker' in navigator) {
@@ -219,25 +219,22 @@ function openPrayerModal(key) {
   if (modal) modal.classList.add("is-visible");
 }
 
-function closeModal(event) {
-  if (!event || event.target.id === "info-modal" || event.target.classList.contains("modal-close-btn")) {
-    const modal = document.getElementById("info-modal");
-    if (modal) modal.classList.remove("is-visible");
-  }
-}
-
 function openAboutModal() {
   vibrateTap();
-  document.getElementById("about-title").textContent = currentLang === 'ms' ? "Maklumat Aplikasi" : "App Information";
+  const title = document.getElementById("about-title");
+  if (title) title.textContent = currentLang === 'ms' ? "Maklumat Aplikasi" : "App Information";
   const modal = document.getElementById("about-modal");
   if (modal) modal.classList.add("is-visible");
 }
 
+function closeModal(event) {
+  const modal = document.getElementById("info-modal");
+  if (modal) modal.classList.remove("is-visible");
+}
+
 function closeAboutModal(event) {
-  if (!event || event.target.id === "about-modal" || event.target.classList.contains("modal-close-btn")) {
-    const modal = document.getElementById("about-modal");
-    if (modal) modal.classList.remove("is-visible");
-  }
+  const modal = document.getElementById("about-modal");
+  if (modal) modal.classList.remove("is-visible");
 }
 
 function renderPrayerList(adjustedTimes, activeKey) {
@@ -248,11 +245,12 @@ function renderPrayerList(adjustedTimes, activeKey) {
   const now = new Date();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
+  // DHUHA BADGE ADDED HERE
   const sequence = [
     { key: "imsak", type: "secondary" },
     { key: "subuh", type: "fardhu", badges: [{ text: "Qabliyyah &#10003;", type: "is-ok" }, { text: "Ba'diyyah &#10007;", type: "is-haram" }] },
     { key: "syuruk", type: "secondary" },
-    { key: "duha", type: "secondary" },
+    { key: "duha", type: "secondary", badges: [{ text: "Sunat &#10003;", type: "is-ok" }] },
     { key: "zuhur", type: "fardhu", badges: [{ text: "Qabliyyah &#10003;", type: "is-ok" }, { text: "Ba'diyyah &#10003;", type: "is-ok" }] },
     { key: "asar", type: "fardhu", badges: [{ text: "Qabliyyah &#10003;", type: "is-ok" }, { text: "Ba'diyyah &#10007;", type: "is-haram" }] },
     { key: "maghrib", type: "fardhu", badges: [{ text: "Qabliyyah &#10003;", type: "is-ok" }, { text: "Ba'diyyah &#10003;", type: "is-ok" }] },
@@ -459,7 +457,6 @@ function fetchRemoteData() {
   const year = now.getFullYear();
   const dateKey = day + "-" + month + "-" + year;
 
-  // Returning the fetch promise for Pull-to-Refresh sync
   return fetch(GITHUB_JSON_URL)
     .then(res => { if (!res.ok) throw new Error(); return res.json(); })
     .then(data => {
@@ -535,11 +532,42 @@ function initPullToRefresh() {
   });
 }
 
-function initApp() {
+function bindEvents() {
   const toggleBtn = document.getElementById('visuals-toggle');
-  if (toggleBtn) {
-    toggleBtn.addEventListener('click', toggleVisuals);
-  }
+  if (toggleBtn) toggleBtn.addEventListener('click', toggleVisuals);
+
+  const btnMs = document.getElementById('lang-btn-ms');
+  if (btnMs) btnMs.addEventListener('click', () => setLanguage('ms'));
+
+  const btnEn = document.getElementById('lang-btn-en');
+  if (btnEn) btnEn.addEventListener('click', () => setLanguage('en'));
+
+  const distSel = document.getElementById('district-select');
+  if (distSel) distSel.addEventListener('change', handleDistrictChange);
+
+  const infoBtn = document.getElementById('info-btn-trigger');
+  if (infoBtn) infoBtn.addEventListener('click', openAboutModal);
+
+  document.querySelectorAll('.modal-close-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      closeModal(e);
+      closeAboutModal(e);
+    });
+  });
+
+  const infoModal = document.getElementById('info-modal');
+  if (infoModal) infoModal.addEventListener('click', closeModal);
+
+  const aboutModal = document.getElementById('about-modal');
+  if (aboutModal) aboutModal.addEventListener('click', closeAboutModal);
+
+  document.querySelectorAll('.modal-card').forEach(card => {
+    card.addEventListener('click', (e) => e.stopPropagation());
+  });
+}
+
+function initApp() {
+  bindEvents();
   applyVisualState();
   setLanguage("ms");
   fetchRemoteData();
