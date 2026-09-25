@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 11.0.0
-Description: Network-first service worker to instantly sync the UI/UX layout and badge fixes.
+Version: 12.0.0
+Description: Network-first service worker to instantly sync the vector PTR and full English translations.
 */
 
-const CACHE_NAME = 'waktu-solat-v11.0.0';
+const CACHE_NAME = 'waktu-solat-v12.0.0';
 const ASSETS = [
   './',
   './index.html',
