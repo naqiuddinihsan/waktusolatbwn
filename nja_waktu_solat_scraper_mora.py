@@ -1,7 +1,7 @@
 """
 Script Name: nja_waktu_solat_scraper_mora.py
-Version: 1.6.0
-Description: Bulletproof KHEU extraction. Forces Brunei-Muara district, dynamic index mapping, and long-wait network resolution to prevent ghost data scraping.
+Version: 1.7.0
+Description: Ultra-resilient KHEU extraction. Forces Zone, Year, and Month individually inside the iteration loop to defeat ASP.NET AJAX resets that cause ghost zone drifting (e.g. Tutong defaults).
 """
 
 import csv
@@ -54,54 +54,51 @@ def extract_prayer_times():
         
         print(f"Navigating to {url}")
         page.goto(url, timeout=90000)
-        time.sleep(5) 
+        page.wait_for_timeout(5000)
         
-        # 1. FORCE DISTRICT TO PREVENT +1 MINUTE TUTONG DEFAULTS
-        try:
-            districts = ["Brunei dan Muara", "Brunei-Muara", "Brunei & Muara"]
-            selects = page.locator("select").all()
-            for sel in selects:
-                opts = sel.inner_text()
-                for d in districts:
-                    if d in opts:
-                        sel.select_option(label=d)
-                        time.sleep(2)
-                        break
-        except Exception:
-            print("Warning: District selection failed. Proceeding.")
-
-        try:
-            page.select_option("select", label=year)
-        except Exception:
-            selects = page.locator("select").all()
-            for sel in selects:
-                options = sel.inner_text()
-                if year in options:
-                    sel.select_option(label=year)
-                    break
-
         for month in months:
-            print(f"Extracting prayer times for {month} {year}...")
+            print(f"Configuring portal for {month} {year} (Enforcing Brunei-Muara)...")
             
-            selects = page.locator("select").all()
-            month_selected = False
-            for sel in selects:
-                options = sel.inner_text()
-                if month in options:
-                    sel.select_option(label=month)
-                    month_selected = True
-                    break
-            
-            if not month_selected:
-                continue
-                
+            # 1. Force District EVERY loop to prevent AJAX resets
             try:
-                page.get_by_role("button", name="Paparkan").click()
+                for sel in page.locator("select").all():
+                    opts = sel.inner_text()
+                    if "Tutong" in opts and "Belait" in opts:
+                        for d in ["Brunei dan Muara", "Brunei-Muara", "Brunei & Muara"]:
+                            if d in opts:
+                                sel.select_option(label=d)
+                                page.wait_for_timeout(2000)
+                                break
             except Exception:
-                page.locator("input[value='Paparkan'], button:has-text('Paparkan')").click()
+                pass
                 
-            # 2. MASSIVE SLEEP: SharePoint is incredibly slow. 8 seconds prevents grabbing previous-month ghost data.
-            time.sleep(8)
+            # 2. Force Year EVERY loop
+            try:
+                for sel in page.locator("select").all():
+                    if year in sel.inner_text() and str(int(year)-1) in sel.inner_text():
+                        sel.select_option(label=year)
+                        page.wait_for_timeout(2000)
+            except Exception:
+                pass
+                
+            # 3. Force Month
+            try:
+                for sel in page.locator("select").all():
+                    opts = sel.inner_text()
+                    if "Januari" in opts and "Disember" in opts:
+                        sel.select_option(label=month)
+                        page.wait_for_timeout(2000)
+            except Exception:
+                pass
+                
+            # Trigger table generation
+            try:
+                page.locator("input[value='Paparkan'], button:has-text('Paparkan'), input[type='submit']").first.click(force=True)
+            except Exception:
+                pass
+                
+            # Massive wait to let the POSTBACK table finish injecting
+            page.wait_for_timeout(8000)
             
             rows = page.locator("table tr").all()
             for row in rows:
@@ -110,7 +107,6 @@ def extract_prayer_times():
                 if col_texts and col_texts not in all_data:
                     all_data.append(col_texts)
                     
-                    # 3. DYNAMIC COLUMN MAPPING
                     if len(col_texts) > 7 and col_texts[0] != "Title" and "-" in col_texts[1]:
                         idx_offset = 0
                         formatted_date = ""
@@ -143,7 +139,7 @@ def extract_prayer_times():
 
     os.makedirs("data", exist_ok=True)
     json_file = "data/brunei_prayers.json"
-    print(f"Saving structured data to {json_file}...")
+    print(f"Saving bulletproof structured data to {json_file}...")
     with open(json_file, mode="w", encoding="utf-8") as f:
         json.dump(structured_json, f, indent=2, ensure_ascii=False)
         
