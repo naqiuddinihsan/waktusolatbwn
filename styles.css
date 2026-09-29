@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 0.16.2
-Description: Hero Card collapse physics, list transition animations, fixed right-space gap bug, inline Reset Pill.
+Version: 0.16.3
+Description: Relocated Back to Today button above prayer list, temporarily disabled row hover physics for modal decoupling.
 */
 
 :root {
@@ -32,7 +32,7 @@ Description: Hero Card collapse physics, list transition animations, fixed right
   -webkit-user-select: none; -ms-user-select: none; user-select: none; 
 }
 
-button, a, input, select, .prayer-row, .date-picker-button, .icon-btn, .lang-btn {
+button, a, input, select, .date-picker-button, .icon-btn, .lang-btn {
   touch-action: manipulation;
 }
 
@@ -89,20 +89,10 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 .date-gregorian { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.01em; color: var(--text-primary); white-space: nowrap; transition: color 0.3s; }
 .date-hijrah { font-size: 0.7rem; font-weight: 500; color: var(--text-secondary); transition: color 0.3s;}
 
-/* Color accents when viewing another date */
 .date-stacked.is-not-today .date-gregorian { color: var(--accent-primary); }
 .date-stacked.is-not-today .date-hijrah { color: var(--text-primary); }
 
 #native-date-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 16px !important; }
-
-/* Inline Reset Pill */
-.reset-pill { 
-  display: none; background: var(--accent-primary); color: var(--bg-base); pointer-events: auto;
-  border: none; border-radius: 99px; padding: 2px 8px; font-size: 0.65rem; 
-  font-weight: 800; text-transform: uppercase; cursor: pointer; transition: transform 0.1s; 
-}
-.reset-pill.is-visible { display: block; }
-.reset-pill:active { transform: scale(0.9); }
 
 .district-select-wrapper { position: relative; flex-shrink: 0; }
 .district-select {
@@ -112,7 +102,6 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 }
 .district-select-wrapper::after { content: "▼"; font-size: 0.6rem; color: var(--text-primary); position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; }
 
-/* HERO CARD PHYSICS & COLLAPSE */
 .hero-tracker {
   background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(10, 10, 10, 0.8) 100%);
   backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--border-subtle); border-radius: 12px;
@@ -124,7 +113,7 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 }
 .hero-tracker::after { content: ""; position: absolute; top: 0; right: 0; width: 150px; height: 100%; background: radial-gradient(circle at top right, var(--accent-glow) 0%, transparent 80%); pointer-events: none; }
 
-.hero-top-bar { display: flex; justify-content: space-between; align-items: center; z-index: 1; margin-bottom: 2px; }
+.hero-top-bar { display: flex; justify-content: space-between; align-items: center; z-index: 1; margin-bottom: 2px; min-height: 24px; }
 .hero-now-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); }
 
 .hero-name { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.02em; color: #ffffff; line-height: 1; z-index: 1; }
@@ -139,12 +128,28 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 .ptr-spinner { width: 18px; height: 18px; border: 2.5px solid var(--text-secondary); border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; display: block; margin: auto; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
-/* FIXED ALIGNMENT & LIST ANIMATIONS */
+/* BACK TO TODAY BUTTON WRAPPER */
+.return-today-wrapper { display: none; padding: 0 4px; margin-bottom: 6px; width: 100%; flex-shrink: 0; }
+.return-today-wrapper.is-visible { display: block; animation: slideDownFade 0.3s ease forwards; }
+
+@keyframes slideDownFade {
+  0% { opacity: 0; transform: translateY(-10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.return-today-btn { 
+  width: 100%; background: rgba(255, 255, 255, 0.08); border: 1px dashed var(--border-subtle); 
+  color: var(--text-primary); padding: 12px; border-radius: 10px; font-size: 0.85rem; 
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; 
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: all 0.2s ease; 
+}
+.return-today-btn:active { transform: scale(0.98); background: rgba(255, 255, 255, 0.15); }
+
 .prayer-list {
   display: flex; flex-direction: column; gap: 8px; width: 100%; flex-grow: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0px, black 12px, black calc(100% - 12px), transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0px, black 12px, black calc(100% - 12px), transparent 100%);
-  padding: 4px 2px; /* Fixed: Removed negative margin that was causing off-center bug */
+  padding: 4px 2px; 
   scrollbar-width: none;
   transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -153,12 +158,18 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 
 .prayer-row {
   display: flex; align-items: center; justify-content: space-between; border-radius: 10px; width: 100%; flex-shrink: 0; 
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); cursor: pointer;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
+  /* MODAL DISABLED TEMP: Revert to 'cursor: pointer' when modal is restored */
+  cursor: default;
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s ease, opacity 0.2s ease, box-shadow 0.3s ease;
   transform-origin: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
+
+/* MODAL DISABLED TEMP: Uncomment hover and active states when restoring modals */
+/*
 @media (hover: hover) { .prayer-row:hover { background-color: var(--bg-surface-elevated) !important; transform: translateY(-2px) scale(1.02) !important; box-shadow: 0 8px 20px rgba(0,0,0,0.3); } }
 .prayer-row:active { transform: translateY(1px) scale(0.96) !important; background-color: var(--bg-surface-active) !important; opacity: 0.85; box-shadow: 0 2px 6px rgba(0,0,0,0.5); }
+*/
 
 .prayer-row.is-fardhu { background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 16px 14px; }
 .prayer-row.is-secondary { background: rgba(10, 10, 10, 0.4); border: 1px dashed var(--border-subtle); padding: 12px 14px; }
