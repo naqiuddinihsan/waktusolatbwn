@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 16.1.0
-Description: Network-first service worker syncing the ghost data prevention logic.
+Version: 0.16.1
+Description: Network-first service worker syncing the full day names and unified control bar layout.
 */
 
-const CACHE_NAME = 'waktu-solat-v16.1.0';
+const CACHE_NAME = 'waktu-solat-v0.16.1';
 const ASSETS = [
   './',
   './index.html',
