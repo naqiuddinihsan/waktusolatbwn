@@ -1,7 +1,7 @@
 """
 Script Name: nja_waktu_solat_scraper_mora.py
-Version: 1.9.0
-Description: Ultra-resilient KHEU extraction. Forces a hard page reload for every single month to defeat ASP.NET AJAX postback failures.
+Version: 1.10.0
+Description: Ultimate ASP.NET Postback resilient extraction. Re-queries DOM locators dynamically after every dropdown change and mathematically validates scraped dates against the target month to entirely prevent ghost data.
 """
 
 import json
@@ -52,39 +52,58 @@ def extract_prayer_times():
         for month in months:
             print(f"Fetching data for {month} {year}...")
             
-            # 1. HARD REFRESH: Kill ASP.NET sticky state by reloading the URL every loop
             page.goto(url, wait_until="domcontentloaded", timeout=90000)
             page.wait_for_timeout(3000)
-                
-            # 2. Select Year
+            
+            # 1. Select Zone
             try:
-                year_sel = page.locator("select").filter(has_text=year).first
-                if year_sel.is_visible():
-                    year_sel.select_option(label=year)
-                    page.wait_for_timeout(1500)
-            except Exception:
-                print("Could not find Year dropdown.")
-                
+                for sel in page.locator("select").all():
+                    if "Tutong" in sel.inner_text() and "Belait" in sel.inner_text():
+                        for opt in sel.locator("option").all():
+                            if "Brunei" in opt.inner_text():
+                                sel.select_option(value=opt.get_attribute("value"))
+                                page.wait_for_timeout(3000)
+                                break
+                        break
+            except Exception as e:
+                print(f"Zone selection error: {e}")
+
+            # 2. Select Year (DOM must be requeried due to ASP.NET Postback)
+            try:
+                for sel in page.locator("select").all():
+                    if year in sel.inner_text() and str(int(year)-1) in sel.inner_text():
+                        for opt in sel.locator("option").all():
+                            if year in opt.inner_text():
+                                sel.select_option(value=opt.get_attribute("value"))
+                                page.wait_for_timeout(3000)
+                                break
+                        break
+            except Exception as e:
+                print(f"Year selection error: {e}")
+
             # 3. Select Month
             try:
-                month_sel = page.locator("select").filter(has_text="Januari").first
-                if month_sel.is_visible():
-                    month_sel.select_option(label=month)
-                    page.wait_for_timeout(1500)
-            except Exception:
-                print(f"Could not find Month dropdown for {month}.")
-                
-            # 4. Click Paparkan
+                for sel in page.locator("select").all():
+                    if "Januari" in sel.inner_text() and "Disember" in sel.inner_text():
+                        for opt in sel.locator("option").all():
+                            if month.lower() == opt.inner_text().lower().strip():
+                                sel.select_option(value=opt.get_attribute("value"))
+                                page.wait_for_timeout(3000)
+                                break
+                        break
+            except Exception as e:
+                print(f"Month selection error: {e}")
+
+            # 4. Trigger Submission
             try:
-                btn = page.locator("input[value='Paparkan'], button:has-text('Paparkan')").first
+                btn = page.locator("input[value='Paparkan'], button:has-text('Paparkan'), input[type='submit']").first
                 if btn.is_visible():
                     btn.click()
-            except Exception:
-                pass
-                
-            # 5. Wait heavily for the new table data to inject
-            page.wait_for_timeout(6000)
-            
+                    page.wait_for_timeout(6000) 
+            except Exception as e:
+                print(f"Button click error: {e}")
+
+            # 5. Extract and Validate
             rows = page.locator("table tr").all()
             for row in rows:
                 cols = row.locator("td, th").all()
@@ -102,20 +121,25 @@ def extract_prayer_times():
                         formatted_date = col_texts[0] if idx_offset == -1 else col_texts[1]
                         hijrah = col_texts[1].strip() if idx_offset == -1 else col_texts[2].strip()
                         
-                        # Guard against table header rows
-                        if "Tarikh" not in formatted_date:
-                            structured_json[formatted_date] = {
-                                "date_gregorian": formatted_date,
-                                "date_hijrah": hijrah,
-                                "imsak": parse_time_to_24h(col_texts[3 + idx_offset], "imsak"),
-                                "subuh": parse_time_to_24h(col_texts[4 + idx_offset], "subuh"),
-                                "syuruk": parse_time_to_24h(col_texts[5 + idx_offset], "syuruk"),
-                                "duha": parse_time_to_24h(col_texts[6 + idx_offset], "duha"),
-                                "zuhur": parse_time_to_24h(col_texts[7 + idx_offset], "zuhur"),
-                                "asar": parse_time_to_24h(col_texts[8 + idx_offset], "asar"),
-                                "maghrib": parse_time_to_24h(col_texts[9 + idx_offset], "maghrib"),
-                                "isya": parse_time_to_24h(col_texts[10 + idx_offset], "isya")
-                            }
+                        date_parts = formatted_date.split("-")
+                        if len(date_parts) == 3:
+                            row_month = int(date_parts[1])
+                            expected_month = months.index(month) + 1
+                            
+                            # Mathematical strict validation to entirely block ghost data
+                            if row_month == expected_month and "Tarikh" not in formatted_date:
+                                structured_json[formatted_date] = {
+                                    "date_gregorian": formatted_date,
+                                    "date_hijrah": hijrah,
+                                    "imsak": parse_time_to_24h(col_texts[3 + idx_offset], "imsak"),
+                                    "subuh": parse_time_to_24h(col_texts[4 + idx_offset], "subuh"),
+                                    "syuruk": parse_time_to_24h(col_texts[5 + idx_offset], "syuruk"),
+                                    "duha": parse_time_to_24h(col_texts[6 + idx_offset], "duha"),
+                                    "zuhur": parse_time_to_24h(col_texts[7 + idx_offset], "zuhur"),
+                                    "asar": parse_time_to_24h(col_texts[8 + idx_offset], "asar"),
+                                    "maghrib": parse_time_to_24h(col_texts[9 + idx_offset], "maghrib"),
+                                    "isya": parse_time_to_24h(col_texts[10 + idx_offset], "isya")
+                                }
         
         browser.close()
 
