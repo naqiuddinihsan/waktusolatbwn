@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.14
-Description: Version bump for formatting updates. Fixed hero label assignment, nightstand date population, and implemented vertically scrolling widget.
+Version: 0.16.15
+Description: Version bump for metadata and formatting updates. Targeted ns-date-2 in setDateHeaders.
 */
 
 if ('serviceWorker' in navigator) {
@@ -91,7 +91,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.14" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.15" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -116,7 +116,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.14" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.15" }
   }
 };
 
@@ -651,6 +651,7 @@ function setDateHeaders() {
   setText("gregorian-date", gregorianStr);
   setText("hijrah-date", hijrahString);
   setText("ns-date", gregorianStr);
+  setText("ns-date-2", gregorianStr); 
 }
 
 function fetchRemoteData() {
