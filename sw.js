@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.5
-Description: Network-first service worker syncing the accurate 2-panel widget nightstand layout.
+Version: 0.16.6
+Description: Network-first service worker syncing the refined widget proportions.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.5';
+const CACHE_NAME = 'waktu-solat-v0.16.6';
 const ASSETS = [
   './',
   './index.html',
