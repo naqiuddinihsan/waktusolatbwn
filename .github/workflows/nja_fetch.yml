@@ -35,6 +35,6 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add brunei_prayers.json
+          git add data/brunei_prayers.json
           git commit -m "🤖 Auto-Fetch: Updated brunei_prayers.json for next year" || echo "No changes to commit"
           git push
