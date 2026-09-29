@@ -1,7 +1,7 @@
 """
 Script Name: nja_waktu_solat_scraper_mora.py
-Version: 1.5.0
-Description: Automates extraction of the full year prayer times from the MoRA Brunei portal. Smartly converts 12h times lacking AM/PM context into strict 24h format based on prayer identity.
+Version: 1.6.0
+Description: Bulletproof KHEU extraction. Forces Brunei-Muara district, dynamic index mapping, and long-wait network resolution to prevent ghost data scraping.
 """
 
 import csv
@@ -23,16 +23,12 @@ def parse_time_to_24h(raw_text, prayer_name):
     hour = int(match.group(1))
     minute = int(match.group(2))
     
-    # Define which prayers happen in the afternoon/evening (PM)
     pm_prayers = ["zuhur", "asar", "maghrib", "isya"]
     
     if prayer_name.lower() in pm_prayers:
-        # If it's a PM prayer, any hour less than 12 needs 12 added to it.
-        # (e.g., 03:48 Asar -> 15:48. 12:27 Zuhur -> remains 12:27)
         if hour < 12:
             hour += 12
     else:
-        # For AM prayers (Imsak, Subuh, Syuruk, Duha)
         if hour == 12:
             hour = 0
 
@@ -57,8 +53,23 @@ def extract_prayer_times():
         page = context.new_page()
         
         print(f"Navigating to {url}")
-        page.goto(url, timeout=60000)
+        page.goto(url, timeout=90000)
+        time.sleep(5) 
         
+        # 1. FORCE DISTRICT TO PREVENT +1 MINUTE TUTONG DEFAULTS
+        try:
+            districts = ["Brunei dan Muara", "Brunei-Muara", "Brunei & Muara"]
+            selects = page.locator("select").all()
+            for sel in selects:
+                opts = sel.inner_text()
+                for d in districts:
+                    if d in opts:
+                        sel.select_option(label=d)
+                        time.sleep(2)
+                        break
+        except Exception:
+            print("Warning: District selection failed. Proceeding.")
+
         try:
             page.select_option("select", label=year)
         except Exception:
@@ -82,7 +93,6 @@ def extract_prayer_times():
                     break
             
             if not month_selected:
-                print(f"Could not find select dropdown for month: {month}")
                 continue
                 
             try:
@@ -90,7 +100,8 @@ def extract_prayer_times():
             except Exception:
                 page.locator("input[value='Paparkan'], button:has-text('Paparkan')").click()
                 
-            time.sleep(3)
+            # 2. MASSIVE SLEEP: SharePoint is incredibly slow. 8 seconds prevents grabbing previous-month ghost data.
+            time.sleep(8)
             
             rows = page.locator("table tr").all()
             for row in rows:
@@ -99,29 +110,38 @@ def extract_prayer_times():
                 if col_texts and col_texts not in all_data:
                     all_data.append(col_texts)
                     
-                    if len(col_texts) >= 11 and col_texts[0] != "Title":
-                        raw_date = col_texts[1]
-                        date_match = re.search(r'(\d{2}-\d{2}-\d{4})', raw_date)
-                        if date_match:
-                            formatted_date = date_match.group(1)
+                    # 3. DYNAMIC COLUMN MAPPING
+                    if len(col_texts) > 7 and col_texts[0] != "Title" and "-" in col_texts[1]:
+                        idx_offset = 0
+                        formatted_date = ""
+                        hijrah = ""
+                        
+                        if re.match(r'\d{2}-\d{2}-\d{4}', col_texts[0]):
+                            idx_offset = -1
+                            formatted_date = col_texts[0]
+                            hijrah = col_texts[1].strip()
+                        elif re.match(r'\d{2}-\d{2}-\d{4}', col_texts[1]):
+                            idx_offset = 0
+                            formatted_date = col_texts[1]
+                            hijrah = col_texts[2].strip()
+                            
+                        if formatted_date:
                             structured_json[formatted_date] = {
                                 "date_gregorian": formatted_date,
-                                "date_hijrah": col_texts[2].strip(),
-                                # Pass the exact prayer name for smart 24h logic
-                                "imsak": parse_time_to_24h(col_texts[3], "imsak"),
-                                "subuh": parse_time_to_24h(col_texts[4], "subuh"),
-                                "syuruk": parse_time_to_24h(col_texts[5], "syuruk"),
-                                "duha": parse_time_to_24h(col_texts[6], "duha"),
-                                "zuhur": parse_time_to_24h(col_texts[7], "zuhur"),
-                                "asar": parse_time_to_24h(col_texts[8], "asar"),
-                                "maghrib": parse_time_to_24h(col_texts[9], "maghrib"),
-                                "isya": parse_time_to_24h(col_texts[10], "isya")
+                                "date_hijrah": hijrah,
+                                "imsak": parse_time_to_24h(col_texts[3 + idx_offset], "imsak"),
+                                "subuh": parse_time_to_24h(col_texts[4 + idx_offset], "subuh"),
+                                "syuruk": parse_time_to_24h(col_texts[5 + idx_offset], "syuruk"),
+                                "duha": parse_time_to_24h(col_texts[6 + idx_offset], "duha"),
+                                "zuhur": parse_time_to_24h(col_texts[7 + idx_offset], "zuhur"),
+                                "asar": parse_time_to_24h(col_texts[8 + idx_offset], "asar"),
+                                "maghrib": parse_time_to_24h(col_texts[9 + idx_offset], "maghrib"),
+                                "isya": parse_time_to_24h(col_texts[10 + idx_offset], "isya")
                             }
         
         browser.close()
 
     os.makedirs("data", exist_ok=True)
-
     json_file = "data/brunei_prayers.json"
     print(f"Saving structured data to {json_file}...")
     with open(json_file, mode="w", encoding="utf-8") as f:
