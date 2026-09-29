@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 14.1.0
-Description: Integrated beautiful calendar selection and reset pill.
+Version: 15.0.0
+Description: Unified Date Bar Trigger, removed redundant calendar icon.
 -->
 <!DOCTYPE html>
 <html lang="ms">
@@ -61,12 +61,10 @@ Description: Integrated beautiful calendar selection and reset pill.
         </div>
       </div>
 
-      <div class="header-bottom">
-        <div class="date-picker-wrapper">
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="cal-icon"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-          <span class="date-text" id="gregorian-date">-</span>
-          <input type="date" id="native-date-input" aria-label="Pilih Tarikh">
-        </div>
+      <!-- FULL BAR DATE PICKER -->
+      <div class="header-bottom date-bar-trigger">
+        <span class="date-text" id="gregorian-date">-</span>
+        <input type="date" id="native-date-input" aria-label="Pilih Tarikh">
         <button id="reset-date-btn" class="reset-pill" type="button">Hari Ini</button>
       </div>
     </header>
@@ -93,7 +91,7 @@ Description: Integrated beautiful calendar selection and reset pill.
       </div>
     </section>
 
-    <!-- Vector Only Pull To Refresh Indicator -->
+    <!-- Vector Pull To Refresh Indicator -->
     <div id="ptr-indicator" class="ptr-container"></div>
 
     <main class="prayer-list" id="prayer-list-container"></main>
@@ -128,7 +126,7 @@ Description: Integrated beautiful calendar selection and reset pill.
       <div class="modal-body about-body" id="about-body-content">
         <p><strong>Sumber Data Rasmi:</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">Kementerian Hal Ehwal Ugama (KHEU) Brunei</a></p>
         <p><strong>Dibangunkan oleh:</strong><br><a href="https://www.qwamii.com" target="_blank">Qwamii</a> / <a href="https://www.behance.net/naqiuddinihsan" target="_blank">Naqiuddin Ihsan</a></p>
-        <p class="about-version">Versi 14.1.0</p>
+        <p class="about-version">Versi 15.0.0</p>
       </div>
     </div>
   </div>
