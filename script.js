@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 15.1.0
-Description: Decoupled JSON fetching to prevent empty files from crashing valid data.
+Version: 16.0.0
+Description: Stacked Date Bar population logic and UI translation integrations.
 */
 
 if ('serviceWorker' in navigator) {
@@ -71,7 +71,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 15.1.0" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 16.0.0" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -91,7 +91,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 15.1.0" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 16.0.0" }
   }
 };
 
@@ -501,14 +501,18 @@ function updateTick() {
   updateSkyVisuals(engineAdjustedTimes, (now.getHours() * 60) + now.getMinutes());
 }
 
+// FIX: Split the date strings into top and bottom spans
 function setDateHeaders() {
   const gregorianOptions = { weekday: "short", day: "numeric", month: "short", year: "numeric" };
-  const dateStr = selectedDate.toLocaleDateString(I18N[currentLang].localeDate, gregorianOptions) + " | " + hijrahString;
-  setText("gregorian-date", dateStr);
-  setText("ns-date", dateStr);
+  const gregorianStr = selectedDate.toLocaleDateString(I18N[currentLang].localeDate, gregorianOptions);
+  
+  setText("gregorian-date", gregorianStr);
+  setText("hijrah-date", hijrahString);
+  
+  // Nightstand still uses the single-line format
+  setText("ns-date", gregorianStr + " | " + hijrahString);
 }
 
-// FIX: Decoupled JSON fetch so empty files do not crash valid data
 function fetchRemoteData() {
   const prayerReq = fetch(PRAYERS_JSON_URL)
     .then(r => { if (!r.ok) throw new Error("Prayer fetch failed"); return r.json(); })
