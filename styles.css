@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 0.16.12
-Description: Version bump to maintain synchronization across the app payload.
+Version: 0.16.13
+Description: Added Y-axis scroll snapping for Panel 2, schedule list styling, and opacity transitions for navigation dots.
 */
 
 :root {
@@ -213,29 +213,40 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 .blink-colon { animation: blink 1s step-start infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 
-.ns-panel-2 { flex-direction: row; padding: 12vh 8vw; gap: 4vw; align-items: stretch; justify-content: center; height: 100vh; width: 100vw;}
+.ns-panel-2 { flex-direction: row; padding: 0 6vw; gap: 4vw; align-items: stretch; justify-content: center; height: 100vh; width: 100vw;}
 
 .ns-widget-left { flex: 1; display: flex; align-items: center; justify-content: center; }
 #ns-time-2 { font-size: 30vmin; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -0.02em; text-align: center; }
 
-.ns-widget-right { 
-  flex: 1; display: flex; flex-direction: column; align-items: flex-start; 
-  justify-content: space-between; text-align: left; padding-left: 2vw;
-}
+/* NS Widget Right Layout Update for Vertical Scrolling */
+.ns-widget-right { flex: 1; height: 100vh; overflow: hidden; position: relative; }
+.ns-vertical-scroll { width: 100%; height: 100vh; overflow-y: auto; overflow-x: hidden; scroll-snap-type: y mandatory; scrollbar-width: none; }
+.ns-vertical-scroll::-webkit-scrollbar { display: none; }
 
+.ns-v-page { min-height: 100vh; scroll-snap-align: start; display: flex; flex-direction: column; padding-left: 2vw; }
+
+/* Widget Page 1: Clock & Next Info */
+.ns-v-page-1 { justify-content: space-between; padding-top: 12vh; padding-bottom: 12vh; }
 .ns-time-left { font-size: 5.5vmin; color: var(--text-primary); font-variant-numeric: tabular-nums; }
-
 .ns-right-mid { display: flex; flex-direction: column; align-items: flex-start; gap: 1vh; transform: translateY(-2vh); }
 .ns-current-icon { width: 12vmin; height: 12vmin; color: var(--text-primary); }
 .ns-current-icon svg { width: 100%; height: 100%; }
 .ns-current-name { font-size: 11vmin; font-weight: 700; color: var(--text-primary); line-height: 1; }
-
 .ns-right-bottom { display: flex; flex-direction: column; gap: 0.5vh; }
 .ns-next-info { font-size: 4.5vmin; color: var(--text-primary); display: flex; align-items: center; gap: 2vw; }
 .ns-next-info svg { width: 5vmin; height: 5vmin; }
 .ns-starts-at { font-size: 4.5vmin; color: var(--text-primary); }
 
-.ns-dots { position: absolute; bottom: 6vh; left: 0; right: 0; display: flex; justify-content: center; gap: 2vw; pointer-events: none; z-index: 10000; }
+/* Widget Page 2: Schedule List */
+.ns-v-page-2 { justify-content: center; padding-right: 4vw; gap: 1vh; }
+.ns-schedule-title { font-size: 3.5vmin; color: var(--accent-primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2vh; }
+.ns-schedule-row { display: flex; justify-content: space-between; align-items: center; font-size: 4vmin; color: var(--text-primary); font-weight: 500; padding-bottom: 1vh; border-bottom: 1px dashed rgba(255,255,255,0.15); }
+.ns-schedule-row:last-child { border-bottom: none; }
+.ns-schedule-row.is-active { color: var(--accent-primary); font-weight: 800; border-bottom-color: var(--accent-primary); font-size: 4.5vmin; }
+.ns-schedule-row.is-past { color: var(--text-muted); }
+
+/* Pager Dots Fading Logic */
+.ns-dots { position: absolute; bottom: 6vh; left: 0; right: 0; display: flex; justify-content: center; gap: 2vw; pointer-events: none; z-index: 10000; transition: opacity 0.5s ease; opacity: 0; }
 .ns-dot { width: 1.2vw; height: 1.2vw; max-width: 8px; max-height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: background 0.3s, transform 0.3s; }
 .ns-dot.active { background: var(--text-primary); transform: scale(1.3); }
 
