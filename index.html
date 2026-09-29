@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 0.16.2
-Description: Translation disabled, Reset pill relocated gracefully next to the date.
+Version: 0.16.3
+Description: Relocated Back to Today button above the prayer list.
 -->
 <!DOCTYPE html>
 <html lang="ms" translate="no">
@@ -67,7 +67,6 @@ Description: Translation disabled, Reset pill relocated gracefully next to the d
           <div class="date-stacked">
             <div class="date-row-top">
               <span class="date-gregorian" id="gregorian-date">-</span>
-              <button id="reset-date-btn" class="reset-pill" type="button">Hari Ini</button>
             </div>
             <span class="date-hijrah" id="hijrah-date">-</span>
           </div>
@@ -85,7 +84,6 @@ Description: Translation disabled, Reset pill relocated gracefully next to the d
       </div>
     </header>
 
-    <!-- SEKARANG CARD -->
     <section class="hero-tracker" id="hero-tracker-card">
       <div class="hero-top-bar">
         <div class="hero-now-label" id="ui-now-label">-</div>
@@ -102,6 +100,11 @@ Description: Translation disabled, Reset pill relocated gracefully next to the d
 
     <!-- Vector Pull To Refresh Indicator -->
     <div id="ptr-indicator" class="ptr-container"></div>
+
+    <!-- NEW BACK TO TODAY BUTTON WRAPPER -->
+    <div id="return-today-wrapper" class="return-today-wrapper">
+      <button id="reset-date-btn" class="return-today-btn" type="button">Kembali ke Hari Ini</button>
+    </div>
 
     <main class="prayer-list" id="prayer-list-container"></main>
 
@@ -135,7 +138,7 @@ Description: Translation disabled, Reset pill relocated gracefully next to the d
       <div class="modal-body about-body" id="about-body-content">
         <p><strong>Sumber Data Rasmi:</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">Kementerian Hal Ehwal Ugama (KHEU) Brunei</a></p>
         <p><strong>Dibangunkan oleh:</strong><br><a href="https://www.qwamii.com" target="_blank">Qwamii</a> / <a href="https://www.behance.net/naqiuddinihsan" target="_blank">Naqiuddin Ihsan</a></p>
-        <p class="about-version">Versi 0.16.2</p>
+        <p class="about-version">Versi 0.16.3</p>
       </div>
     </div>
   </div>
