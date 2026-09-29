@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 15.0.0
-Description: Unified Date Bar Trigger, removed redundant calendar icon.
+Version: 16.0.0
+Description: Stacked 2-line Date Bar layout to prevent text squashing.
 -->
 <!DOCTYPE html>
 <html lang="ms">
@@ -61,9 +61,12 @@ Description: Unified Date Bar Trigger, removed redundant calendar icon.
         </div>
       </div>
 
-      <!-- FULL BAR DATE PICKER -->
+      <!-- 2-LINE STACKED DATE PICKER -->
       <div class="header-bottom date-bar-trigger">
-        <span class="date-text" id="gregorian-date">-</span>
+        <div class="date-stacked">
+          <span class="date-gregorian" id="gregorian-date">-</span>
+          <span class="date-hijrah" id="hijrah-date">-</span>
+        </div>
         <input type="date" id="native-date-input" aria-label="Pilih Tarikh">
         <button id="reset-date-btn" class="reset-pill" type="button">Hari Ini</button>
       </div>
@@ -126,7 +129,7 @@ Description: Unified Date Bar Trigger, removed redundant calendar icon.
       <div class="modal-body about-body" id="about-body-content">
         <p><strong>Sumber Data Rasmi:</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">Kementerian Hal Ehwal Ugama (KHEU) Brunei</a></p>
         <p><strong>Dibangunkan oleh:</strong><br><a href="https://www.qwamii.com" target="_blank">Qwamii</a> / <a href="https://www.behance.net/naqiuddinihsan" target="_blank">Naqiuddin Ihsan</a></p>
-        <p class="about-version">Versi 15.0.0</p>
+        <p class="about-version">Versi 16.0.0</p>
       </div>
     </div>
   </div>
