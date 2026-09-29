@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 15.0.0
-Description: Fixed Timezone Bug for Date Selection, full-bar date trigger bindings.
+Version: 15.1.0
+Description: Decoupled JSON fetching to prevent empty files from crashing valid data.
 */
 
 if ('serviceWorker' in navigator) {
@@ -71,7 +71,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 15.0.0" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 15.1.0" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -91,7 +91,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 15.0.0" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 15.1.0" }
   }
 };
 
@@ -203,11 +203,10 @@ function checkDateStatus() {
   }
 }
 
-// FIX: Timezone robust parsing
 function handleDateChange(e) {
   if (e.target.value) {
     const [y, m, d] = e.target.value.split('-');
-    selectedDate = new Date(y, m - 1, d); // Forces exact local day, immune to GMT shifts
+    selectedDate = new Date(y, m - 1, d);
     syncScheduleToSelectedDate();
   }
 }
@@ -509,18 +508,24 @@ function setDateHeaders() {
   setText("ns-date", dateStr);
 }
 
+// FIX: Decoupled JSON fetch so empty files do not crash valid data
 function fetchRemoteData() {
-  const prayerReq = fetch(PRAYERS_JSON_URL).then(r => { if (!r.ok) throw new Error(); return r.json(); });
-  const fadhilatReq = fetch(FADHILAT_JSON_URL).then(r => { if (!r.ok) throw new Error(); return r.json(); });
+  const prayerReq = fetch(PRAYERS_JSON_URL)
+    .then(r => { if (!r.ok) throw new Error("Prayer fetch failed"); return r.json(); })
+    .catch(e => null);
+
+  const fadhilatReq = fetch(FADHILAT_JSON_URL)
+    .then(r => { if (!r.ok) throw new Error("Fadhilat fetch failed"); return r.json(); })
+    .catch(e => null);
 
   return Promise.all([prayerReq, fadhilatReq])
     .then(([prayers, fadhilat]) => {
-      fullYearSchedule = prayers;
-      fadhilatData = fadhilat;
-      syncScheduleToSelectedDate();
-    })
-    .catch(() => {
-      console.warn("Using offline fallback schedule");
+      if (prayers) { fullYearSchedule = prayers; } 
+      else { console.warn("Prayer data empty/failed. Using offline fallback."); }
+      
+      if (fadhilat) { fadhilatData = fadhilat; } 
+      else { console.warn("Fadhilat data failed to load."); }
+      
       syncScheduleToSelectedDate();
     });
 }
