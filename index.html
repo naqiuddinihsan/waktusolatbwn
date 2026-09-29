@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 0.16.3
-Description: Relocated Back to Today button above the prayer list.
+Version: 0.16.4
+Description: 2-Panel swipeable Nightstand Mode layout and pagination dots.
 -->
 <!DOCTYPE html>
 <html lang="ms" translate="no">
@@ -98,10 +98,8 @@ Description: Relocated Back to Today button above the prayer list.
       </div>
     </section>
 
-    <!-- Vector Pull To Refresh Indicator -->
     <div id="ptr-indicator" class="ptr-container"></div>
 
-    <!-- NEW BACK TO TODAY BUTTON WRAPPER -->
     <div id="return-today-wrapper" class="return-today-wrapper">
       <button id="reset-date-btn" class="return-today-btn" type="button">Kembali ke Hari Ini</button>
     </div>
@@ -138,15 +136,46 @@ Description: Relocated Back to Today button above the prayer list.
       <div class="modal-body about-body" id="about-body-content">
         <p><strong>Sumber Data Rasmi:</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">Kementerian Hal Ehwal Ugama (KHEU) Brunei</a></p>
         <p><strong>Dibangunkan oleh:</strong><br><a href="https://www.qwamii.com" target="_blank">Qwamii</a> / <a href="https://www.behance.net/naqiuddinihsan" target="_blank">Naqiuddin Ihsan</a></p>
-        <p class="about-version">Versi 0.16.3</p>
+        <p class="about-version">Versi 0.16.4</p>
       </div>
     </div>
   </div>
 
+  <!-- UPGRADED 2-PANEL NIGHTSTAND MODE -->
   <div id="nightstand-mode">
-    <div id="ns-time">00<span class="blink-colon">:</span>00</div>
-    <div id="ns-date">-</div>
-    <div id="ns-next">-</div>
+    <div class="ns-scroll-container" id="ns-scroll-container">
+      
+      <!-- Panel 1: Classic Minimal -->
+      <div class="ns-panel ns-panel-1">
+        <div id="ns-time">00<span class="blink-colon">:</span>00</div>
+        <div id="ns-date">-</div>
+        <div id="ns-next">-</div>
+      </div>
+      
+      <!-- Panel 2: Side-by-Side Widget -->
+      <div class="ns-panel ns-panel-2">
+        <div class="ns-widget-left">
+          <div id="ns-time-2">00<span class="blink-colon">:</span>00</div>
+          <div id="ns-date-2">-</div>
+        </div>
+        <div class="ns-divider"></div>
+        <div class="ns-widget-right">
+          <div class="ns-next-label" id="ns-label-2">SETERUSNYA</div>
+          <div id="ns-next-name-2">-</div>
+          <div id="ns-next-time-2">--:--</div>
+          <div class="ns-countdown-box">
+            <div id="ns-next-countdown-2">--:--:--</div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    
+    <!-- Pager Dots -->
+    <div class="ns-dots">
+      <div class="ns-dot active" id="ns-dot-1"></div>
+      <div class="ns-dot" id="ns-dot-2"></div>
+    </div>
   </div>
 
   <script src="script.js"></script>
