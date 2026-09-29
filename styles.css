@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 0.16.4
-Description: 2-Panel CSS scroll-snapping layout for Nightstand widget style.
+Version: 0.16.5
+Description: Accurate Nightstand Panel 2 CSS formatting based on reference screenshot.
 */
 
 :root {
@@ -201,13 +201,11 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 .info-btn { pointer-events: auto; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-subtle); color: var(--text-muted); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .info-btn:active { transform: scale(0.85); background: rgba(255, 255, 255, 0.1); color: var(--text-primary); }
 
-/* --- 2-PANEL NIGHTSTAND CSS ARCHITECTURE --- */
 #nightstand-mode { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: #000000; z-index: 9999; color: var(--text-primary); flex-direction: column; }
 .ns-scroll-container { display: flex; width: 100vw; height: 100vh; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .ns-scroll-container::-webkit-scrollbar { display: none; }
 .ns-panel { min-width: 100vw; height: 100vh; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; position: relative; }
 
-/* Panel 1: Classic Minimal */
 .ns-panel-1 { flex-direction: column; }
 #ns-time { font-size: 28vmin; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -0.02em; }
 #ns-date { font-size: 5vmin; color: var(--text-secondary); margin-top: 1vh; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -215,22 +213,23 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 .blink-colon { animation: blink 1s step-start infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 
-/* Panel 2: Side-by-Side Widget */
-.ns-panel-2 { flex-direction: row; gap: 5vw; padding: 4vw; }
-.ns-widget-left { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
-#ns-time-2 { font-size: 20vmin; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -0.02em; }
-#ns-date-2 { font-size: 3.5vmin; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1vh; }
-
-.ns-divider { width: 2px; height: 35vmin; background: var(--border-subtle); border-radius: 2px; }
+/* NEW 2-PANEL DESIGN */
+.ns-panel-2 { flex-direction: row; gap: 8vw; padding: 4vw; justify-content: center; }
+.ns-widget-left { display: flex; align-items: center; justify-content: center; }
+.ns-clock-dial { 
+  border: 4px dashed var(--text-secondary); border-radius: 4vmin; padding: 6vmin 8vmin; 
+  display: flex; align-items: center; justify-content: center;
+}
+#ns-time-2 { font-size: 22vmin; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -0.02em; }
 
 .ns-widget-right { display: flex; flex-direction: column; align-items: flex-start; text-align: left; justify-content: center; }
-.ns-next-label { font-size: 3vmin; color: var(--accent-primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5vh; }
-#ns-next-name-2 { font-size: 9vmin; font-weight: 800; line-height: 1; color: var(--text-primary); }
-#ns-next-time-2 { font-size: 5vmin; font-weight: 600; color: var(--text-secondary); margin-top: 0.5vh; }
-.ns-countdown-box { margin-top: 2vh; background: var(--bg-surface-elevated); padding: 1.5vh 3vw; border-radius: 12px; border: 1px solid var(--border-subtle); }
-#ns-next-countdown-2 { font-size: 5vmin; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--accent-primary); }
+.ns-time-left { font-size: 5vmin; color: var(--text-primary); margin-bottom: 4vh; font-variant-numeric: tabular-nums; }
+.ns-current-icon { width: 10vmin; height: 10vmin; color: var(--text-primary); margin-bottom: 1vh; }
+.ns-current-icon svg { width: 100%; height: 100%; }
+.ns-current-name { font-size: 10vmin; font-weight: 700; color: var(--text-primary); line-height: 1; margin-bottom: 2vh; }
+.ns-next-info { font-size: 4.5vmin; color: var(--text-primary); margin-bottom: 1vh; display: flex; align-items: center; gap: 2vw; }
+.ns-starts-at { font-size: 4.5vmin; color: var(--text-primary); }
 
-/* Pager Dots */
 .ns-dots { position: absolute; bottom: 6vh; left: 0; right: 0; display: flex; justify-content: center; gap: 2vw; pointer-events: none; z-index: 10000; }
 .ns-dot { width: 1.2vw; height: 1.2vw; max-width: 8px; max-height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: background 0.3s, transform 0.3s; }
 .ns-dot.active { background: var(--text-primary); transform: scale(1.3); }
