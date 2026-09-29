@@ -1,7 +1,7 @@
 """
 Script Name: nja_waktu_solat_scraper_mora.py
-Version: 1.7.0
-Description: Ultra-resilient KHEU extraction. Forces Zone, Year, and Month individually inside the iteration loop to defeat ASP.NET AJAX resets that cause ghost zone drifting (e.g. Tutong defaults).
+Version: 1.8.0
+Description: Injects exact UTC+8 scraping timestamp into JSON metadata block for frontend validation.
 """
 
 import csv
@@ -10,7 +10,7 @@ import re
 import sys
 import time
 import os
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from playwright.sync_api import sync_playwright
 
 def parse_time_to_24h(raw_text, prayer_name):
@@ -59,7 +59,6 @@ def extract_prayer_times():
         for month in months:
             print(f"Configuring portal for {month} {year} (Enforcing Brunei-Muara)...")
             
-            # 1. Force District EVERY loop to prevent AJAX resets
             try:
                 for sel in page.locator("select").all():
                     opts = sel.inner_text()
@@ -72,7 +71,6 @@ def extract_prayer_times():
             except Exception:
                 pass
                 
-            # 2. Force Year EVERY loop
             try:
                 for sel in page.locator("select").all():
                     if year in sel.inner_text() and str(int(year)-1) in sel.inner_text():
@@ -81,7 +79,6 @@ def extract_prayer_times():
             except Exception:
                 pass
                 
-            # 3. Force Month
             try:
                 for sel in page.locator("select").all():
                     opts = sel.inner_text()
@@ -91,13 +88,11 @@ def extract_prayer_times():
             except Exception:
                 pass
                 
-            # Trigger table generation
             try:
                 page.locator("input[value='Paparkan'], button:has-text('Paparkan'), input[type='submit']").first.click(force=True)
             except Exception:
                 pass
                 
-            # Massive wait to let the POSTBACK table finish injecting
             page.wait_for_timeout(8000)
             
             rows = page.locator("table tr").all()
@@ -136,6 +131,12 @@ def extract_prayer_times():
                             }
         
         browser.close()
+
+    # Append UTC+8 Timestamp Metadata
+    brunei_tz = timezone(timedelta(hours=8))
+    structured_json["metadata"] = {
+        "last_updated": datetime.now(brunei_tz).isoformat()
+    }
 
     os.makedirs("data", exist_ok=True)
     json_file = "data/brunei_prayers.json"
