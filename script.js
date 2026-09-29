@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.6
-Description: Nightstand logic engine synced with the perfected widget structure.
+Version: 0.16.7
+Description: Accurate widget data binding, I18N for new panel elements, and dynamic Sun/Moon SVG icons correctly calculated for both current and next prayers.
 */
 
 if ('serviceWorker' in navigator) {
@@ -79,9 +79,9 @@ const I18N = {
     viewingOtherDate: "Tarikh Pilihan:",
     resetToday: "Kembali ke Hari Ini",
     noData: "Tiada Data",
-    nsTimeLeft: "Masa tinggal:",
-    nsNextLabel: "Seterusnya:",
-    nsStartsAt: "Bermula pada",
+    nsTimeLeft: "Time left:",
+    nsNextLabel: "Next:",
+    nsStartsAt: "Starts at",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir", sunat: "Sunat" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
@@ -90,7 +90,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.6" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.7" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -114,7 +114,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.6" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.7" }
   }
 };
 
@@ -392,6 +392,9 @@ function renderPrayerList(adjustedTimes, activeKey) {
       else if (prayerMins < currentMinutes) { row.classList.add("is-past"); }
     }
 
+    // MODAL DISABLED TEMP
+    // row.addEventListener('click', () => openPrayerModal(item.key));
+
     let badgesHtml = '';
     if (item.badges) {
       item.badges.forEach(badge => { badgesHtml += `<span class="fiqh-badge ${badge.type}">${badge.text}</span>`; });
@@ -520,6 +523,7 @@ function updateTick() {
 
   let timeOnlyStr = "--:--:--";
   let activeIcon = SVG_MOON;
+  let nextIcon = SVG_MOON;
 
   if (isToday) {
     if (!hasData) {
@@ -535,6 +539,9 @@ function updateTick() {
       const maghribMins = adjustedTimes.maghrib;
       if (state.currentMinutes >= subuhMins && state.currentMinutes < maghribMins) {
         activeIcon = SVG_SUN;
+      }
+      if (state.next.mins >= subuhMins && state.next.mins < maghribMins) {
+        nextIcon = SVG_SUN;
       }
       
       let targetMins = state.next.mins;
@@ -588,7 +595,7 @@ function updateTick() {
      setText("ns-current-name-2", state.active.name);
      
      const nextEl = document.getElementById("ns-next-info-2");
-     if (nextEl) nextEl.innerHTML = t.nsNextLabel + " " + activeIcon + " " + state.next.name;
+     if (nextEl) nextEl.innerHTML = t.nsNextLabel + " " + nextIcon + " " + state.next.name;
      
      setText("ns-starts-at-2", t.nsStartsAt + " " + minutesToDisplay(adjustedTimes[state.next.key]));
   } else {
@@ -597,7 +604,8 @@ function updateTick() {
      const iconContainer = document.getElementById("ns-current-icon-2");
      if (iconContainer) iconContainer.innerHTML = SVG_MOON;
      setText("ns-current-name-2", "-");
-     setText("ns-next-info-2", t.nsNextLabel + " -");
+     const nextEl = document.getElementById("ns-next-info-2");
+     if (nextEl) nextEl.innerHTML = t.nsNextLabel + " -";
      setText("ns-starts-at-2", t.nsStartsAt + " --:--");
   }
 
