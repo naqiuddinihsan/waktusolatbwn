@@ -1,6 +1,6 @@
 /*
 File Name: script.js
-Version: 0.16.11
+Version: 0.16.12
 Description: Version bump for metadata and formatting updates.
 */
 
