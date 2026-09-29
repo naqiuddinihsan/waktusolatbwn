@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 15.0.0
-Description: Hard-blocks iOS zooming (16px inputs + touch-action manipulation), full-width date bar, and enlarged native-feeling dropdown.
+Version: 16.0.0
+Description: Stacked Date Bar styling with absolute positioned Reset Pill to eliminate layout shift.
 */
 
 :root {
@@ -32,7 +32,6 @@ Description: Hard-blocks iOS zooming (16px inputs + touch-action manipulation), 
   -webkit-user-select: none; -ms-user-select: none; user-select: none; 
 }
 
-/* HARD-BLOCK DOUBLE TAP ZOOM ON ALL INTERACTIVE ELEMENTS */
 button, a, input, select, .prayer-row, .date-bar-trigger, .icon-btn, .lang-btn {
   touch-action: manipulation;
 }
@@ -78,21 +77,25 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 .lang-btn { background: none; border: none; color: var(--text-muted); font-size: 0.65rem; font-weight: 600; padding: 4px 6px; border-radius: 4px; cursor: pointer; }
 .lang-btn.active { background-color: var(--bg-surface-elevated); color: var(--text-primary); }
 
-/* FULL BAR DATE PICKER STYLES */
+/* 2-LINE STACKED DATE PICKER STYLES */
 .date-bar-trigger { 
-  position: relative; display: flex; justify-content: center; align-items: center; gap: 12px;
+  position: relative; display: flex; justify-content: center; align-items: center;
   background: var(--bg-surface); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); 
-  padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-subtle); width: 100%; cursor: pointer; transition: background 0.2s;
+  padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-subtle); width: 100%; cursor: pointer; transition: background 0.2s;
+  min-height: 56px; /* Ensures spacious breathing room */
 }
 .date-bar-trigger:active { background: rgba(255,255,255,0.1); }
-.date-text { font-size: 0.9rem; font-weight: 700; letter-spacing: 0.02em; color: var(--text-primary); pointer-events: none; }
 
-/* HARD-BLOCK IOS FOCUS ZOOM: input must be 16px minimum */
+.date-stacked { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; width: 100%; pointer-events: none; }
+.date-gregorian { font-size: 0.95rem; font-weight: 700; letter-spacing: 0.01em; color: var(--text-primary); }
+.date-hijrah { font-size: 0.75rem; font-weight: 500; color: var(--text-secondary); }
+
 #native-date-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 16px !important; }
 
+/* FIX: Absolute positioned Reset Pill so it never shifts the center date text */
 .reset-pill { 
-  display: none; position: relative; z-index: 5; background: var(--bg-surface-elevated); color: var(--text-primary); 
-  border: 1px solid var(--border-active); border-radius: 99px; padding: 4px 12px; font-size: 0.75rem; 
+  display: none; position: absolute; right: 12px; z-index: 5; background: var(--bg-surface-elevated); color: var(--text-primary); 
+  border: 1px solid var(--border-active); border-radius: 99px; padding: 5px 12px; font-size: 0.7rem; 
   font-weight: 700; text-transform: uppercase; cursor: pointer; transition: transform 0.1s; 
 }
 .reset-pill.is-visible { display: block; }
@@ -108,11 +111,10 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 .hero-top-bar { display: flex; justify-content: space-between; align-items: center; z-index: 1; margin-bottom: 2px; }
 .hero-now-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); }
 
-/* ENLARGED LOCATION DROPDOWN & ZOOM FIX */
 .district-select-wrapper { position: relative; flex-shrink: 0; }
 .district-select {
   appearance: none; background-color: rgba(30, 30, 30, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.25); color: #ffffff;
-  font-size: 16px !important; /* Forces Safari NOT to zoom */
+  font-size: 16px !important; 
   font-weight: 600; padding: 8px 36px 8px 14px; border-radius: 8px; outline: none; cursor: pointer; font-family: var(--font-stack); min-height: 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 .district-select-wrapper::after { content: "▼"; font-size: 0.65rem; color: var(--text-primary); position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; }
