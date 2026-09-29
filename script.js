@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.7
-Description: Accurate widget data binding, I18N for new panel elements, and dynamic Sun/Moon SVG icons correctly calculated for both current and next prayers.
+Version: 0.16.8
+Description: Injects scraping metadata timestamp into the About modal, safely ignoring it during calendar bounding logic.
 */
 
 if ('serviceWorker' in navigator) {
@@ -79,9 +79,10 @@ const I18N = {
     viewingOtherDate: "Tarikh Pilihan:",
     resetToday: "Kembali ke Hari Ini",
     noData: "Tiada Data",
-    nsTimeLeft: "Time left:",
-    nsNextLabel: "Next:",
-    nsStartsAt: "Starts at",
+    nsTimeLeft: "Masa tinggal:",
+    nsNextLabel: "Seterusnya:",
+    nsStartsAt: "Bermula pada",
+    dataAsOf: "Data dikemas kini pada",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir", sunat: "Sunat" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
@@ -90,7 +91,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.7" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.8" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -106,6 +107,7 @@ const I18N = {
     nsTimeLeft: "Time left:",
     nsNextLabel: "Next:",
     nsStartsAt: "Starts at",
+    dataAsOf: "Data as of",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witr", sunat: "Sunnah" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
@@ -114,7 +116,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.7" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.8" }
   }
 };
 
@@ -196,13 +198,21 @@ function setLanguage(lang) {
   populateDistricts();
   if (sel) sel.selectedIndex = savedIndex > -1 ? savedIndex : 0;
 
+  // Render Metadata logic
+  let dataAsOfStr = "";
+  if (fullYearSchedule && fullYearSchedule.metadata && fullYearSchedule.metadata.last_updated) {
+    const dObj = new Date(fullYearSchedule.metadata.last_updated);
+    const fmt = dObj.toLocaleString(t.localeDate, { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    dataAsOfStr = `<br><span style="margin-top: 6px; display: inline-block; color: var(--text-muted); font-size: 0.65rem;">${t.dataAsOf}: ${fmt}</span>`;
+  }
+
   setText("about-title", t.about.title);
   const aboutBody = document.getElementById("about-body-content");
   if (aboutBody) {
     aboutBody.innerHTML = `
       <p><strong>${t.about.sourceLabel}</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">${t.about.sourceName}</a></p>
       <p><strong>${t.about.devLabel}</strong><br><a href="https://www.qwamii.com" target="_blank">Qwamii</a> / <a href="https://www.behance.net/naqiuddinihsan" target="_blank">Naqiuddin Ihsan</a></p>
-      <p class="about-version">${t.about.version}</p>
+      <p class="about-version">${t.about.version}${dataAsOfStr}</p>
     `;
   }
   setDateHeaders();
@@ -252,7 +262,8 @@ function animateDateUpdate() {
 }
 
 function applyDatePickerLimits() {
-  const keys = Object.keys(fullYearSchedule);
+  // Safely filter out the new metadata key during calendar date parsing
+  const keys = Object.keys(fullYearSchedule).filter(k => k !== 'metadata');
   if (keys.length > 0) {
     const parsedDates = keys.map(k => {
       const [d, m, y] = k.split('-');
@@ -620,6 +631,7 @@ function setDateHeaders() {
   
   setText("gregorian-date", gregorianStr);
   setText("hijrah-date", hijrahString);
+  setText("ns-date", gregorianStr + " | " + hijrahString);
 }
 
 function fetchRemoteData() {
@@ -642,6 +654,7 @@ function fetchRemoteData() {
       if (fadhilat) { fadhilatData = fadhilat; } 
       
       syncScheduleToSelectedDate();
+      setLanguage(currentLang);
     });
 }
 
