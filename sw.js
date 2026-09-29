@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.2
-Description: Network-first service worker syncing the translation disable and transition updates.
+Version: 0.16.3
+Description: Network-first service worker syncing the relocated Today button and disabled modals.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.2';
+const CACHE_NAME = 'waktu-solat-v0.16.3';
 const ASSETS = [
   './',
   './index.html',
