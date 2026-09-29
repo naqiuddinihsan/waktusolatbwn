@@ -1,0 +1,40 @@
+name: NJA Automated Fetch (Prayer Times)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 1 11 *'
+
+jobs:
+  fetch-mora:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install playwright
+          playwright install chromium
+
+      - name: Run Fetcher for Next Year
+        run: |
+          NEXT_YEAR=$(date -d "+2 months" +%Y)
+          echo "Targeting Year: $NEXT_YEAR"
+          python nja_waktu_solat_scraper_mora.py $NEXT_YEAR
+
+      - name: Commit and push updated JSON
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add brunei_prayers.json
+          git commit -m "🤖 Auto-Fetch: Updated brunei_prayers.json for next year" || echo "No changes to commit"
+          git push
