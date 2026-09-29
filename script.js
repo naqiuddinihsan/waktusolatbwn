@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.4
-Description: 2-Panel Nightstand data integration, disabled modals, layout swipe observer.
+Version: 0.16.5
+Description: Accurate widget data binding, I18N for new panel elements, and dynamic Sun/Moon SVG icons.
 */
 
 if ('serviceWorker' in navigator) {
@@ -53,6 +53,10 @@ const SVG_PULL = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--
 const SVG_RELEASE = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--text-secondary)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s; transform: rotate(180deg);"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
 const SVG_SPINNER = `<span class="ptr-spinner"></span>`;
 
+// Dynamic icons for Nightstand Mode
+const SVG_SUN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+const SVG_MOON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+
 function vibrateTap() {
   if (navigator.vibrate) {
     try { navigator.vibrate(15); } catch (e) {}
@@ -76,7 +80,9 @@ const I18N = {
     viewingOtherDate: "Tarikh Pilihan:",
     resetToday: "Kembali ke Hari Ini",
     noData: "Tiada Data",
-    nsNextLabel: "SETERUSNYA",
+    nsTimeLeft: "Masa tinggal:",
+    nsNextLabel: "Seterusnya:",
+    nsStartsAt: "Bermula pada",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir", sunat: "Sunat" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
@@ -85,7 +91,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.4" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.5" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -98,7 +104,9 @@ const I18N = {
     viewingOtherDate: "Selected Date:",
     resetToday: "Back to Today",
     noData: "No Data Available",
-    nsNextLabel: "NEXT",
+    nsTimeLeft: "Time left:",
+    nsNextLabel: "Next:",
+    nsStartsAt: "Starts at",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witr", sunat: "Sunnah" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
@@ -107,7 +115,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.4" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.5" }
   }
 };
 
@@ -183,7 +191,6 @@ function setLanguage(lang) {
   setText("ui-app-title", t.appTitle);
   document.title = t.appTitle;
   setText("reset-date-btn", t.resetToday);
-  setText("ns-label-2", t.nsNextLabel);
 
   let sel = document.getElementById("district-select");
   let savedIndex = sel ? sel.selectedIndex : 0;
@@ -386,7 +393,7 @@ function renderPrayerList(adjustedTimes, activeKey) {
       else if (prayerMins < currentMinutes) { row.classList.add("is-past"); }
     }
 
-    // MODAL DISABLED TEMP: Uncomment to restore Fadhilat modals
+    // MODAL DISABLED TEMP
     // row.addEventListener('click', () => openPrayerModal(item.key));
 
     let badgesHtml = '';
@@ -516,6 +523,7 @@ function updateTick() {
   const hasData = !isNaN(adjustedTimes["subuh"]);
 
   let timeOnlyStr = "--:--:--";
+  let activeIcon = SVG_MOON;
 
   if (isToday) {
     if (!hasData) {
@@ -526,6 +534,13 @@ function updateTick() {
       if (progressFill) progressFill.style.width = "0%";
     } else if (state.active && state.next) {
       setText("hero-current-name", state.active.name);
+      
+      const subuhMins = adjustedTimes.subuh;
+      const maghribMins = adjustedTimes.maghrib;
+      if (state.currentMinutes >= subuhMins && state.currentMinutes < maghribMins) {
+        activeIcon = SVG_SUN;
+      }
+      
       let targetMins = state.next.mins;
       let currentTotalSecs = state.currentMinutes * 60 + state.currentSeconds;
       let targetTotalSecs = targetMins * 60;
@@ -562,26 +577,33 @@ function updateTick() {
   const nhh = String(now.getHours()).padStart(2, '0');
   const nmm = String(now.getMinutes()).padStart(2, '0');
   
-  // PANEL 1 UPDATES
   const nsTimeEl = document.getElementById("ns-time");
   if (nsTimeEl) nsTimeEl.innerHTML = `${nhh}<span class="blink-colon">:</span>${nmm}`;
   
-  // PANEL 2 UPDATES
   const nsTimeEl2 = document.getElementById("ns-time-2");
   if (nsTimeEl2) nsTimeEl2.innerHTML = `${nhh}<span class="blink-colon">:</span>${nmm}`;
   
   if (isToday && hasData && state.next) {
      setText("ns-next", document.getElementById("hero-countdown-text").textContent);
      
-     setText("ns-next-name-2", state.next.name);
-     setText("ns-next-time-2", minutesToDisplay(adjustedTimes[state.next.key]));
-     setText("ns-next-countdown-2", "-" + timeOnlyStr);
+     setText("ns-time-left-2", t.nsTimeLeft + " " + timeOnlyStr);
+     const iconContainer = document.getElementById("ns-current-icon-2");
+     if (iconContainer) iconContainer.innerHTML = activeIcon;
+     setText("ns-current-name-2", state.active.name);
+     
+     // Build the string: Next: [icon] Name
+     const nextEl = document.getElementById("ns-next-info-2");
+     if (nextEl) nextEl.innerHTML = t.nsNextLabel + " " + activeIcon + " " + state.next.name;
+     
+     setText("ns-starts-at-2", t.nsStartsAt + " " + minutesToDisplay(adjustedTimes[state.next.key]));
   } else {
      setText("ns-next", "-");
-     
-     setText("ns-next-name-2", "-");
-     setText("ns-next-time-2", "--:--");
-     setText("ns-next-countdown-2", "--:--:--");
+     setText("ns-time-left-2", t.nsTimeLeft + " --:--:--");
+     const iconContainer = document.getElementById("ns-current-icon-2");
+     if (iconContainer) iconContainer.innerHTML = SVG_MOON;
+     setText("ns-current-name-2", "-");
+     setText("ns-next-info-2", t.nsNextLabel + " -");
+     setText("ns-starts-at-2", t.nsStartsAt + " --:--");
   }
 
   renderPrayerList(adjustedTimes, state.active ? state.active.key : null);
@@ -595,9 +617,7 @@ function setDateHeaders() {
   
   setText("gregorian-date", gregorianStr);
   setText("hijrah-date", hijrahString);
-  
   setText("ns-date", gregorianStr + " | " + hijrahString);
-  setText("ns-date-2", gregorianStr + " | " + hijrahString);
 }
 
 function fetchRemoteData() {
@@ -708,7 +728,6 @@ function bindEvents() {
     card.addEventListener('click', (e) => e.stopPropagation());
   });
 
-  // NS PAGER LOGIC
   const nsScroll = document.getElementById('ns-scroll-container');
   if(nsScroll) {
     nsScroll.addEventListener('scroll', () => {
