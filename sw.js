@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 15.1.0
-Description: Network-first service worker syncing the decoupled JSON fetch logic.
+Version: 16.0.0
+Description: Network-first service worker syncing the 2-line stacked Date Bar revamp.
 */
 
-const CACHE_NAME = 'waktu-solat-v15.1.0';
+const CACHE_NAME = 'waktu-solat-v16.0.0';
 const ASSETS = [
   './',
   './index.html',
