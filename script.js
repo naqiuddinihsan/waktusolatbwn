@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.2
-Description: strict Nightstand-only Wake Lock, date change animations, collapsing hero card, and full-day locale formatting.
+Version: 0.16.3
+Description: Relocated Back to Today trigger, disabled modal event listeners temporarily.
 */
 
 if ('serviceWorker' in navigator) {
@@ -21,7 +21,6 @@ let fullYearSchedule = {};
 let fadhilatData = null;
 let selectedDate = new Date();
 
-// STRICT NIGHTSTAND WAKE LOCK LOGIC
 const nightstandQuery = window.matchMedia('(orientation: landscape) and (max-height: 600px)');
 
 async function evaluateWakeLock() {
@@ -48,7 +47,7 @@ async function evaluateWakeLock() {
 
 nightstandQuery.addEventListener('change', evaluateWakeLock);
 document.addEventListener('visibilitychange', evaluateWakeLock);
-document.addEventListener('click', evaluateWakeLock); // Captures activation gesture
+document.addEventListener('click', evaluateWakeLock);
 
 const SVG_PULL = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--text-secondary)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s;"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
 const SVG_RELEASE = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--text-secondary)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s; transform: rotate(180deg);"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
@@ -75,7 +74,7 @@ const I18N = {
     yesterdaySuffix: "(Malam Tadi)",
     tomorrowSuffix: "(Esok)",
     viewingOtherDate: "Tarikh Pilihan:",
-    resetToday: "Hari Ini",
+    resetToday: "Kembali ke Hari Ini", // Translated for the new prominent button
     noData: "Tiada Data",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir", sunat: "Sunat" },
     districts: [
@@ -85,7 +84,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.2" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.3" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -96,7 +95,7 @@ const I18N = {
     yesterdaySuffix: "(Last Night)",
     tomorrowSuffix: "(Tomorrow)",
     viewingOtherDate: "Selected Date:",
-    resetToday: "Today",
+    resetToday: "Back to Today", // Translated for the new prominent button
     noData: "No Data Available",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witr", sunat: "Sunnah" },
     districts: [
@@ -106,7 +105,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.2" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.3" }
   }
 };
 
@@ -203,18 +202,18 @@ function setLanguage(lang) {
 
 function checkDateStatus() {
   const isToday = selectedDate.toDateString() === new Date().toDateString();
-  const resetBtn = document.getElementById('reset-date-btn');
+  const resetBtnWrapper = document.getElementById('return-today-wrapper');
   const heroCard = document.getElementById('hero-tracker-card');
   const dateStacked = document.querySelector('.date-stacked');
 
   if (isToday) {
-    resetBtn.classList.remove('is-visible');
+    if(resetBtnWrapper) resetBtnWrapper.classList.remove('is-visible');
     if(dateStacked) dateStacked.classList.remove('is-not-today');
-    heroCard.classList.remove('is-collapsed');
+    if(heroCard) heroCard.classList.remove('is-collapsed');
   } else {
-    resetBtn.classList.add('is-visible');
+    if(resetBtnWrapper) resetBtnWrapper.classList.add('is-visible');
     if(dateStacked) dateStacked.classList.add('is-not-today');
-    heroCard.classList.add('is-collapsed'); // Collapses the hero card cleanly
+    if(heroCard) heroCard.classList.add('is-collapsed'); 
   }
 }
 
@@ -233,7 +232,6 @@ function resetDateToToday() {
   animateDateUpdate();
 }
 
-// Applies fade transition to list during swaps
 function animateDateUpdate() {
   const list = document.getElementById("prayer-list-container");
   if (list) list.classList.add("is-updating");
@@ -385,7 +383,8 @@ function renderPrayerList(adjustedTimes, activeKey) {
       else if (prayerMins < currentMinutes) { row.classList.add("is-past"); }
     }
 
-    row.addEventListener('click', () => openPrayerModal(item.key));
+    // MODAL DISABLED TEMP: Uncomment the line below to restore Modal pop-ups.
+    // row.addEventListener('click', () => openPrayerModal(item.key));
 
     let badgesHtml = '';
     if (item.badges) {
@@ -570,7 +569,6 @@ function updateTick() {
   updateSkyVisuals(engineAdjustedTimes, (now.getHours() * 60) + now.getMinutes());
 }
 
-// FULL DAY NAME LOGIC
 function setDateHeaders() {
   const gregorianOptions = { weekday: "long", day: "numeric", month: "short", year: "numeric" };
   const gregorianStr = selectedDate.toLocaleDateString(I18N[currentLang].localeDate, gregorianOptions);
