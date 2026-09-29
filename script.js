@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.12
-Description: Version bump for metadata and formatting updates.
+Version: 0.16.14
+Description: Version bump for formatting updates. Fixed hero label assignment, nightstand date population, and implemented vertically scrolling widget.
 */
 
 if ('serviceWorker' in navigator) {
@@ -50,7 +50,7 @@ document.addEventListener('visibilitychange', evaluateWakeLock);
 document.addEventListener('click', evaluateWakeLock);
 
 const SVG_PULL = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--text-secondary)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s;"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
-const SVG_RELEASE = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--text-secondary)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s; transform: rotate(180deg);"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
+const SVG_RELEASE = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--text-secondary)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s; transform: rotate(180deg)"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
 const SVG_SPINNER = `<span class="ptr-spinner"></span>`;
 
 const SVG_SUN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
@@ -91,7 +91,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.10" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.14" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -116,7 +116,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.10" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.14" }
   }
 };
 
@@ -192,6 +192,7 @@ function setLanguage(lang) {
   setText("ui-app-title", t.appTitle);
   document.title = t.appTitle;
   setText("reset-date-btn", t.resetToday);
+  setText("ui-now-label", t.nowLabel);
 
   let sel = document.getElementById("district-select");
   let savedIndex = sel ? sel.selectedIndex : 0;
@@ -401,9 +402,6 @@ function renderPrayerList(adjustedTimes, activeKey) {
       else if (prayerMins < currentMinutes) { row.classList.add("is-past"); }
     }
 
-    // MODAL DISABLED TEMP
-    // row.addEventListener('click', () => openPrayerModal(item.key));
-
     let badgesHtml = '';
     if (item.badges) {
       item.badges.forEach(badge => { badgesHtml += `<span class="fiqh-badge ${badge.type}">${badge.text}</span>`; });
@@ -418,6 +416,27 @@ function renderPrayerList(adjustedTimes, activeKey) {
       `<div class="${timeClass}">${minutesToDisplay(prayerMins)}</div>`;
 
     list.appendChild(row);
+  });
+}
+
+function renderNightstandPrayerList(adjustedTimes, activeKey, nextKey) {
+  const list = document.getElementById("ns-prayer-list");
+  if (!list) return;
+  list.innerHTML = "";
+  
+  const sequence = ["imsak", "subuh", "syuruk", "duha", "zuhur", "asar", "maghrib", "isya"];
+  
+  sequence.forEach(key => {
+     const row = document.createElement("div");
+     row.className = "ns-prayer-row";
+     if (key === activeKey) row.classList.add("is-active-ns");
+     if (key === nextKey) row.classList.add("is-next");
+     
+     const name = I18N[currentLang].prayers[key];
+     const time = minutesToDisplay(adjustedTimes[key]);
+     
+     row.innerHTML = `<span>${name}</span><span>${time}</span>`;
+     list.appendChild(row);
   });
 }
 
@@ -620,6 +639,7 @@ function updateTick() {
   }
 
   renderPrayerList(adjustedTimes, state.active ? state.active.key : null);
+  renderNightstandPrayerList(adjustedTimes, state.active ? state.active.key : null, state.next ? state.next.key : null);
   const engineAdjustedTimes = getAdjustedSchedule();
   updateSkyVisuals(engineAdjustedTimes, (now.getHours() * 60) + now.getMinutes());
 }
@@ -630,6 +650,7 @@ function setDateHeaders() {
   
   setText("gregorian-date", gregorianStr);
   setText("hijrah-date", hijrahString);
+  setText("ns-date", gregorianStr);
 }
 
 function fetchRemoteData() {
@@ -751,6 +772,34 @@ function bindEvents() {
       if (dot1) dot1.classList.toggle('active', activeIndex === 0);
       if (dot2) dot2.classList.toggle('active', activeIndex === 1);
     }, {passive: true});
+  }
+
+  const nsWidgetScroll = document.getElementById('ns-widget-right-scroll');
+  const nsWidgetDots = document.getElementById('ns-widget-dots');
+  let dotsTimeout;
+  
+  if(nsWidgetScroll) {
+    const showDots = () => {
+      if(nsWidgetDots) {
+        nsWidgetDots.classList.remove('hidden');
+        clearTimeout(dotsTimeout);
+        dotsTimeout = setTimeout(() => {
+          nsWidgetDots.classList.add('hidden');
+        }, 2500);
+      }
+    };
+    
+    nsWidgetScroll.addEventListener('scroll', () => {
+      showDots();
+      const height = nsWidgetScroll.clientHeight;
+      const activeIndex = Math.round(nsWidgetScroll.scrollTop / height);
+      const dot1 = document.getElementById('ns-w-dot-1');
+      const dot2 = document.getElementById('ns-w-dot-2');
+      if (dot1) dot1.classList.toggle('active', activeIndex === 0);
+      if (dot2) dot2.classList.toggle('active', activeIndex === 1);
+    }, {passive: true});
+    
+    showDots();
   }
 }
 
