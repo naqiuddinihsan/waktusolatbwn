@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.3
-Description: Network-first service worker syncing the relocated Today button and disabled modals.
+Version: 0.16.4
+Description: Network-first service worker syncing the 2-panel Nightstand upgrade.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.3';
+const CACHE_NAME = 'waktu-solat-v0.16.4';
 const ASSETS = [
   './',
   './index.html',
