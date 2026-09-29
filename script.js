@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 14.1.0
-Description: External JSON fetch for fadhilat, custom date selection, and touchcancel PTR fix.
+Version: 15.0.0
+Description: Fixed Timezone Bug for Date Selection, full-bar date trigger bindings.
 */
 
 if ('serviceWorker' in navigator) {
@@ -71,7 +71,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 14.1.0" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 15.0.0" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -91,7 +91,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 14.1.0" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 15.0.0" }
   }
 };
 
@@ -142,12 +142,8 @@ function handleDistrictChange() {
 function applyVisualState() {
   const toggleBtn = document.getElementById('visuals-toggle');
   if (toggleBtn) toggleBtn.textContent = visualsEnabled ? "BG ON" : "BG OFF";
-  
-  if (visualsEnabled) {
-    document.body.classList.remove('visuals-off');
-  } else {
-    document.body.classList.add('visuals-off');
-  }
+  if (visualsEnabled) { document.body.classList.remove('visuals-off'); } 
+  else { document.body.classList.add('visuals-off'); }
 }
 
 function toggleVisuals() {
@@ -169,7 +165,6 @@ function setLanguage(lang) {
   const t = I18N[currentLang];
   setText("ui-app-title", t.appTitle);
   document.title = t.appTitle;
-  
   setText("reset-date-btn", t.resetToday);
 
   let sel = document.getElementById("district-select");
@@ -186,7 +181,6 @@ function setLanguage(lang) {
       <p class="about-version">${t.about.version}</p>
     `;
   }
-
   setDateHeaders();
   updateTick();
 }
@@ -209,9 +203,11 @@ function checkDateStatus() {
   }
 }
 
+// FIX: Timezone robust parsing
 function handleDateChange(e) {
   if (e.target.value) {
-    selectedDate = new Date(e.target.value);
+    const [y, m, d] = e.target.value.split('-');
+    selectedDate = new Date(y, m - 1, d); // Forces exact local day, immune to GMT shifts
     syncScheduleToSelectedDate();
   }
 }
@@ -233,7 +229,7 @@ function syncScheduleToSelectedDate() {
     cachedSchedule = fullYearSchedule[dateKey];
     hijrahString = fullYearSchedule[dateKey].date_hijrah || hijrahString;
   } else {
-    console.warn("No data for chosen date in JSON.");
+    console.warn("Offline/Missing data for chosen date: " + dateKey);
   }
   setDateHeaders();
   checkDateStatus();
@@ -322,25 +318,19 @@ function renderPrayerList(adjustedTimes, activeKey) {
   sequence.forEach(function(item) {
     const row = document.createElement("div");
     row.className = "prayer-row is-" + item.type;
-
     const prayerMins = adjustedTimes[item.key];
     const prayerName = I18N[currentLang].prayers[item.key];
 
     if (isToday) {
-      if (item.key === activeKey) {
-        row.classList.add("is-active");
-      } else if (prayerMins < currentMinutes) {
-        row.classList.add("is-past");
-      }
+      if (item.key === activeKey) { row.classList.add("is-active"); } 
+      else if (prayerMins < currentMinutes) { row.classList.add("is-past"); }
     }
 
     row.addEventListener('click', () => openPrayerModal(item.key));
 
     let badgesHtml = '';
     if (item.badges) {
-      item.badges.forEach(badge => {
-        badgesHtml += `<span class="fiqh-badge ${badge.type}">${badge.text}</span>`;
-      });
+      item.badges.forEach(badge => { badgesHtml += `<span class="fiqh-badge ${badge.type}">${badge.text}</span>`; });
     }
 
     const nameClass = item.type === "fardhu" ? "row-left-fardhu" : "row-left-sec";
@@ -574,10 +564,7 @@ function initPullToRefresh() {
       ptr.style.height = '40px';
       ptr.innerHTML = SVG_SPINNER;
       vibrateTap();
-      
-      fetchRemoteData().finally(() => {
-        setTimeout(() => { ptr.style.height = '0px'; }, 600);
-      });
+      fetchRemoteData().finally(() => { setTimeout(() => { ptr.style.height = '0px'; }, 600); });
     } else {
       ptr.style.height = '0px';
     }
