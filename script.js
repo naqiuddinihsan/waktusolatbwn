@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.8
-Description: Injects scraping metadata timestamp into the About modal, safely ignoring it during calendar bounding logic.
+Version: 0.16.9
+Description: Exact timer formatting (h:mm:ss) matching reference screenshot and synced with stretched flex-layout.
 */
 
 if ('serviceWorker' in navigator) {
@@ -79,9 +79,9 @@ const I18N = {
     viewingOtherDate: "Tarikh Pilihan:",
     resetToday: "Kembali ke Hari Ini",
     noData: "Tiada Data",
-    nsTimeLeft: "Masa tinggal:",
-    nsNextLabel: "Seterusnya:",
-    nsStartsAt: "Bermula pada",
+    nsTimeLeft: "Time left:",
+    nsNextLabel: "Next:",
+    nsStartsAt: "Starts at",
     dataAsOf: "Data dikemas kini pada",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir", sunat: "Sunat" },
     districts: [
@@ -91,7 +91,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.8" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.9" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -116,7 +116,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.8" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.9" }
   }
 };
 
@@ -198,7 +198,6 @@ function setLanguage(lang) {
   populateDistricts();
   if (sel) sel.selectedIndex = savedIndex > -1 ? savedIndex : 0;
 
-  // Render Metadata logic
   let dataAsOfStr = "";
   if (fullYearSchedule && fullYearSchedule.metadata && fullYearSchedule.metadata.last_updated) {
     const dObj = new Date(fullYearSchedule.metadata.last_updated);
@@ -262,7 +261,6 @@ function animateDateUpdate() {
 }
 
 function applyDatePickerLimits() {
-  // Safely filter out the new metadata key during calendar date parsing
   const keys = Object.keys(fullYearSchedule).filter(k => k !== 'metadata');
   if (keys.length > 0) {
     const parsedDates = keys.map(k => {
@@ -402,9 +400,6 @@ function renderPrayerList(adjustedTimes, activeKey) {
       if (item.key === activeKey) { row.classList.add("is-active"); } 
       else if (prayerMins < currentMinutes) { row.classList.add("is-past"); }
     }
-
-    // MODAL DISABLED TEMP
-    // row.addEventListener('click', () => openPrayerModal(item.key));
 
     let badgesHtml = '';
     if (item.badges) {
@@ -564,7 +559,9 @@ function updateTick() {
       let hours = Math.floor(diffSeconds / 3600);
       let mins = Math.floor((diffSeconds % 3600) / 60);
       let secs = diffSeconds % 60;
-      let hStr = hours < 10 ? "0" + hours : hours;
+      
+      // Removed leading zero for hours to match 2:50:25 format
+      let hStr = hours; 
       let mStr = mins < 10 ? "0" + mins : mins;
       let sStr = secs < 10 ? "0" + secs : secs;
 
@@ -631,7 +628,6 @@ function setDateHeaders() {
   
   setText("gregorian-date", gregorianStr);
   setText("hijrah-date", hijrahString);
-  setText("ns-date", gregorianStr + " | " + hijrahString);
 }
 
 function fetchRemoteData() {
