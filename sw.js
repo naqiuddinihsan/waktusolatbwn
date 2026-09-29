@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 1.0.12
-Description: Network-first service worker to instantly sync the Wake Lock API, Android fixes, and URL updates.
+Version: 14.1.0
+Description: Network-first service worker syncing the data folder architecture, PTR bugfixes, and UI polish.
 */
 
-const CACHE_NAME = 'waktu-solat-v1.0.12';
+const CACHE_NAME = 'waktu-solat-v14.1.0';
 const ASSETS = [
   './',
   './index.html',
