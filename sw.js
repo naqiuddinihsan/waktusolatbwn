@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.8
-Description: Network-first service worker syncing the data timestamp metadata features.
+Version: 0.16.9
+Description: Network-first service worker syncing the perfected widget proportions.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.8';
+const CACHE_NAME = 'waktu-solat-v0.16.9';
 const ASSETS = [
   './',
   './index.html',
