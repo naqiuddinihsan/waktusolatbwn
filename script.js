@@ -10,7 +10,8 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-const GITHUB_JSON_URL = "https://raw.githubusercontent.com/naqiuddinihsan/waktu-solat-brunei/main/brunei_prayers.json";
+// const GITHUB_JSON_URL = "https://raw.githubusercontent.com/naqiuddinihsan/waktu-solat-brunei/main/brunei_prayers.json";
+const GITHUB_JSON_URL = "https://raw.githubusercontent.com/naqiuddinihsan/waktusolatbwn/main/brunei_prayers.json";
 
 let currentLang = "ms";
 let visualsEnabled = localStorage.getItem('bwn_visuals') === 'true';
