@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 16.1.0
-Description: Added ghost data prevention, dynamic date picker bounds, and graceful NaN Tiada Data fallbacks.
+Version: 0.16.1
+Description: Full day name logic, integrated control bar data bindings.
 */
 
 if ('serviceWorker' in navigator) {
@@ -72,7 +72,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 16.1.0" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.1" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -93,7 +93,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 16.1.0" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.1" }
   }
 };
 
@@ -191,16 +191,18 @@ function setLanguage(lang) {
 function checkDateStatus() {
   const isToday = selectedDate.toDateString() === new Date().toDateString();
   const resetBtn = document.getElementById('reset-date-btn');
+  const nowLabel = document.getElementById('ui-now-label');
   const t = I18N[currentLang];
 
   if (isToday) {
     resetBtn.classList.remove('is-visible');
+    nowLabel.style.display = "block";
     setText("ui-now-label", t.nowLabel);
     document.getElementById("hero-progress-container").style.opacity = "1";
     document.getElementById("hero-current-range").style.opacity = "1";
   } else {
     resetBtn.classList.add('is-visible');
-    setText("ui-now-label", t.viewingOtherDate);
+    nowLabel.style.display = "none"; // Hides "Sekarang" so "Hari Ini" takes over cleanly
     document.getElementById("hero-progress-container").style.opacity = "0";
     document.getElementById("hero-current-range").style.opacity = "0";
   }
@@ -257,7 +259,6 @@ function syncScheduleToSelectedDate() {
     hijrahString = fullYearSchedule[dateKey].date_hijrah || hijrahString;
   } else {
     console.warn("Offline/Missing data for chosen date: " + dateKey);
-    // Explicitly wipe the data to prevent ghost data persistence
     cachedSchedule = {
       imsak: "--:--", subuh: "--:--", syuruk: "--:--", duha: "--:--",
       zuhur: "--:--", asar: "--:--", maghrib: "--:--", isya: "--:--"
@@ -430,7 +431,6 @@ function updateSkyVisuals(adjustedTimes, currentMins) {
     return;
   }
 
-  // Gracefully fallback to standard 5 AM / 6 PM limits if selected data is missing
   const subuhMins = isNaN(adjustedTimes.subuh) ? 300 : adjustedTimes.subuh;
   const syurukMins = isNaN(adjustedTimes.syuruk) ? 360 : adjustedTimes.syuruk;
   const zuhurMins = isNaN(adjustedTimes.zuhur) ? 720 : adjustedTimes.zuhur;
@@ -531,6 +531,7 @@ function updateTick() {
       if (progressFill) progressFill.style.width = progressPercent.toFixed(1) + "%";
     }
   } else {
+    // FIX: Fallback for missing data when viewing past/future
     const dateStr = selectedDate.toLocaleDateString(I18N[currentLang].localeDate, { weekday: "long", day: "numeric", month: "long" });
     if (!hasData) {
       setText("hero-current-name", dateStr + " (" + t.noData + ")");
@@ -558,8 +559,9 @@ function updateTick() {
   updateSkyVisuals(engineAdjustedTimes, (now.getHours() * 60) + now.getMinutes());
 }
 
+// FIX: Full Day Formatting implementation
 function setDateHeaders() {
-  const gregorianOptions = { weekday: "short", day: "numeric", month: "short", year: "numeric" };
+  const gregorianOptions = { weekday: "long", day: "numeric", month: "long", year: "numeric" };
   const gregorianStr = selectedDate.toLocaleDateString(I18N[currentLang].localeDate, gregorianOptions);
   
   setText("gregorian-date", gregorianStr);
