@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 16.0.0
-Description: Stacked Date Bar population logic and UI translation integrations.
+Version: 16.1.0
+Description: Added ghost data prevention, dynamic date picker bounds, and graceful NaN Tiada Data fallbacks.
 */
 
 if ('serviceWorker' in navigator) {
@@ -63,6 +63,7 @@ const I18N = {
     tomorrowSuffix: "(Esok)",
     viewingOtherDate: "Tarikh Pilihan:",
     resetToday: "Hari Ini",
+    noData: "Tiada Data",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir", sunat: "Sunat" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
@@ -71,7 +72,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 16.0.0" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 16.1.0" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -83,6 +84,7 @@ const I18N = {
     tomorrowSuffix: "(Tomorrow)",
     viewingOtherDate: "Selected Date:",
     resetToday: "Today",
+    noData: "No Data Available",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witr", sunat: "Sunnah" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
@@ -91,7 +93,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 16.0.0" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 16.1.0" }
   }
 };
 
@@ -104,12 +106,13 @@ let cachedSchedule = {
 let hijrahString = "13 Rabiulakhir 1448 H";
 
 function timeStringToMinutes(str) {
-  if (!str) return 0;
+  if (!str || str === "--:--") return NaN;
   const parts = str.split(":");
   return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
 }
 
 function minutesToDisplay(mins) {
+  if (isNaN(mins)) return "--:--";
   let normalized = (mins % 1440 + 1440) % 1440;
   let h = Math.floor(normalized / 60);
   let m = normalized % 60;
@@ -218,17 +221,48 @@ function resetDateToToday() {
   syncScheduleToSelectedDate();
 }
 
+function applyDatePickerLimits() {
+  const keys = Object.keys(fullYearSchedule);
+  if (keys.length > 0) {
+    const parsedDates = keys.map(k => {
+      const [d, m, y] = k.split('-');
+      return new Date(y, m - 1, d);
+    });
+    parsedDates.sort((a, b) => a - b);
+    
+    const formatForInput = (dateObj) => {
+      const y = dateObj.getFullYear();
+      const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const d = String(dateObj.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    };
+    
+    const input = document.getElementById("native-date-input");
+    if (input) {
+      input.min = formatForInput(parsedDates[0]);
+      input.max = formatForInput(parsedDates[parsedDates.length - 1]);
+    }
+  }
+}
+
 function syncScheduleToSelectedDate() {
   const day = String(selectedDate.getDate()).padStart(2, "0");
   const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
   const year = selectedDate.getFullYear();
   const dateKey = `${day}-${month}-${year}`;
+  const t = I18N[currentLang];
 
   if (fullYearSchedule && fullYearSchedule[dateKey]) {
     cachedSchedule = fullYearSchedule[dateKey];
     hijrahString = fullYearSchedule[dateKey].date_hijrah || hijrahString;
   } else {
     console.warn("Offline/Missing data for chosen date: " + dateKey);
+    // Explicitly wipe the data to prevent ghost data persistence
+    cachedSchedule = {
+      imsak: "--:--", subuh: "--:--", syuruk: "--:--", duha: "--:--",
+      zuhur: "--:--", asar: "--:--", maghrib: "--:--", isya: "--:--"
+    };
+    hijrahString = t.noData;
   }
   setDateHeaders();
   checkDateStatus();
@@ -240,8 +274,12 @@ function getAdjustedSchedule() {
   const sel = document.getElementById("district-select");
   const offset = parseInt((sel ? sel.value : 0) || 0, 10);
   ALL_KEYS.forEach(function(key) {
-    let baseMins = timeStringToMinutes(cachedSchedule[key]);
-    adjusted[key] = baseMins + offset;
+    if (cachedSchedule[key] === "--:--") {
+      adjusted[key] = NaN;
+    } else {
+      let baseMins = timeStringToMinutes(cachedSchedule[key]);
+      adjusted[key] = baseMins + offset;
+    }
   });
   return adjusted;
 }
@@ -320,7 +358,7 @@ function renderPrayerList(adjustedTimes, activeKey) {
     const prayerMins = adjustedTimes[item.key];
     const prayerName = I18N[currentLang].prayers[item.key];
 
-    if (isToday) {
+    if (isToday && !isNaN(prayerMins)) {
       if (item.key === activeKey) { row.classList.add("is-active"); } 
       else if (prayerMins < currentMinutes) { row.classList.add("is-past"); }
     }
@@ -349,6 +387,10 @@ function determinePrayerState(adjustedTimes) {
   const currentMins = now.getHours() * 60 + now.getMinutes();
   const currentSecs = now.getSeconds();
   const t = I18N[currentLang];
+
+  if (isNaN(adjustedTimes["subuh"])) {
+    return { active: null, next: null, currentMinutes: currentMins, currentSeconds: currentSecs };
+  }
 
   const sequence = ALL_KEYS.map(key => ({ key: key, mins: adjustedTimes[key] }));
 
@@ -388,12 +430,13 @@ function updateSkyVisuals(adjustedTimes, currentMins) {
     return;
   }
 
-  const subuhMins = adjustedTimes.subuh;
-  const syurukMins = adjustedTimes.syuruk;
-  const zuhurMins = adjustedTimes.zuhur;
-  const asarMins = adjustedTimes.asar;
-  const maghribMins = adjustedTimes.maghrib;
-  const isyaMins = adjustedTimes.isya;
+  // Gracefully fallback to standard 5 AM / 6 PM limits if selected data is missing
+  const subuhMins = isNaN(adjustedTimes.subuh) ? 300 : adjustedTimes.subuh;
+  const syurukMins = isNaN(adjustedTimes.syuruk) ? 360 : adjustedTimes.syuruk;
+  const zuhurMins = isNaN(adjustedTimes.zuhur) ? 720 : adjustedTimes.zuhur;
+  const asarMins = isNaN(adjustedTimes.asar) ? 900 : adjustedTimes.asar;
+  const maghribMins = isNaN(adjustedTimes.maghrib) ? 1080 : adjustedTimes.maghrib;
+  const isyaMins = isNaN(adjustedTimes.isya) ? 1140 : adjustedTimes.isya;
 
   let isDay = currentMins >= subuhMins && currentMins < maghribMins;
   celestial.style.opacity = "1";
@@ -447,42 +490,55 @@ function updateTick() {
   const state = determinePrayerState(adjustedTimes);
   const t = I18N[currentLang];
   const isToday = selectedDate.toDateString() === new Date().toDateString();
-
-  if (!state.active || !state.next) return;
+  const hasData = !isNaN(adjustedTimes["subuh"]);
 
   if (isToday) {
-    setText("hero-current-name", state.active.name);
-    let targetMins = state.next.mins;
-    let currentTotalSecs = state.currentMinutes * 60 + state.currentSeconds;
-    let targetTotalSecs = targetMins * 60;
-    let diffSeconds = targetTotalSecs - currentTotalSecs;
+    if (!hasData) {
+      setText("hero-current-name", t.noData);
+      setText("hero-countdown-text", "--:--:--");
+      setText("hero-current-range", "--:--");
+      const progressFill = document.getElementById("hero-progress-fill");
+      if (progressFill) progressFill.style.width = "0%";
+    } else if (state.active && state.next) {
+      setText("hero-current-name", state.active.name);
+      let targetMins = state.next.mins;
+      let currentTotalSecs = state.currentMinutes * 60 + state.currentSeconds;
+      let targetTotalSecs = targetMins * 60;
+      let diffSeconds = targetTotalSecs - currentTotalSecs;
 
-    if (diffSeconds < 0) diffSeconds = 0;
-    let hours = Math.floor(diffSeconds / 3600);
-    let mins = Math.floor((diffSeconds % 3600) / 60);
-    let secs = diffSeconds % 60;
-    let hStr = hours < 10 ? "0" + hours : hours;
-    let mStr = mins < 10 ? "0" + mins : mins;
-    let sStr = secs < 10 ? "0" + secs : secs;
+      if (diffSeconds < 0) diffSeconds = 0;
+      let hours = Math.floor(diffSeconds / 3600);
+      let mins = Math.floor((diffSeconds % 3600) / 60);
+      let secs = diffSeconds % 60;
+      let hStr = hours < 10 ? "0" + hours : hours;
+      let mStr = mins < 10 ? "0" + mins : mins;
+      let sStr = secs < 10 ? "0" + secs : secs;
 
-    let countdownString = hStr + ":" + mStr + ":" + sStr + " " + t.toNext + " " + state.next.name;
-    setText("hero-countdown-text", countdownString);
+      let countdownString = hStr + ":" + mStr + ":" + sStr + " " + t.toNext + " " + state.next.name;
+      setText("hero-countdown-text", countdownString);
 
-    let activeMinsDisplay = adjustedTimes[state.active.key] ? minutesToDisplay(adjustedTimes[state.active.key]) : "-";
-    setText("hero-current-range", t.enteredAt + " " + activeMinsDisplay);
+      let activeMinsDisplay = adjustedTimes[state.active.key] ? minutesToDisplay(adjustedTimes[state.active.key]) : "-";
+      setText("hero-current-range", t.enteredAt + " " + activeMinsDisplay);
 
-    let startTotalSecs = state.active.mins * 60;
-    let intervalSecs = targetTotalSecs - startTotalSecs;
-    let progressPercent = 0;
-    if (intervalSecs > 0) {
-      let elapsedSecs = currentTotalSecs - startTotalSecs;
-      progressPercent = Math.min(100, Math.max(0, (elapsedSecs / intervalSecs) * 100));
+      let startTotalSecs = state.active.mins * 60;
+      let intervalSecs = targetTotalSecs - startTotalSecs;
+      let progressPercent = 0;
+      if (intervalSecs > 0) {
+        let elapsedSecs = currentTotalSecs - startTotalSecs;
+        progressPercent = Math.min(100, Math.max(0, (elapsedSecs / intervalSecs) * 100));
+      }
+      const progressFill = document.getElementById("hero-progress-fill");
+      if (progressFill) progressFill.style.width = progressPercent.toFixed(1) + "%";
     }
-    const progressFill = document.getElementById("hero-progress-fill");
-    if (progressFill) progressFill.style.width = progressPercent.toFixed(1) + "%";
   } else {
     const dateStr = selectedDate.toLocaleDateString(I18N[currentLang].localeDate, { weekday: "long", day: "numeric", month: "long" });
-    setText("hero-current-name", dateStr);
+    if (!hasData) {
+      setText("hero-current-name", dateStr + " (" + t.noData + ")");
+      setText("hero-countdown-text", "--:--:--");
+      setText("hero-current-range", "--:--");
+    } else {
+      setText("hero-current-name", dateStr);
+    }
   }
 
   const now = new Date();
@@ -490,26 +546,24 @@ function updateTick() {
   const nmm = String(now.getMinutes()).padStart(2, '0');
   const nsTimeEl = document.getElementById("ns-time");
   if (nsTimeEl) nsTimeEl.innerHTML = `${nhh}<span class="blink-colon">:</span>${nmm}`;
-  if (isToday) {
+  
+  if (isToday && hasData && state.next) {
      setText("ns-next", document.getElementById("hero-countdown-text").textContent);
   } else {
      setText("ns-next", "-");
   }
 
-  renderPrayerList(adjustedTimes, state.active.key);
+  renderPrayerList(adjustedTimes, state.active ? state.active.key : null);
   const engineAdjustedTimes = getAdjustedSchedule();
   updateSkyVisuals(engineAdjustedTimes, (now.getHours() * 60) + now.getMinutes());
 }
 
-// FIX: Split the date strings into top and bottom spans
 function setDateHeaders() {
   const gregorianOptions = { weekday: "short", day: "numeric", month: "short", year: "numeric" };
   const gregorianStr = selectedDate.toLocaleDateString(I18N[currentLang].localeDate, gregorianOptions);
   
   setText("gregorian-date", gregorianStr);
   setText("hijrah-date", hijrahString);
-  
-  // Nightstand still uses the single-line format
   setText("ns-date", gregorianStr + " | " + hijrahString);
 }
 
@@ -524,11 +578,13 @@ function fetchRemoteData() {
 
   return Promise.all([prayerReq, fadhilatReq])
     .then(([prayers, fadhilat]) => {
-      if (prayers) { fullYearSchedule = prayers; } 
-      else { console.warn("Prayer data empty/failed. Using offline fallback."); }
-      
+      if (prayers) { 
+        fullYearSchedule = prayers; 
+        applyDatePickerLimits();
+      } else { 
+        console.warn("Prayer data empty/failed."); 
+      }
       if (fadhilat) { fadhilatData = fadhilat; } 
-      else { console.warn("Fadhilat data failed to load."); }
       
       syncScheduleToSelectedDate();
     });
