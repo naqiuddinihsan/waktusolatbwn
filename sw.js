@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.11
+Version: 0.16.12
 Description: Network-first service worker syncing the full data correction.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.11';
+const CACHE_NAME = 'waktu-solat-v0.16.12';
 const ASSETS = [
   './',
   './index.html',
