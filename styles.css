@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 0.16.9
-Description: Perfected 50/50 widget proportions. Clock perfectly centered, text elements utilize full vertical span.
+Version: 0.16.10
+Description: Version bump to maintain synchronization across the app payload.
 */
 
 :root {
@@ -213,14 +213,11 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 .blink-colon { animation: blink 1s step-start infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 
-/* WIDGET ARCHITECTURE - FULL VERTICAL SPREAD */
 .ns-panel-2 { flex-direction: row; padding: 12vh 8vw; gap: 4vw; align-items: stretch; justify-content: center; height: 100vh; width: 100vw;}
 
-/* Left Block: Centers the clock absolutely */
 .ns-widget-left { flex: 1; display: flex; align-items: center; justify-content: center; }
 #ns-time-2 { font-size: 30vmin; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -0.02em; text-align: center; }
 
-/* Right Block: space-between forces top and bottom alignment */
 .ns-widget-right { 
   flex: 1; display: flex; flex-direction: column; align-items: flex-start; 
   justify-content: space-between; text-align: left; padding-left: 2vw;
