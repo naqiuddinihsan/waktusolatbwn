@@ -1,7 +1,7 @@
 """
 Script Name: nja_waktu_solat_scraper_mora.py
-Version: 1.12.0
-Description: Bulletproof ASP.NET AJAX extraction. Uses hard timeouts instead of navigation locks to prevent timeouts, and utilizes strict index-based column mapping to absolutely prevent data drifting.
+Version: 1.13.0
+Description: Forces Asia/Brunei timezone to prevent server-side date shifting. Uses isolated browser contexts per month to defeat ASP.NET AJAX crashes.
 """
 
 import json
@@ -38,98 +38,96 @@ def extract_prayer_times():
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        context = browser.new_context()
-        page = context.new_page()
-        
-        for month in months:
-            print(f"Fetching data for {month} {year}...")
-            
-            # Hard reload to reset ASP.NET state for every month
-            page.goto(url, wait_until="domcontentloaded", timeout=90000)
-            page.wait_for_timeout(3000)
-            
-            # 1. Select Zone
+        # CRITICAL: Force Brunei Timezone so KHEU's server generates the correct Hijri dates
+        context = browser.new_context(
+            timezone_id="Asia/Brunei",
+            locale="ms-BN"
+        )
+
+        for month_idx, month in enumerate(months):
+            page = context.new_page()
             try:
+                print(f"Fetching {month} {year}...")
+                page.goto(url, wait_until="networkidle", timeout=60000)
+                page.wait_for_timeout(3000)
+
+                # Set Zone strictly by searching options
                 for sel in page.locator("select").all():
-                    opts = sel.inner_text()
-                    if "Tutong" in opts:
-                        for label in ["Brunei dan Muara", "Brunei-Muara", "Brunei & Muara"]:
-                            if label in opts:
-                                sel.select_option(label=label)
-                                page.wait_for_timeout(2000)
+                    if "Tutong" in sel.inner_text():
+                        for opt in sel.locator("option").all_inner_texts():
+                            if "Brunei" in opt and "Muara" in opt:
+                                sel.select_option(label=opt)
+                                page.wait_for_timeout(1500)
                                 break
                         break
-            except Exception as e:
-                print(f"Zone set error: {e}")
 
-            # 2. Select Year
-            try:
+                # Set Year
                 for sel in page.locator("select").all():
-                    if year in sel.inner_text() and str(int(year)-1) in sel.inner_text():
-                        sel.select_option(label=year)
-                        page.wait_for_timeout(2000)
+                    if year in sel.inner_text() or str(int(year)-1) in sel.inner_text():
+                        for opt in sel.locator("option").all_inner_texts():
+                            if year in opt:
+                                sel.select_option(label=opt)
+                                page.wait_for_timeout(1500)
+                                break
                         break
-            except Exception as e:
-                print(f"Year set error: {e}")
 
-            # 3. Select Month
-            try:
+                # Set Month
                 for sel in page.locator("select").all():
                     if "Januari" in sel.inner_text() and "Disember" in sel.inner_text():
-                        sel.select_option(label=month)
-                        page.wait_for_timeout(2000)
+                        for opt in sel.locator("option").all_inner_texts():
+                            if month.lower() == opt.lower().strip():
+                                sel.select_option(label=opt)
+                                page.wait_for_timeout(1500)
+                                break
                         break
-            except Exception as e:
-                print(f"Month set error: {e}")
 
-            # 4. Trigger Submission (No expect_navigation to prevent timeout crash)
-            try:
-                btn = page.locator("input[value='Paparkan'], button:has-text('Paparkan'), input[type='submit']").first
-                if btn.is_visible():
-                    btn.click()
-                    page.wait_for_timeout(6000) # Hard wait for AJAX table render
-            except Exception as e:
-                print(f"Button click error: {e}")
+                # Click Paparkan and wait for AJAX
+                btn = page.locator("input[value='Paparkan'], button:has-text('Paparkan')").first
+                if btn.count() > 0:
+                    btn.click(force=True)
+                    page.wait_for_timeout(8000) 
 
-            # 5. Extract and STRICTLY Validate
-            rows = page.locator("table tr").all()
-            for row in rows:
-                cols = row.locator("td, th").all()
-                col_texts = [col.inner_text().strip() for col in cols]
-                
-                # Strict Index Locating: Find exactly where the date is, ignore all offset guessing
-                date_index = -1
-                for i, text in enumerate(col_texts):
-                    if re.match(r'^\d{2}-\d{2}-\d{4}$', text):
-                        date_index = i
-                        break
-                        
-                if date_index != -1 and len(col_texts) >= date_index + 10:
-                    formatted_date = col_texts[date_index]
-                    row_month = int(formatted_date.split("-")[1])
-                    expected_month_num = months.index(month) + 1
+                rows = page.locator("table tr").all()
+                expected_month_str = f"-{month_idx + 1:02d}-" 
+
+                for row in rows:
+                    cols = row.locator("td, th").all()
+                    col_texts = [col.inner_text().strip() for col in cols]
                     
-                    # Ensure we are saving data for the correct month and haven't captured ghost rows
-                    if row_month == expected_month_num:
-                        structured_json[formatted_date] = {
-                            "date_gregorian": formatted_date,
-                            "date_hijrah": col_texts[date_index + 1],
-                            "imsak": parse_time_to_24h(col_texts[date_index + 2], "imsak"),
-                            "subuh": parse_time_to_24h(col_texts[date_index + 3], "subuh"),
-                            "syuruk": parse_time_to_24h(col_texts[date_index + 4], "syuruk"),
-                            "duha": parse_time_to_24h(col_texts[date_index + 5], "duha"),
-                            "zuhur": parse_time_to_24h(col_texts[date_index + 6], "zuhur"),
-                            "asar": parse_time_to_24h(col_texts[date_index + 7], "asar"),
-                            "maghrib": parse_time_to_24h(col_texts[date_index + 8], "maghrib"),
-                            "isya": parse_time_to_24h(col_texts[date_index + 9], "isya")
-                        }
-        
+                    if len(col_texts) > 7 and "Tarikh" not in col_texts[0] and "Tarikh" not in col_texts[1]:
+                        idx_offset = None
+                        if re.match(r'\d{2}-\d{2}-\d{4}', col_texts[0]):
+                            idx_offset = -1
+                        elif re.match(r'\d{2}-\d{2}-\d{4}', col_texts[1]):
+                            idx_offset = 0
+
+                        if idx_offset is not None:
+                            formatted_date = col_texts[0] if idx_offset == -1 else col_texts[1]
+                            hijrah = col_texts[1].strip() if idx_offset == -1 else col_texts[2].strip()
+
+                            # Guard against ghost rows
+                            if expected_month_str in formatted_date:
+                                structured_json[formatted_date] = {
+                                    "date_gregorian": formatted_date,
+                                    "date_hijrah": hijrah,
+                                    "imsak": parse_time_to_24h(col_texts[3 + idx_offset], "imsak"),
+                                    "subuh": parse_time_to_24h(col_texts[4 + idx_offset], "subuh"),
+                                    "syuruk": parse_time_to_24h(col_texts[5 + idx_offset], "syuruk"),
+                                    "duha": parse_time_to_24h(col_texts[6 + idx_offset], "duha"),
+                                    "zuhur": parse_time_to_24h(col_texts[7 + idx_offset], "zuhur"),
+                                    "asar": parse_time_to_24h(col_texts[8 + idx_offset], "asar"),
+                                    "maghrib": parse_time_to_24h(col_texts[9 + idx_offset], "maghrib"),
+                                    "isya": parse_time_to_24h(col_texts[10 + idx_offset], "isya")
+                                }
+            except Exception as e:
+                print(f"Error on {month}: {e}")
+            finally:
+                page.close() 
+
         browser.close()
 
     brunei_tz = timezone(timedelta(hours=8))
-    structured_json["metadata"] = {
-        "last_updated": datetime.now(brunei_tz).isoformat()
-    }
+    structured_json["metadata"] = {"last_updated": datetime.now(brunei_tz).isoformat()}
 
     os.makedirs("data", exist_ok=True)
     json_file = "data/brunei_prayers.json"
