@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 0.16.4
-Description: 2-Panel swipeable Nightstand Mode layout and pagination dots.
+Version: 0.16.5
+Description: Updated Panel 2 layout to match the provided screenshot design.
 -->
 <!DOCTYPE html>
 <html lang="ms" translate="no">
@@ -136,42 +136,37 @@ Description: 2-Panel swipeable Nightstand Mode layout and pagination dots.
       <div class="modal-body about-body" id="about-body-content">
         <p><strong>Sumber Data Rasmi:</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">Kementerian Hal Ehwal Ugama (KHEU) Brunei</a></p>
         <p><strong>Dibangunkan oleh:</strong><br><a href="https://www.qwamii.com" target="_blank">Qwamii</a> / <a href="https://www.behance.net/naqiuddinihsan" target="_blank">Naqiuddin Ihsan</a></p>
-        <p class="about-version">Versi 0.16.4</p>
+        <p class="about-version">Versi 0.16.5</p>
       </div>
     </div>
   </div>
 
-  <!-- UPGRADED 2-PANEL NIGHTSTAND MODE -->
   <div id="nightstand-mode">
     <div class="ns-scroll-container" id="ns-scroll-container">
       
-      <!-- Panel 1: Classic Minimal -->
       <div class="ns-panel ns-panel-1">
         <div id="ns-time">00<span class="blink-colon">:</span>00</div>
         <div id="ns-date">-</div>
         <div id="ns-next">-</div>
       </div>
       
-      <!-- Panel 2: Side-by-Side Widget -->
       <div class="ns-panel ns-panel-2">
         <div class="ns-widget-left">
-          <div id="ns-time-2">00<span class="blink-colon">:</span>00</div>
-          <div id="ns-date-2">-</div>
-        </div>
-        <div class="ns-divider"></div>
-        <div class="ns-widget-right">
-          <div class="ns-next-label" id="ns-label-2">SETERUSNYA</div>
-          <div id="ns-next-name-2">-</div>
-          <div id="ns-next-time-2">--:--</div>
-          <div class="ns-countdown-box">
-            <div id="ns-next-countdown-2">--:--:--</div>
+          <div class="ns-clock-dial">
+            <div id="ns-time-2">00<span class="blink-colon">:</span>00</div>
           </div>
+        </div>
+        <div class="ns-widget-right">
+          <div class="ns-time-left" id="ns-time-left-2">Time left: --:--:--</div>
+          <div class="ns-current-icon" id="ns-current-icon-2"></div>
+          <div class="ns-current-name" id="ns-current-name-2">-</div>
+          <div class="ns-next-info" id="ns-next-info-2">Next: -</div>
+          <div class="ns-starts-at" id="ns-starts-at-2">Starts at --:--</div>
         </div>
       </div>
       
     </div>
     
-    <!-- Pager Dots -->
     <div class="ns-dots">
       <div class="ns-dot active" id="ns-dot-1"></div>
       <div class="ns-dot" id="ns-dot-2"></div>
