@@ -1,0 +1,22 @@
+{
+  "ms": {
+    "subuh": { "desc": "Solat Sunat Qabliyah Subuh amat dituntut.", "benefit": "'Dua rakaat Fajar lebih baik dari dunia dan seisinya' (HR. Muslim).", "source": "Hadis Sahih Muslim, No. 725" },
+    "zuhur": { "desc": "Bermula bila matahari tergelincir dari puncak langit.", "benefit": "Allah haramkan api neraka bagi yang memelihara 4 rakaat sebelum dan selepas Zuhur.", "source": "Sunan Tirmizi, No. 428" },
+    "asar": { "desc": "Waktu solat pertengahan yang disejukkan.", "benefit": "Siapa menunaikan solat Subuh dan Asar dijanjikan syurga (HR. Bukhari & Muslim).", "source": "Sahih al-Bukhari, No. 574" },
+    "maghrib": { "desc": "Bermula sejurus matahari terbenam sepenuhnya.", "benefit": "Solat Sunat Ba'diyyah Maghrib mendatangkan keberkatan dan cahaya malam.", "source": "Al-Fiqh al-Manhaji" },
+    "isya": { "desc": "Bermula selepas hilangnya mega merah di ufuk.", "benefit": "Disunatkan menutup ibadah malam dengan Solat Sunat Witir.", "source": "Sahih al-Bukhari, No. 998" },
+    "syuruk": { "desc": "Detik matahari terbit di ufuk timur. Dilarang solat pada waktu ini.", "benefit": "Dianjurkan berzikir hingga matahari naik untuk solat Sunat Duha.", "source": "Pejabat Mufti Kerajaan Brunei" },
+    "duha": { "desc": "Waktu pagi setelah matahari meninggi segalah hingga sebelum Zuhur.", "benefit": "Mencukupi sedekah bagi seluruh 360 sendi tubuh badan.", "source": "Hadis Sahih Muslim, No. 720" },
+    "imsak": { "desc": "Waktu berjaga-jaga (~10 minit sebelum Subuh) untuk tamat sahur.", "benefit": "Memastikan ibadah puasa dimulakan dengan penuh yakin dan tertib.", "source": "KHEU Brunei" }
+  },
+  "en": {
+    "subuh": { "desc": "Fajr marks the true dawn light on the horizon.", "benefit": "'Two rak'ahs before Fajr are better than the entire world' (Sahih Muslim).", "source": "Sahih Muslim, No. 725" },
+    "zuhur": { "desc": "Starts after the sun passes its highest point.", "benefit": "Maintaining Sunnah prayers around Zuhr shields against the Hellfire.", "source": "Sunan Tirmidhi, No. 428" },
+    "asar": { "desc": "The middle prayer during afternoon hours.", "benefit": "Whoever guards Fajr and Asr enters Paradise without delay.", "source": "Sahih al-Bukhari, No. 574" },
+    "maghrib": { "desc": "Begins immediately upon sunset until dusk fades.", "benefit": "Performing Sunnah rak'ahs after Maghrib brings divine peace into the home.", "source": "Al-Fiqh al-Manhaji" },
+    "isya": { "desc": "Commences once the twilight glow completely fades.", "benefit": "The Prophet SAW encouraged concluding night prayers with Witr.", "source": "Sahih al-Bukhari, No. 998" },
+    "syuruk": { "desc": "The exact sunrise interval. Voluntary prayers are prohibited.", "benefit": "Engage in morning remembrance until Dhuha time begins.", "source": "State Mufti Department Brunei" },
+    "duha": { "desc": "From mid-morning until shortly before Zuhr.", "benefit": "Suffices as daily charity for every joint in your body.", "source": "Sahih Muslim, No. 720" },
+    "imsak": { "desc": "Precautionary interval (~10 mins before Fajr) to conclude Sahur.", "benefit": "Allows fasting to begin with accuracy and reassurance.", "source": "MORA Brunei" }
+  }
+}
