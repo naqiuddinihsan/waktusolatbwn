@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.9
-Description: Exact timer formatting (h:mm:ss) matching reference screenshot and synced with stretched flex-layout.
+Version: 0.16.10
+Description: Version bump for metadata and formatting updates.
 */
 
 if ('serviceWorker' in navigator) {
@@ -91,7 +91,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.9" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.10" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -116,7 +116,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.9" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.10" }
   }
 };
 
@@ -401,6 +401,9 @@ function renderPrayerList(adjustedTimes, activeKey) {
       else if (prayerMins < currentMinutes) { row.classList.add("is-past"); }
     }
 
+    // MODAL DISABLED TEMP
+    // row.addEventListener('click', () => openPrayerModal(item.key));
+
     let badgesHtml = '';
     if (item.badges) {
       item.badges.forEach(badge => { badgesHtml += `<span class="fiqh-badge ${badge.type}">${badge.text}</span>`; });
@@ -560,7 +563,6 @@ function updateTick() {
       let mins = Math.floor((diffSeconds % 3600) / 60);
       let secs = diffSeconds % 60;
       
-      // Removed leading zero for hours to match 2:50:25 format
       let hStr = hours; 
       let mStr = mins < 10 ? "0" + mins : mins;
       let sStr = secs < 10 ? "0" + secs : secs;
