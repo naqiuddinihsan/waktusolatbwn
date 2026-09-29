@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.5
-Description: Accurate widget data binding, I18N for new panel elements, and dynamic Sun/Moon SVG icons.
+Version: 0.16.6
+Description: Nightstand logic engine synced with the perfected widget structure.
 */
 
 if ('serviceWorker' in navigator) {
@@ -53,7 +53,6 @@ const SVG_PULL = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--
 const SVG_RELEASE = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--text-secondary)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s; transform: rotate(180deg);"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
 const SVG_SPINNER = `<span class="ptr-spinner"></span>`;
 
-// Dynamic icons for Nightstand Mode
 const SVG_SUN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
 const SVG_MOON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
 
@@ -91,7 +90,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.5" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.6" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -115,7 +114,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.5" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.6" }
   }
 };
 
@@ -393,9 +392,6 @@ function renderPrayerList(adjustedTimes, activeKey) {
       else if (prayerMins < currentMinutes) { row.classList.add("is-past"); }
     }
 
-    // MODAL DISABLED TEMP
-    // row.addEventListener('click', () => openPrayerModal(item.key));
-
     let badgesHtml = '';
     if (item.badges) {
       item.badges.forEach(badge => { badgesHtml += `<span class="fiqh-badge ${badge.type}">${badge.text}</span>`; });
@@ -591,7 +587,6 @@ function updateTick() {
      if (iconContainer) iconContainer.innerHTML = activeIcon;
      setText("ns-current-name-2", state.active.name);
      
-     // Build the string: Next: [icon] Name
      const nextEl = document.getElementById("ns-next-info-2");
      if (nextEl) nextEl.innerHTML = t.nsNextLabel + " " + activeIcon + " " + state.next.name;
      
@@ -617,7 +612,6 @@ function setDateHeaders() {
   
   setText("gregorian-date", gregorianStr);
   setText("hijrah-date", hijrahString);
-  setText("ns-date", gregorianStr + " | " + hijrahString);
 }
 
 function fetchRemoteData() {
