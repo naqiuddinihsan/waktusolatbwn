@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.13
-Description: Network-first service worker syncing the missing label bugs and vertical widget swipe.
+Version: 0.16.14
+Description: Network-first service worker syncing the missing label bugs and vertical widget swipe payload update.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.13';
+const CACHE_NAME = 'waktu-solat-v0.16.14';
 const ASSETS = [
   './',
   './index.html',
