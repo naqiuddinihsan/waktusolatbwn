@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 14.1.0
-Description: Network-first service worker syncing the data folder architecture, PTR bugfixes, and UI polish.
+Version: 15.0.0
+Description: Network-first service worker syncing the iOS zoom fixes and date-picker overhaul.
 */
 
-const CACHE_NAME = 'waktu-solat-v14.1.0';
+const CACHE_NAME = 'waktu-solat-v15.0.0';
 const ASSETS = [
   './',
   './index.html',
