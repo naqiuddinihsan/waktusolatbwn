@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 0.16.14
-Description: Version bump to maintain synchronization. Configured vertical snapping properties for the second nightstand page.
+Version: 0.16.15
+Description: Synchronized scrolling container heights to lock vertical scroll snapping. Added new nightstand date styling.
 */
 
 :root {
@@ -215,16 +215,17 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 
 .ns-panel-2 { flex-direction: row; padding: 12vh 8vw; gap: 4vw; align-items: stretch; justify-content: center; height: 100vh; width: 100vw;}
 
-.ns-widget-left { flex: 1; display: flex; align-items: center; justify-content: center; }
+.ns-widget-left { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1vh; }
 #ns-time-2 { font-size: 30vmin; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -0.02em; text-align: center; }
+#ns-date-2 { font-size: 4vmin; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; }
 
-.ns-widget-right-wrapper { flex: 1; position: relative; display: flex; }
-.ns-widget-right { flex: 1; display: flex; flex-direction: column; overflow-y: auto; scroll-snap-type: y mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.ns-widget-right-wrapper { flex: 1; position: relative; display: flex; height: 100%; overflow: hidden; }
+.ns-widget-right { flex: 1; display: flex; flex-direction: column; overflow-y: auto; scroll-snap-type: y mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; height: 100%; }
 .ns-widget-right::-webkit-scrollbar { display: none; }
 
-.ns-widget-page { min-height: 100vh; width: 100%; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; scroll-snap-align: start; padding-left: 2vw; }
-.ns-widget-page-1 { justify-content: space-between; padding-top: 12vh; padding-bottom: 12vh; }
-.ns-widget-page-2 { justify-content: center; gap: 2vh; padding-right: 6vw; }
+.ns-widget-page { height: 100%; width: 100%; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; scroll-snap-align: start; padding-left: 2vw; }
+.ns-widget-page-1 { gap: 4vh; }
+.ns-widget-page-2 { gap: 2vh; padding-right: 6vw; }
 
 .ns-widget-dots { position: absolute; right: 2vw; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 1.5vh; transition: opacity 0.4s ease; z-index: 10001; pointer-events: none; }
 .ns-widget-dots.hidden { opacity: 0; }
