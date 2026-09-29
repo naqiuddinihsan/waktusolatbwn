@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 0.16.7
-Description: Perfected widget proportions. 50/50 flex split, centered clock, spaced-between vertical text layout.
+Version: 0.16.8
+Description: Version bump for metadata rendering.
 */
 
 :root {
@@ -213,14 +213,11 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 .blink-colon { animation: blink 1s step-start infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 
-/* PERFECTED 50/50 WIDGET ARCHITECTURE */
 .ns-panel-2 { flex-direction: row; padding: 6vw; gap: 4vw; }
 
-/* Left Block: 50% width, dead-center the clock */
 .ns-widget-left { flex: 1; display: flex; align-items: center; justify-content: center; height: 100%; }
 #ns-time-2 { font-size: 26vmin; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -0.02em; text-align: center; width: 100%; }
 
-/* Right Block: 50% width, spread items vertically from absolute top to bottom */
 .ns-widget-right { 
   flex: 1; display: flex; flex-direction: column; align-items: flex-start; 
   justify-content: space-between; text-align: left; height: 100%; 
