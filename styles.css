@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 1.0.12
-Description: Tabular-nums fixed width for Nightstand countdown. Increased max-height media query for Android landscape support.
+Version: 14.1.0
+Description: Hover cutoff fixed with side padding, dropdown enlarged, Calendar Picker UI added.
 */
 
 :root {
@@ -73,8 +73,17 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 .lang-btn { background: none; border: none; color: var(--text-muted); font-size: 0.65rem; font-weight: 600; padding: 4px 6px; border-radius: 4px; cursor: pointer; }
 .lang-btn.active { background-color: var(--bg-surface-elevated); color: var(--text-primary); }
 
-.header-bottom { display: flex; justify-content: center; align-items: center; background: var(--bg-surface); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-subtle); width: 100%; }
-.date-text { font-size: 0.85rem; font-weight: 600; letter-spacing: 0.02em; color: var(--text-secondary); }
+.header-bottom { display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-subtle); width: 100%; }
+
+.date-picker-wrapper { position: relative; display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px; cursor: pointer; border: 1px solid var(--border-subtle); transition: background 0.2s; }
+.date-picker-wrapper:active { background: rgba(255,255,255,0.1); }
+.cal-icon { color: var(--text-primary); opacity: 0.8; }
+.date-text { font-size: 0.85rem; font-weight: 600; letter-spacing: 0.02em; color: var(--text-primary); }
+#native-date-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+
+.reset-pill { display: none; background: var(--bg-surface-elevated); color: var(--text-primary); border: 1px solid var(--border-active); border-radius: 99px; padding: 4px 12px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: transform 0.1s; }
+.reset-pill.is-visible { display: block; }
+.reset-pill:active { transform: scale(0.9); }
 
 .hero-tracker {
   background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(10, 10, 10, 0.8) 100%);
@@ -88,15 +97,15 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 
 .district-select-wrapper { position: relative; flex-shrink: 0; }
 .district-select {
-  appearance: none; background-color: rgba(20, 20, 20, 0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); border: 1px solid rgba(255, 255, 255, 0.15); color: var(--text-primary);
-  font-size: 0.65rem; font-weight: 600; padding: 3px 20px 3px 8px; border-radius: 6px; outline: none; cursor: pointer; font-family: var(--font-stack);
+  appearance: none; background-color: rgba(20, 20, 20, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.2); color: var(--text-primary);
+  font-size: 0.8rem; font-weight: 600; padding: 8px 32px 8px 12px; border-radius: 8px; outline: none; cursor: pointer; font-family: var(--font-stack); min-height: 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
-.district-select-wrapper::after { content: "▼"; font-size: 0.45rem; color: var(--text-primary); position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+.district-select-wrapper::after { content: "▼"; font-size: 0.6rem; color: var(--text-primary); position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; }
 
 .hero-name { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.02em; color: #ffffff; line-height: 1; z-index: 1; }
 .hero-time { font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px; z-index: 1; }
 
-.progress-container { width: 100%; display: flex; flex-direction: column; gap: 4px; z-index: 1; margin-top: 2px; }
+.progress-container { width: 100%; display: flex; flex-direction: column; gap: 4px; z-index: 1; margin-top: 2px; transition: opacity 0.3s; }
 .progress-countdown { font-size: 0.85rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-primary); }
 .progress-track { width: 100%; height: 6px; background-color: var(--border-subtle); border-radius: 999px; overflow: hidden; }
 .progress-fill { height: 100%; width: 0%; background: var(--accent-primary); border-radius: 999px; box-shadow: 0 0 10px var(--accent-primary); transition: width 0.8s ease; }
@@ -106,10 +115,11 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
 .prayer-list {
-  display: flex; flex-direction: column; gap: 8px; width: 100%; flex-grow: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  display: flex; flex-direction: column; gap: 8px; width: 100%; flex-grow: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0px, black 12px, black calc(100% - 12px), transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0px, black 12px, black calc(100% - 12px), transparent 100%);
-  padding-top: 4px; padding-bottom: 4px; scrollbar-width: none;
+  padding: 4px 10px; margin: 0 -10px;
+  scrollbar-width: none;
 }
 .prayer-list::-webkit-scrollbar { display: none; }
 
@@ -119,7 +129,7 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s ease, opacity 0.2s ease, box-shadow 0.3s ease;
   transform-origin: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
-@media (hover: hover) { .prayer-row:hover { background-color: var(--bg-surface-elevated) !important; transform: translateY(-2px) scale(1.01) !important; box-shadow: 0 8px 20px rgba(0,0,0,0.3); } }
+@media (hover: hover) { .prayer-row:hover { background-color: var(--bg-surface-elevated) !important; transform: translateY(-2px) scale(1.02) !important; box-shadow: 0 8px 20px rgba(0,0,0,0.3); } }
 .prayer-row:active { transform: translateY(1px) scale(0.96) !important; background-color: var(--bg-surface-active) !important; opacity: 0.85; box-shadow: 0 2px 6px rgba(0,0,0,0.5); }
 
 .prayer-row.is-fardhu { background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 16px 14px; }
@@ -165,11 +175,8 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 .blink-colon { animation: blink 1s step-start infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 #ns-date { font-size: 5vmin; color: var(--text-secondary); margin-top: 1vh; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
-
-/* FIX: Tabular Nums for Nightstand Countdown */
 #ns-next { font-size: 6vmin; color: var(--text-primary); margin-top: 3vh; font-weight: 600; background: var(--bg-surface-elevated); padding: 1.5vh 4vw; border-radius: 99px; border: 1px solid var(--border-subtle); font-variant-numeric: tabular-nums; }
 
-/* FIX: Android max-height increased to 600px for landscape */
 @media (orientation: landscape) and (max-height: 600px) {
   .app-wrapper, .modal-backdrop, #sky-bg, #celestial-body, #clouds-layer { display: none !important; }
   #nightstand-mode { display: flex; }
