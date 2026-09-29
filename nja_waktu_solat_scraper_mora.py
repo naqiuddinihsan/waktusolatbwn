@@ -1,14 +1,12 @@
 """
 Script Name: nja_waktu_solat_scraper_mora.py
-Version: 1.8.0
-Description: Injects exact UTC+8 scraping timestamp into JSON metadata block for frontend validation.
+Version: 1.9.0
+Description: Ultra-resilient KHEU extraction. Forces a hard page reload for every single month to defeat ASP.NET AJAX postback failures.
 """
 
-import csv
 import json
 import re
 import sys
-import time
 import os
 from datetime import datetime, timezone, timedelta
 from playwright.sync_api import sync_playwright
@@ -44,7 +42,6 @@ def extract_prayer_times():
     year = sys.argv[1] if len(sys.argv) > 1 else str(datetime.now().year)
     print(f"Targeting year for extraction: {year}")
     
-    all_data = []
     structured_json = {}
 
     with sync_playwright() as p:
@@ -52,71 +49,61 @@ def extract_prayer_times():
         context = browser.new_context()
         page = context.new_page()
         
-        print(f"Navigating to {url}")
-        page.goto(url, timeout=90000)
-        page.wait_for_timeout(5000)
-        
         for month in months:
-            print(f"Configuring portal for {month} {year} (Enforcing Brunei-Muara)...")
+            print(f"Fetching data for {month} {year}...")
             
+            # 1. HARD REFRESH: Kill ASP.NET sticky state by reloading the URL every loop
+            page.goto(url, wait_until="domcontentloaded", timeout=90000)
+            page.wait_for_timeout(3000)
+                
+            # 2. Select Year
             try:
-                for sel in page.locator("select").all():
-                    opts = sel.inner_text()
-                    if "Tutong" in opts and "Belait" in opts:
-                        for d in ["Brunei dan Muara", "Brunei-Muara", "Brunei & Muara"]:
-                            if d in opts:
-                                sel.select_option(label=d)
-                                page.wait_for_timeout(2000)
-                                break
+                year_sel = page.locator("select").filter(has_text=year).first
+                if year_sel.is_visible():
+                    year_sel.select_option(label=year)
+                    page.wait_for_timeout(1500)
+            except Exception:
+                print("Could not find Year dropdown.")
+                
+            # 3. Select Month
+            try:
+                month_sel = page.locator("select").filter(has_text="Januari").first
+                if month_sel.is_visible():
+                    month_sel.select_option(label=month)
+                    page.wait_for_timeout(1500)
+            except Exception:
+                print(f"Could not find Month dropdown for {month}.")
+                
+            # 4. Click Paparkan
+            try:
+                btn = page.locator("input[value='Paparkan'], button:has-text('Paparkan')").first
+                if btn.is_visible():
+                    btn.click()
             except Exception:
                 pass
                 
-            try:
-                for sel in page.locator("select").all():
-                    if year in sel.inner_text() and str(int(year)-1) in sel.inner_text():
-                        sel.select_option(label=year)
-                        page.wait_for_timeout(2000)
-            except Exception:
-                pass
-                
-            try:
-                for sel in page.locator("select").all():
-                    opts = sel.inner_text()
-                    if "Januari" in opts and "Disember" in opts:
-                        sel.select_option(label=month)
-                        page.wait_for_timeout(2000)
-            except Exception:
-                pass
-                
-            try:
-                page.locator("input[value='Paparkan'], button:has-text('Paparkan'), input[type='submit']").first.click(force=True)
-            except Exception:
-                pass
-                
-            page.wait_for_timeout(8000)
+            # 5. Wait heavily for the new table data to inject
+            page.wait_for_timeout(6000)
             
             rows = page.locator("table tr").all()
             for row in rows:
                 cols = row.locator("td, th").all()
                 col_texts = [col.inner_text().strip() for col in cols]
-                if col_texts and col_texts not in all_data:
-                    all_data.append(col_texts)
+                
+                if len(col_texts) > 7 and col_texts[0] != "Title" and "-" in col_texts[1]:
+                    idx_offset = None
                     
-                    if len(col_texts) > 7 and col_texts[0] != "Title" and "-" in col_texts[1]:
+                    if re.match(r'\d{2}-\d{2}-\d{4}', col_texts[0]):
+                        idx_offset = -1
+                    elif re.match(r'\d{2}-\d{2}-\d{4}', col_texts[1]):
                         idx_offset = 0
-                        formatted_date = ""
-                        hijrah = ""
                         
-                        if re.match(r'\d{2}-\d{2}-\d{4}', col_texts[0]):
-                            idx_offset = -1
-                            formatted_date = col_texts[0]
-                            hijrah = col_texts[1].strip()
-                        elif re.match(r'\d{2}-\d{2}-\d{4}', col_texts[1]):
-                            idx_offset = 0
-                            formatted_date = col_texts[1]
-                            hijrah = col_texts[2].strip()
-                            
-                        if formatted_date:
+                    if idx_offset is not None:
+                        formatted_date = col_texts[0] if idx_offset == -1 else col_texts[1]
+                        hijrah = col_texts[1].strip() if idx_offset == -1 else col_texts[2].strip()
+                        
+                        # Guard against table header rows
+                        if "Tarikh" not in formatted_date:
                             structured_json[formatted_date] = {
                                 "date_gregorian": formatted_date,
                                 "date_hijrah": hijrah,
@@ -132,7 +119,6 @@ def extract_prayer_times():
         
         browser.close()
 
-    # Append UTC+8 Timestamp Metadata
     brunei_tz = timezone(timedelta(hours=8))
     structured_json["metadata"] = {
         "last_updated": datetime.now(brunei_tz).isoformat()
