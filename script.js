@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 1.0.12
-Description: Screen Wake Lock API for Always-On Display, updated developer URLs, tabular countdowns.
+Version: 14.1.0
+Description: External JSON fetch for fadhilat, custom date selection, and touchcancel PTR fix.
 */
 
 if ('serviceWorker' in navigator) {
@@ -10,14 +10,17 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// const GITHUB_JSON_URL = "https://raw.githubusercontent.com/naqiuddinihsan/waktu-solat-brunei/main/brunei_prayers.json";
-const GITHUB_JSON_URL = "https://raw.githubusercontent.com/naqiuddinihsan/waktusolatbwn/main/brunei_prayers.json";
+const PRAYERS_JSON_URL = "https://raw.githubusercontent.com/naqiuddinihsan/waktusolatbwn/main/data/brunei_prayers.json";
+const FADHILAT_JSON_URL = "https://raw.githubusercontent.com/naqiuddinihsan/waktusolatbwn/main/data/fadhilat.json";
 
 let currentLang = "ms";
 let visualsEnabled = localStorage.getItem('bwn_visuals') === 'true';
 let wakeLock = null;
 
-// REQUEST ALWAYS-ON DISPLAY WAKE LOCK
+let fullYearSchedule = {};
+let fadhilatData = null;
+let selectedDate = new Date();
+
 async function requestWakeLock() {
   try {
     if ('wakeLock' in navigator) {
@@ -28,7 +31,6 @@ async function requestWakeLock() {
   }
 }
 
-// Re-acquire Wake Lock when app becomes visible
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && wakeLock !== null) {
     requestWakeLock();
@@ -59,6 +61,8 @@ const I18N = {
     localeDate: "ms-MY",
     yesterdaySuffix: "(Malam Tadi)",
     tomorrowSuffix: "(Esok)",
+    viewingOtherDate: "Tarikh Pilihan:",
+    resetToday: "Hari Ini",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir", sunat: "Sunat" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
@@ -66,27 +70,8 @@ const I18N = {
       { val: 1, text: "Tutong (+1 min)" },
       { val: 0, text: "Temburong" }
     ],
-    prayers: {
-      imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha",
-      zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'"
-    },
-    about: {
-      title: "Maklumat Aplikasi",
-      sourceLabel: "Sumber Data Rasmi:",
-      sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei",
-      devLabel: "Dibangunkan oleh:",
-      version: "Versi 1.0.12"
-    },
-    details: {
-      subuh: { desc: "Solat Sunat Qabliyah Subuh amat dituntut.", benefit: "'Dua rakaat Fajar lebih baik dari dunia dan seisinya' (HR. Muslim).", source: "Hadis Sahih Muslim, No. 725" },
-      zuhur: { desc: "Bermula bila matahari tergelincir dari puncak langit.", benefit: "Allah haramkan api neraka bagi yang memelihara 4 rakaat sebelum dan selepas Zuhur.", source: "Sunan Tirmizi, No. 428" },
-      asar: { desc: "Waktu solat pertengahan yang disejukkan.", benefit: "Siapa menunaikan solat Subuh dan Asar dijanjikan syurga (HR. Bukhari & Muslim).", source: "Sahih al-Bukhari, No. 574" },
-      maghrib: { desc: "Bermula sejurus matahari terbenam sepenuhnya.", benefit: "Solat Sunat Ba'diyyah Maghrib mendatangkan keberkatan dan cahaya malam.", source: "Al-Fiqh al-Manhaji" },
-      isya: { desc: "Bermula selepas hilangnya mega merah di ufuk.", benefit: "Disunatkan menutup ibadah malam dengan Solat Sunat Witir.", source: "Sahih al-Bukhari, No. 998" },
-      syuruk: { desc: "Detik matahari terbit di ufuk timur. Dilarang solat pada waktu ini.", benefit: "Dianjurkan berzikir hingga matahari naik untuk solat Sunat Duha.", source: "Pejabat Mufti Kerajaan Brunei" },
-      duha: { desc: "Waktu pagi setelah matahari meninggi segalah hingga sebelum Zuhur.", benefit: "Mencukupi sedekah bagi seluruh 360 sendi tubuh badan.", source: "Hadis Sahih Muslim, No. 720" },
-      imsak: { desc: "Waktu berjaga-jaga (~10 minit sebelum Subuh) untuk tamat sahur.", benefit: "Memastikan ibadah puasa dimulakan dengan penuh yakin dan tertib.", source: "KHEU Brunei" }
-    }
+    prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 14.1.0" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -96,6 +81,8 @@ const I18N = {
     localeDate: "en-GB",
     yesterdaySuffix: "(Last Night)",
     tomorrowSuffix: "(Tomorrow)",
+    viewingOtherDate: "Selected Date:",
+    resetToday: "Today",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witr", sunat: "Sunnah" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
@@ -103,27 +90,8 @@ const I18N = {
       { val: 1, text: "Tutong (+1 min)" },
       { val: 0, text: "Temburong" }
     ],
-    prayers: {
-      imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha",
-      zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'"
-    },
-    about: {
-      title: "App Information",
-      sourceLabel: "Official Data Source:",
-      sourceName: "Ministry of Religious Affairs (MORA) Brunei",
-      devLabel: "Developed by:",
-      version: "Version 1.0.12"
-    },
-    details: {
-      subuh: { desc: "Fajr marks the true dawn light on the horizon.", benefit: "'Two rak'ahs before Fajr are better than the entire world' (Sahih Muslim).", source: "Sahih Muslim, No. 725" },
-      zuhur: { desc: "Starts after the sun passes its highest point.", benefit: "Maintaining Sunnah prayers around Zuhr shields against the Hellfire.", source: "Sunan Tirmidhi, No. 428" },
-      asar: { desc: "The middle prayer during afternoon hours.", benefit: "Whoever guards Fajr and Asr enters Paradise without delay.", source: "Sahih al-Bukhari, No. 574" },
-      maghrib: { desc: "Begins immediately upon sunset until dusk fades.", benefit: "Performing Sunnah rak'ahs after Maghrib brings divine peace into the home.", source: "Al-Fiqh al-Manhaji" },
-      isya: { desc: "Commences once the twilight glow completely fades.", benefit: "The Prophet SAW encouraged concluding night prayers with Witr.", source: "Sahih al-Bukhari, No. 998" },
-      syuruk: { desc: "The exact sunrise interval. Voluntary prayers are prohibited.", benefit: "Engage in morning remembrance until Dhuha time begins.", source: "State Mufti Department Brunei" },
-      duha: { desc: "From mid-morning until shortly before Zuhr.", benefit: "Suffices as daily charity for every joint in your body.", source: "Sahih Muslim, No. 720" },
-      imsak: { desc: "Precautionary interval (~10 mins before Fajr) to conclude Sahur.", benefit: "Allows fasting to begin with accuracy and reassurance.", source: "MORA Brunei" }
-    }
+    prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 14.1.0" }
   }
 };
 
@@ -201,7 +169,8 @@ function setLanguage(lang) {
   const t = I18N[currentLang];
   setText("ui-app-title", t.appTitle);
   document.title = t.appTitle;
-  setText("ui-now-label", t.nowLabel);
+  
+  setText("reset-date-btn", t.resetToday);
 
   let sel = document.getElementById("district-select");
   let savedIndex = sel ? sel.selectedIndex : 0;
@@ -222,6 +191,55 @@ function setLanguage(lang) {
   updateTick();
 }
 
+function checkDateStatus() {
+  const isToday = selectedDate.toDateString() === new Date().toDateString();
+  const resetBtn = document.getElementById('reset-date-btn');
+  const t = I18N[currentLang];
+
+  if (isToday) {
+    resetBtn.classList.remove('is-visible');
+    setText("ui-now-label", t.nowLabel);
+    document.getElementById("hero-progress-container").style.opacity = "1";
+    document.getElementById("hero-current-range").style.opacity = "1";
+  } else {
+    resetBtn.classList.add('is-visible');
+    setText("ui-now-label", t.viewingOtherDate);
+    document.getElementById("hero-progress-container").style.opacity = "0";
+    document.getElementById("hero-current-range").style.opacity = "0";
+  }
+}
+
+function handleDateChange(e) {
+  if (e.target.value) {
+    selectedDate = new Date(e.target.value);
+    syncScheduleToSelectedDate();
+  }
+}
+
+function resetDateToToday() {
+  vibrateTap();
+  selectedDate = new Date();
+  document.getElementById('native-date-input').value = "";
+  syncScheduleToSelectedDate();
+}
+
+function syncScheduleToSelectedDate() {
+  const day = String(selectedDate.getDate()).padStart(2, "0");
+  const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
+  const year = selectedDate.getFullYear();
+  const dateKey = `${day}-${month}-${year}`;
+
+  if (fullYearSchedule && fullYearSchedule[dateKey]) {
+    cachedSchedule = fullYearSchedule[dateKey];
+    hijrahString = fullYearSchedule[dateKey].date_hijrah || hijrahString;
+  } else {
+    console.warn("No data for chosen date in JSON.");
+  }
+  setDateHeaders();
+  checkDateStatus();
+  updateTick();
+}
+
 function getAdjustedSchedule() {
   const adjusted = {};
   const sel = document.getElementById("district-select");
@@ -237,7 +255,12 @@ function openPrayerModal(key) {
   vibrateTap();
   const t = I18N[currentLang];
   const prayerName = t.prayers[key];
-  const detail = t.details[key] || { desc: "-", benefit: "-", source: "-" };
+  
+  let detail = { desc: "-", benefit: "-", source: "-" };
+  if (fadhilatData && fadhilatData[currentLang] && fadhilatData[currentLang][key]) {
+    detail = fadhilatData[currentLang][key];
+  }
+
   const adjustedTimes = getAdjustedSchedule();
   const timeStr = minutesToDisplay(adjustedTimes[key]);
 
@@ -282,6 +305,7 @@ function renderPrayerList(adjustedTimes, activeKey) {
 
   const now = new Date();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const isToday = selectedDate.toDateString() === now.toDateString();
   const b = I18N[currentLang].badges;
 
   const sequence = [
@@ -302,10 +326,12 @@ function renderPrayerList(adjustedTimes, activeKey) {
     const prayerMins = adjustedTimes[item.key];
     const prayerName = I18N[currentLang].prayers[item.key];
 
-    if (item.key === activeKey) {
-      row.classList.add("is-active");
-    } else if (prayerMins < currentMinutes) {
-      row.classList.add("is-past");
+    if (isToday) {
+      if (item.key === activeKey) {
+        row.classList.add("is-active");
+      } else if (prayerMins < currentMinutes) {
+        row.classList.add("is-past");
+      }
     }
 
     row.addEventListener('click', () => openPrayerModal(item.key));
@@ -431,87 +457,82 @@ function updateTick() {
   const adjustedTimes = getAdjustedSchedule();
   const state = determinePrayerState(adjustedTimes);
   const t = I18N[currentLang];
+  const isToday = selectedDate.toDateString() === new Date().toDateString();
 
   if (!state.active || !state.next) return;
 
-  setText("hero-current-name", state.active.name);
+  if (isToday) {
+    setText("hero-current-name", state.active.name);
+    let targetMins = state.next.mins;
+    let currentTotalSecs = state.currentMinutes * 60 + state.currentSeconds;
+    let targetTotalSecs = targetMins * 60;
+    let diffSeconds = targetTotalSecs - currentTotalSecs;
 
-  let targetMins = state.next.mins;
-  let currentTotalSecs = state.currentMinutes * 60 + state.currentSeconds;
-  let targetTotalSecs = targetMins * 60;
-  let diffSeconds = targetTotalSecs - currentTotalSecs;
+    if (diffSeconds < 0) diffSeconds = 0;
+    let hours = Math.floor(diffSeconds / 3600);
+    let mins = Math.floor((diffSeconds % 3600) / 60);
+    let secs = diffSeconds % 60;
+    let hStr = hours < 10 ? "0" + hours : hours;
+    let mStr = mins < 10 ? "0" + mins : mins;
+    let sStr = secs < 10 ? "0" + secs : secs;
 
-  if (diffSeconds < 0) diffSeconds = 0;
+    let countdownString = hStr + ":" + mStr + ":" + sStr + " " + t.toNext + " " + state.next.name;
+    setText("hero-countdown-text", countdownString);
 
-  let hours = Math.floor(diffSeconds / 3600);
-  let mins = Math.floor((diffSeconds % 3600) / 60);
-  let secs = diffSeconds % 60;
+    let activeMinsDisplay = adjustedTimes[state.active.key] ? minutesToDisplay(adjustedTimes[state.active.key]) : "-";
+    setText("hero-current-range", t.enteredAt + " " + activeMinsDisplay);
 
-  let hStr = hours < 10 ? "0" + hours : hours;
-  let mStr = mins < 10 ? "0" + mins : mins;
-  let sStr = secs < 10 ? "0" + secs : secs;
-
-  let countdownString = hStr + ":" + mStr + ":" + sStr + " " + t.toNext + " " + state.next.name;
-  setText("hero-countdown-text", countdownString);
-
-  let activeMinsDisplay = adjustedTimes[state.active.key] ? minutesToDisplay(adjustedTimes[state.active.key]) : "-";
-  setText("hero-current-range", t.enteredAt + " " + activeMinsDisplay);
-
-  let startTotalSecs = state.active.mins * 60;
-  let intervalSecs = targetTotalSecs - startTotalSecs;
-  let progressPercent = 0;
-
-  if (intervalSecs > 0) {
-    let elapsedSecs = currentTotalSecs - startTotalSecs;
-    progressPercent = Math.min(100, Math.max(0, (elapsedSecs / intervalSecs) * 100));
+    let startTotalSecs = state.active.mins * 60;
+    let intervalSecs = targetTotalSecs - startTotalSecs;
+    let progressPercent = 0;
+    if (intervalSecs > 0) {
+      let elapsedSecs = currentTotalSecs - startTotalSecs;
+      progressPercent = Math.min(100, Math.max(0, (elapsedSecs / intervalSecs) * 100));
+    }
+    const progressFill = document.getElementById("hero-progress-fill");
+    if (progressFill) progressFill.style.width = progressPercent.toFixed(1) + "%";
+  } else {
+    const dateStr = selectedDate.toLocaleDateString(I18N[currentLang].localeDate, { weekday: "long", day: "numeric", month: "long" });
+    setText("hero-current-name", dateStr);
   }
-
-  const progressFill = document.getElementById("hero-progress-fill");
-  if (progressFill) progressFill.style.width = progressPercent.toFixed(1) + "%";
 
   const now = new Date();
   const nhh = String(now.getHours()).padStart(2, '0');
   const nmm = String(now.getMinutes()).padStart(2, '0');
   const nsTimeEl = document.getElementById("ns-time");
   if (nsTimeEl) nsTimeEl.innerHTML = `${nhh}<span class="blink-colon">:</span>${nmm}`;
-  setText("ns-next", countdownString);
+  if (isToday) {
+     setText("ns-next", document.getElementById("hero-countdown-text").textContent);
+  } else {
+     setText("ns-next", "-");
+  }
 
   renderPrayerList(adjustedTimes, state.active.key);
-  updateSkyVisuals(adjustedTimes, state.currentMinutes);
+  const engineAdjustedTimes = getAdjustedSchedule();
+  updateSkyVisuals(engineAdjustedTimes, (now.getHours() * 60) + now.getMinutes());
 }
 
 function setDateHeaders() {
-  const now = new Date();
   const gregorianOptions = { weekday: "short", day: "numeric", month: "short", year: "numeric" };
-  const dateStr = now.toLocaleDateString(I18N[currentLang].localeDate, gregorianOptions) + " | " + hijrahString;
+  const dateStr = selectedDate.toLocaleDateString(I18N[currentLang].localeDate, gregorianOptions) + " | " + hijrahString;
   setText("gregorian-date", dateStr);
   setText("ns-date", dateStr);
 }
 
 function fetchRemoteData() {
-  const now = new Date();
-  const day = String(now.getDate()).padStart(2, "0");
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const year = now.getFullYear();
-  const dateKey = day + "-" + month + "-" + year;
+  const prayerReq = fetch(PRAYERS_JSON_URL).then(r => { if (!r.ok) throw new Error(); return r.json(); });
+  const fadhilatReq = fetch(FADHILAT_JSON_URL).then(r => { if (!r.ok) throw new Error(); return r.json(); });
 
-  return fetch(GITHUB_JSON_URL)
-    .then(res => { if (!res.ok) throw new Error(); return res.json(); })
-    .then(data => {
-      if (data && data[dateKey]) {
-        cachedSchedule = {
-          imsak: data[dateKey].imsak, subuh: data[dateKey].subuh, syuruk: data[dateKey].syuruk,
-          duha: data[dateKey].duha, zuhur: data[dateKey].zuhur, asar: data[dateKey].asar,
-          maghrib: data[dateKey].maghrib, isya: data[dateKey].isya
-        };
-        if (data[dateKey].date_hijrah) {
-          hijrahString = data[dateKey].date_hijrah;
-          setDateHeaders();
-        }
-        updateTick();
-      }
+  return Promise.all([prayerReq, fadhilatReq])
+    .then(([prayers, fadhilat]) => {
+      fullYearSchedule = prayers;
+      fadhilatData = fadhilat;
+      syncScheduleToSelectedDate();
     })
-    .catch(() => console.warn("Using offline fallback schedule"));
+    .catch(() => {
+      console.warn("Using offline fallback schedule");
+      syncScheduleToSelectedDate();
+    });
 }
 
 function initPullToRefresh() {
@@ -538,20 +559,15 @@ function initPullToRefresh() {
     if (dist > 0 && list.scrollTop === 0) {
       let ptrHeight = Math.min(dist * 0.4, 65);
       ptr.style.height = ptrHeight + 'px';
-      
-      if (ptrHeight >= 55) {
-        ptr.innerHTML = SVG_RELEASE;
-      } else {
-        ptr.innerHTML = SVG_PULL;
-      }
+      if (ptrHeight >= 55) { ptr.innerHTML = SVG_RELEASE; } 
+      else { ptr.innerHTML = SVG_PULL; }
     }
   }, { passive: true });
 
-  list.addEventListener('touchend', () => {
+  const endPull = () => {
     if (!isPulling) return;
     isPulling = false;
     const currentHeight = parseInt(ptr.style.height || '0');
-    
     ptr.style.transition = 'height 0.3s ease';
     
     if (currentHeight >= 55) {
@@ -559,15 +575,16 @@ function initPullToRefresh() {
       ptr.innerHTML = SVG_SPINNER;
       vibrateTap();
       
-      fetchRemoteData().then(() => {
-        setTimeout(() => { ptr.style.height = '0px'; }, 600);
-      }).catch(() => {
+      fetchRemoteData().finally(() => {
         setTimeout(() => { ptr.style.height = '0px'; }, 600);
       });
     } else {
       ptr.style.height = '0px';
     }
-  });
+  };
+
+  list.addEventListener('touchend', endPull);
+  list.addEventListener('touchcancel', endPull);
 }
 
 function bindEvents() {
@@ -585,12 +602,15 @@ function bindEvents() {
 
   const infoBtn = document.getElementById('info-btn-trigger');
   if (infoBtn) infoBtn.addEventListener('click', openAboutModal);
+  
+  const resetBtn = document.getElementById('reset-date-btn');
+  if (resetBtn) resetBtn.addEventListener('click', resetDateToToday);
+  
+  const dateInput = document.getElementById('native-date-input');
+  if (dateInput) dateInput.addEventListener('change', handleDateChange);
 
   document.querySelectorAll('.modal-close-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      closeModal(e);
-      closeAboutModal(e);
-    });
+    btn.addEventListener('click', (e) => { closeModal(e); closeAboutModal(e); });
   });
 
   const infoModal = document.getElementById('info-modal');
@@ -603,7 +623,6 @@ function bindEvents() {
     card.addEventListener('click', (e) => e.stopPropagation());
   });
 
-  // WAKE LOCK INITIALIZER ON FIRST TAP
   document.addEventListener('click', requestWakeLock, { once: true });
 }
 
