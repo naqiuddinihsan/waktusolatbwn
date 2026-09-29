@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.9
-Description: Network-first service worker syncing the perfected widget proportions.
+Version: 0.16.10
+Description: Network-first service worker syncing the version bump.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.9';
+const CACHE_NAME = 'waktu-solat-v0.16.10';
 const ASSETS = [
   './',
   './index.html',
