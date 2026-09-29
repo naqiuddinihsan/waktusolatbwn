@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.1
-Description: Network-first service worker syncing the full day names and unified control bar layout.
+Version: 0.16.2
+Description: Network-first service worker syncing the translation disable and transition updates.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.1';
+const CACHE_NAME = 'waktu-solat-v0.16.2';
 const ASSETS = [
   './',
   './index.html',
