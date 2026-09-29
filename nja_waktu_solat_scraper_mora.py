@@ -1,8 +1,15 @@
+"""
+Script Name: nja_waktu_solat_scraper_mora.py
+Version: 1.4.0
+Description: Automates extraction of the full year prayer times from the MoRA Brunei portal and outputs JSON format directly into the data directory.
+"""
+
 import csv
 import json
 import re
 import sys
 import time
+import os
 from datetime import datetime
 from playwright.sync_api import sync_playwright
 
@@ -32,7 +39,6 @@ def extract_prayer_times():
         "Julai", "Ogos", "September", "Oktober", "November", "Disember"
     ]
     
-    # DYNAMIC YEAR: Accepts command-line argument or defaults to current year
     year = sys.argv[1] if len(sys.argv) > 1 else str(datetime.now().year)
     print(f"Targeting year for extraction: {year}")
     
@@ -107,7 +113,10 @@ def extract_prayer_times():
         
         browser.close()
 
-    json_file = "brunei_prayers.json"
+    # Ensure the data directory exists before saving
+    os.makedirs("data", exist_ok=True)
+
+    json_file = "data/brunei_prayers.json"
     print(f"Saving structured data to {json_file}...")
     with open(json_file, mode="w", encoding="utf-8") as f:
         json.dump(structured_json, f, indent=2, ensure_ascii=False)
