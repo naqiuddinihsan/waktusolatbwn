@@ -1,7 +1,7 @@
 """
 Script Name: nja_waktu_solat_scraper_mora.py
-Version: 1.4.0
-Description: Automates extraction of the full year prayer times from the MoRA Brunei portal and outputs JSON format directly into the data directory.
+Version: 1.5.0
+Description: Automates extraction of the full year prayer times from the MoRA Brunei portal. Smartly converts 12h times lacking AM/PM context into strict 24h format based on prayer identity.
 """
 
 import csv
@@ -13,23 +13,29 @@ import os
 from datetime import datetime
 from playwright.sync_api import sync_playwright
 
-def parse_time_to_24h(raw_text):
+def parse_time_to_24h(raw_text, prayer_name):
     text = raw_text.strip()
     match = re.search(r'(\d{1,2})[.:](\d{2})', text)
+    
     if not match:
         return text
+        
     hour = int(match.group(1))
     minute = int(match.group(2))
-    upper = text.upper()
-    if "PETANG" in upper or "MALAM" in upper:
+    
+    # Define which prayers happen in the afternoon/evening (PM)
+    pm_prayers = ["zuhur", "asar", "maghrib", "isya"]
+    
+    if prayer_name.lower() in pm_prayers:
+        # If it's a PM prayer, any hour less than 12 needs 12 added to it.
+        # (e.g., 03:48 Asar -> 15:48. 12:27 Zuhur -> remains 12:27)
         if hour < 12:
             hour += 12
-    elif "TENGAH HARI" in upper:
-        if hour < 11:
-            hour += 12
-    elif "PAGI" in upper:
+    else:
+        # For AM prayers (Imsak, Subuh, Syuruk, Duha)
         if hour == 12:
             hour = 0
+
     return f"{hour:02d}:{minute:02d}"
 
 def extract_prayer_times():
@@ -101,19 +107,19 @@ def extract_prayer_times():
                             structured_json[formatted_date] = {
                                 "date_gregorian": formatted_date,
                                 "date_hijrah": col_texts[2].strip(),
-                                "imsak": parse_time_to_24h(col_texts[3]),
-                                "subuh": parse_time_to_24h(col_texts[4]),
-                                "syuruk": parse_time_to_24h(col_texts[5]),
-                                "duha": parse_time_to_24h(col_texts[6]),
-                                "zuhur": parse_time_to_24h(col_texts[7]),
-                                "asar": parse_time_to_24h(col_texts[8]),
-                                "maghrib": parse_time_to_24h(col_texts[9]),
-                                "isya": parse_time_to_24h(col_texts[10])
+                                # Pass the exact prayer name for smart 24h logic
+                                "imsak": parse_time_to_24h(col_texts[3], "imsak"),
+                                "subuh": parse_time_to_24h(col_texts[4], "subuh"),
+                                "syuruk": parse_time_to_24h(col_texts[5], "syuruk"),
+                                "duha": parse_time_to_24h(col_texts[6], "duha"),
+                                "zuhur": parse_time_to_24h(col_texts[7], "zuhur"),
+                                "asar": parse_time_to_24h(col_texts[8], "asar"),
+                                "maghrib": parse_time_to_24h(col_texts[9], "maghrib"),
+                                "isya": parse_time_to_24h(col_texts[10], "isya")
                             }
         
         browser.close()
 
-    # Ensure the data directory exists before saving
     os.makedirs("data", exist_ok=True)
 
     json_file = "data/brunei_prayers.json"
