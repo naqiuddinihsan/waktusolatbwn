@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.1
-Description: Full day name logic, integrated control bar data bindings.
+Version: 0.16.2
+Description: strict Nightstand-only Wake Lock, date change animations, collapsing hero card, and full-day locale formatting.
 */
 
 if ('serviceWorker' in navigator) {
@@ -21,21 +21,34 @@ let fullYearSchedule = {};
 let fadhilatData = null;
 let selectedDate = new Date();
 
-async function requestWakeLock() {
-  try {
-    if ('wakeLock' in navigator) {
-      wakeLock = await navigator.wakeLock.request('screen');
+// STRICT NIGHTSTAND WAKE LOCK LOGIC
+const nightstandQuery = window.matchMedia('(orientation: landscape) and (max-height: 600px)');
+
+async function evaluateWakeLock() {
+  if (!('wakeLock' in navigator)) return;
+  const isNightstand = nightstandQuery.matches;
+  const isVisible = document.visibilityState === 'visible';
+
+  if (isNightstand && isVisible) {
+    if (wakeLock === null) {
+      try { 
+        wakeLock = await navigator.wakeLock.request('screen'); 
+        console.log("Wake Lock acquired.");
+      } catch (err) { console.warn('Wake Lock failed:', err.message); }
     }
-  } catch (err) {
-    console.warn('Wake Lock failed:', err.message);
+  } else {
+    if (wakeLock !== null) {
+      wakeLock.release().then(() => { 
+        wakeLock = null; 
+        console.log("Wake Lock released.");
+      });
+    }
   }
 }
 
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && wakeLock !== null) {
-    requestWakeLock();
-  }
-});
+nightstandQuery.addEventListener('change', evaluateWakeLock);
+document.addEventListener('visibilitychange', evaluateWakeLock);
+document.addEventListener('click', evaluateWakeLock); // Captures activation gesture
 
 const SVG_PULL = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--text-secondary)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s;"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
 const SVG_RELEASE = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--text-secondary)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s; transform: rotate(180deg);"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
@@ -72,7 +85,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.1" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.2" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -93,7 +106,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.1" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.2" }
   }
 };
 
@@ -191,20 +204,17 @@ function setLanguage(lang) {
 function checkDateStatus() {
   const isToday = selectedDate.toDateString() === new Date().toDateString();
   const resetBtn = document.getElementById('reset-date-btn');
-  const nowLabel = document.getElementById('ui-now-label');
-  const t = I18N[currentLang];
+  const heroCard = document.getElementById('hero-tracker-card');
+  const dateStacked = document.querySelector('.date-stacked');
 
   if (isToday) {
     resetBtn.classList.remove('is-visible');
-    nowLabel.style.display = "block";
-    setText("ui-now-label", t.nowLabel);
-    document.getElementById("hero-progress-container").style.opacity = "1";
-    document.getElementById("hero-current-range").style.opacity = "1";
+    if(dateStacked) dateStacked.classList.remove('is-not-today');
+    heroCard.classList.remove('is-collapsed');
   } else {
     resetBtn.classList.add('is-visible');
-    nowLabel.style.display = "none"; // Hides "Sekarang" so "Hari Ini" takes over cleanly
-    document.getElementById("hero-progress-container").style.opacity = "0";
-    document.getElementById("hero-current-range").style.opacity = "0";
+    if(dateStacked) dateStacked.classList.add('is-not-today');
+    heroCard.classList.add('is-collapsed'); // Collapses the hero card cleanly
   }
 }
 
@@ -212,7 +222,7 @@ function handleDateChange(e) {
   if (e.target.value) {
     const [y, m, d] = e.target.value.split('-');
     selectedDate = new Date(y, m - 1, d);
-    syncScheduleToSelectedDate();
+    animateDateUpdate();
   }
 }
 
@@ -220,7 +230,18 @@ function resetDateToToday() {
   vibrateTap();
   selectedDate = new Date();
   document.getElementById('native-date-input').value = "";
-  syncScheduleToSelectedDate();
+  animateDateUpdate();
+}
+
+// Applies fade transition to list during swaps
+function animateDateUpdate() {
+  const list = document.getElementById("prayer-list-container");
+  if (list) list.classList.add("is-updating");
+  
+  setTimeout(() => {
+    syncScheduleToSelectedDate();
+    if (list) list.classList.remove("is-updating");
+  }, 150);
 }
 
 function applyDatePickerLimits() {
@@ -530,16 +551,6 @@ function updateTick() {
       const progressFill = document.getElementById("hero-progress-fill");
       if (progressFill) progressFill.style.width = progressPercent.toFixed(1) + "%";
     }
-  } else {
-    // FIX: Fallback for missing data when viewing past/future
-    const dateStr = selectedDate.toLocaleDateString(I18N[currentLang].localeDate, { weekday: "long", day: "numeric", month: "long" });
-    if (!hasData) {
-      setText("hero-current-name", dateStr + " (" + t.noData + ")");
-      setText("hero-countdown-text", "--:--:--");
-      setText("hero-current-range", "--:--");
-    } else {
-      setText("hero-current-name", dateStr);
-    }
   }
 
   const now = new Date();
@@ -559,9 +570,9 @@ function updateTick() {
   updateSkyVisuals(engineAdjustedTimes, (now.getHours() * 60) + now.getMinutes());
 }
 
-// FIX: Full Day Formatting implementation
+// FULL DAY NAME LOGIC
 function setDateHeaders() {
-  const gregorianOptions = { weekday: "long", day: "numeric", month: "long", year: "numeric" };
+  const gregorianOptions = { weekday: "long", day: "numeric", month: "short", year: "numeric" };
   const gregorianStr = selectedDate.toLocaleDateString(I18N[currentLang].localeDate, gregorianOptions);
   
   setText("gregorian-date", gregorianStr);
@@ -676,8 +687,6 @@ function bindEvents() {
   document.querySelectorAll('.modal-card').forEach(card => {
     card.addEventListener('click', (e) => e.stopPropagation());
   });
-
-  document.addEventListener('click', requestWakeLock, { once: true });
 }
 
 function initApp() {
