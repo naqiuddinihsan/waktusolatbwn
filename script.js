@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.26
-Description: Synchronized version bumping for the 114 Surah expansion and dynamic Bismillah scaling.
+Version: 0.16.27
+Description: Version synchronization and translation ID migration failsafe.
 */
 
 if ('serviceWorker' in navigator) {
@@ -103,7 +103,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.26" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.27" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -130,7 +130,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.26" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.27" }
   }
 };
 
@@ -228,7 +228,7 @@ function setLanguage(lang) {
   if (aboutBody) {
     aboutBody.innerHTML = `
       <p><strong>${t.about.sourceLabel}</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">${t.about.sourceName}</a></p>
-      <p><strong>Data Al-Quran:</strong><br><a href="https://quran.com" target="_blank">Quran.com Foundation API</a><br><span style="font-size: 0.75rem; color: var(--text-secondary);">Terjemahan BM: Abdullah Basmeih<br>Terjemahan EN: Dr. Mustafa Khattab, Saheeh International, Yusuf Ali</span></p>
+      <p><strong>Data Al-Quran:</strong><br><a href="https://quran.com" target="_blank">Quran.com Foundation API</a><br><span style="font-size: 0.75rem; color: var(--text-secondary);">Terjemahan BM: Abdullah Basmeih<br>Terjemahan EN: Saheeh International, Yusuf Ali</span></p>
       <p><strong>${t.about.devLabel}</strong><br><a href="https://www.qwamii.com" target="_blank">Qwamii</a> / <a href="https://www.behance.net/naqiuddinihsan" target="_blank">Naqiuddin Ihsan</a></p>
       <p class="about-version">${t.about.version}${dataAsOfStr}</p>
     `;
@@ -1053,8 +1053,14 @@ function bindEvents() {
 
   const transSelect = document.getElementById('quran-translation-select');
   if (transSelect) {
-     const savedTrans = localStorage.getItem('quranTransId') || "39";
+     let savedTrans = localStorage.getItem('quranTransId') || "39";
+     // Failsafe: If user had Dr. Mustafa Khattab (131) saved, migrate them to Saheeh International (20)
+     if (savedTrans === "131") {
+         savedTrans = "20";
+         localStorage.setItem('quranTransId', savedTrans);
+     }
      transSelect.value = savedTrans;
+     
      transSelect.addEventListener('change', (e) => {
         localStorage.setItem('quranTransId', e.target.value);
         if (isQuranLoaded && surahSelect) {

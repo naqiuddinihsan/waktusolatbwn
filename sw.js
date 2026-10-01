@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.26
-Description: Service worker cache bump securing the 114 Surah DOM expansion and dynamic Bismillah scaling logic.
+Version: 0.16.27
+Description: Service worker cache bump securing the translation removal and local storage fallback migration.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.26';
+const CACHE_NAME = 'waktu-solat-v0.16.27';
 const ASSETS = [
   './',
   './index.html',
