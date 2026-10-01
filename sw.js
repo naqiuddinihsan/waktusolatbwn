@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.27
-Description: Service worker cache bump securing the translation removal and local storage fallback migration.
+Version: 0.16.28
+Description: Service worker cache bump securing the expanded header layout and 'Arab Sahaja' API toggle.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.27';
+const CACHE_NAME = 'waktu-solat-v0.16.28';
 const ASSETS = [
   './',
   './index.html',

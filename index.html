@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 0.16.27
-Description: Purged Dr. Mustafa Khattab translation option and updated informational credits.
+Version: 0.16.28
+Description: Surah selector promoted to main header, Translation label added, and "Arab Sahaja" option injected.
 -->
 <!DOCTYPE html>
 <html lang="ms" translate="no">
@@ -126,151 +126,263 @@ Description: Purged Dr. Mustafa Khattab translation option and updated informati
     <div class="quran-wrapper" id="quran-wrapper" data-theme="dark">
       <header class="quran-header" id="quran-header">
         <div class="qh-top">
-          <h2>Al-Quran</h2>
-          <div class="qh-controls">
-            <div class="district-select-wrapper">
-              <select id="surah-select" class="district-select">
-                <option value="1">1. Al-Fatihah</option>
-                <option value="2">2. Al-Baqarah</option>
-                <option value="3">3. Ali 'Imran</option>
-                <option value="4">4. An-Nisa</option>
-                <option value="5">5. Al-Ma'idah</option>
-                <option value="6">6. Al-An'am</option>
-                <option value="7">7. Al-A'raf</option>
-                <option value="8">8.**TL;DR:** Part 1 of 4. Here is the fully updated `index.html` (v0.16.27).
-
-**Key HTML Upgrades in this payload:**
-*   **Translation Removed:** "Dr. Mustafa Khattab" (ID 131) has been completely removed from the translation dropdown options.
-*   **Credits Updated:** The Information/About modal text has been updated to reflect only the active English translations (Saheeh International and Yusuf Ali).
-
-Please replace your entire `index.html` with the code below. Once saved, reply with **"next"** and I will provide the updated `script.js` which includes a failsafe to automatically switch users to Saheeh International if they previously had Dr. Mustafa Khattab saved in their local storage.
-
-### index.html
-```html
-<!--
-Page Name: index.html
-Version: 0.16.27
-Description: Removed Dr. Mustafa Khattab translation option and updated credits.
--->
-<!DOCTYPE html>
-<html lang="ms" translate="no">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#050505">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="google" content="notranslate">
-
-  <title>Waktu Solat BWN</title>
-
-  <link rel="stylesheet" href="styles.css">
-  <link rel="manifest" href="manifest.json">
-  <meta name="application-name" content="Waktu BWN">
-  <meta name="apple-mobile-web-app-title" content="Waktu BWN">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <link rel="apple-touch-icon" href="icon.svg">
-  <link rel="icon" type="image/svg+xml" href="icon.svg">
-</head>
-<body>
-
-  <div id="sky-bg"></div>
-  <div id="celestial-body"></div>
-  <div id="clouds-layer">
-    <div class="cloud c1"></div>
-    <div class="cloud c2"></div>
-    <div class="cloud c3"></div>
-  </div>
-
-  <div id="master-slider" class="master-slider">
-    <div class="app-wrapper">
-      <header class="header-bar">
-        <div class="header-top">
-          <div class="brand-cluster">
-            <div class="brand-logo" aria-hidden="true">
-              <svg viewBox="0 0 512 512" fill="none" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)">
-                <path d="M256 52c-2.8 14.3-9.8 27.4-20.2 37.7-10.3 10.3-23.4 17.4-37.7 20.2 14.3 2.8 27.4 9.8 37.7 20.2 10.3 10.3 17.4 23.4 20.2 37.7 2.8-14.3 9.8-27.4 20.2-37.7 10.3-10.3 23.4-17.4 37.7-20.2-14.3-2.8-27.4-9.8-37.7-20.2-10.4-10.3-17.4-23.4-20.2-37.7z" fill="#e5e5e5"/>
-                <path d="M256 140c-58.8 0-112 38.5-128 100h256c-16-61.5-69.2-100-128-100z" fill="#e5e5e5"/>
-                <path d="M128 240v172c0 6.6 5.4 12 12 12h60v-92c0-31 14-56 56-56s56 25 56 56v92h60c6.6 0 12-5.4 12-12V240H128z" fill="#262626"/>
-                <path d="M224 332c0-22.1 14.3-40 32-40s32 17.9 32 40v92h-64v-92z" fill="#e5e5e5"/>
-                <path d="M81 222h18v190H36c-4.4 0-8-3.6-8-8V230c0-4.4 3.6-8 8-8h45zm332 0h18v190h-45c-4.4 0-8-3.6-8-8V230c0-4.4 3.6-8 8-8h45z" fill="#404040"/>
-                <path d="M90 170c-13.3 0-24 20-24 50h48c0-30-10.7-50-24-50zm332 0c-13.3 0-24 20-24 50h48c0-30-10.7-50-24-50z" fill="#e5e5e5"/>
-                <path d="M80 384h352v24H80z" fill="#e5e5e5"/>
-              </svg>
-            </div>
-            <div class="header-title-box">
-              <h1 id="ui-app-title">Waktu Solat BWN</h1>
-            </div>
-          </div>
-
-          <div class="controls-cluster">
-            <button class="icon-btn" id="visuals-toggle" type="button">BG OFF</button>
-            <div class="lang-switcher">
-              <button id="lang-btn-ms" class="lang-btn active" type="button">BM</button>
-              <button id="lang-btn-en" class="lang-btn" type="button">EN</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="header-bottom">
-          <div class="date-picker-button">
-            <div class="date-stacked">
-              <div class="date-row-top">
-                <span class="date-gregorian" id="gregorian-date">-</span>
-              </div>
-              <span class="date-hijrah" id="hijrah-date">-</span>
-            </div>
-            <input type="date" id="native-date-input" aria-label="Pilih Tarikh">
-          </div>
-          
-          <div class="district-select-wrapper">
-            <select class="district-select" id="district-select">
-              <option value="0">Brunei-Muara</option>
-              <option value="3">Belait (+3 min)</option>
-              <option value="1">Tutong (+1 min)</option>
-              <option value="0">Temburong</option>
+          <div class="district-select-wrapper qh-surah-wrapper">
+            <select id="surah-select" class="district-select qh-surah-select">
+              <option value="1">1. Al-Fatihah</option>
+              <option value="2">2. Al-Baqarah</option>
+              <option value="3">3. Ali 'Imran</option>
+              <option value="4">4. An-Nisa</option>
+              <option value="5">5. Al-Ma'idah</option>
+              <option value="6">6. Al-An'am</option>
+              <option value="7">7. Al-A'raf</option>
+              <option value="8">8. Al-Anfal</option>
+              <option value="9">9. At-Tawbah</option>
+              <option value="10">10. Yunus</option>
+              <option value="11">11. Hud</option>
+              <option value="12">12. Yusuf</option>
+              <option value="13">13. Ar-Ra'd</option>
+              <option value="14">14. Ibrahim</option>
+              <option value="15">15. Al-Hijr</option>
+              <option value="16">16. An-Nahl</option>
+              <option value="17">17. Al-Isra</option>
+              <option value="18">18. Al-Kahf</option>
+              <option value="19">19. Maryam</option>
+              <option value="20">20. Taha</option>
+              <option value="21">21. Al-Anbya</option>
+              <option value="22">22. Al-Hajj</option>
+              <option value="23">23. Al-Mu'minun</option>
+              <option value="24">24. An-Nur</option>
+              <option value="25">25. Al-Furqan</option>
+              <option value="26">26. Ash-Shu'ara</option>
+              <option value="27">27. An-Naml</option>
+              <option value="28">28. Al-Qasas</option>
+              <option value="29">29. Al-'Ankabut</option>
+              <option value="30">30. Ar-Rum</option>
+              <option value="31">31. Luqman</option>
+              <option value="32">32. As-Sajdah</option>
+              <option value="33">33. Al-Ahzab</option>
+              <option value="34">34. Saba</option>
+              <option value="35">35. Fatir</option>
+              <option value="36">36. Ya-Sin</option>
+              <option value="37">37. As-Saffat</option>
+              <option value="38">38. Sad</option>
+              <option value="39">39. Az-Zumar</option>
+              <option value="40">40. Ghafir</option>
+              <option value="41">41. Fussilat</option>
+              <option value="42">42. Ash-Shura</option>
+              <option value="43">43. Az-Zukhruf</option>
+              <option value="44">44. Ad-Dukhan</option>
+              <option value="45">45. Al-Jathiyah</option>
+              <option value="46">46. Al-Ahqaf</option>
+              <option value="47">47. Muhammad</option>
+              <option value="48">48. Al-Fath</option>
+              <option value="49">49. Al-Hujurat</option>
+              <option value="50">50. Qaf</option>
+              <option value="51">51. Adh-Dhariyat</option>
+              <option value="52">52. At-Tur</option>
+              <option value="53">53. An-Najm</option>
+              <option value="54">54. Al-Qamar</option>
+              <option value="55">55. Ar-Rahman</option>
+              <option value="56">56. Al-Waqi'ah</option>
+              <option value="57">57. Al-Hadid</option>
+              <option value="58">58. Al-Mujadila</option>
+              <option value="59">59. Al-Hashr</option>
+              <option value="60">60. Al-Mumtahanah</option>
+              <option value="61">61. As-Saff</option>
+              <option value="62">62. Al-Jumu'ah</option>
+              <option value="63">63. Al-Munafiqun</option>
+              <option value="64">64. At-Taghabun</option>
+              <option value="65">65. At-Talaq</option>
+              <option value="66">66. At-Tahrim</option>
+              <option value="67">67. Al-Mulk</option>
+              <option value="68">68. Al-Qalam</option>
+              <option value="69">69. Al-Haqqah</option>
+              <option value="70">70. Al-Ma'arij</option>
+              <option value="71">71. Nuh</option>
+              <option value="72">72. Al-Jinn</option>
+              <option value="73">73. Al-Muzzammil</option>
+              <option value="74">74. Al-Muddaththir</option>
+              <option value="75">75. Al-Qiyamah</option>
+              <option value="76">76. Al-Insan</option>
+              <option value="77">77. Al-Mursalat</option>
+              <option value="78">78. An-Naba</option>
+              <option value="79">79. An-Nazi'at</option>
+              <option value="80">80. 'Abasa</option>
+              <option value="81">81. At-Takwir</option>
+              <option value="82">82. Al-Infitar</option>
+              <option value="83">83. Al-Mutaffifin</option>
+              <option value="84">84. Al-Inshiqaq</option>
+              <option value="85">85. Al-Buruj</option>
+              <option value="86">86. At-Tariq</option>
+              <option value="87">87. Al-A'la</option>
+              <option value="88">88. Al-Ghashiyah</option>
+              <option value="89">89. Al-Fajr</option>
+              <option value="90">90. Al-Balad</option>
+              <option value="91">91. Ash-Shams</option>
+              <option value="92">92. Al-Layl</option>
+              <option value="93">93. Ad-Duhaa</option>
+              <option value="94">94. Ash-Sharh</option>
+              <option value="95">95. At-Tin</option>
+              <option value="96">96. Al-'Alaq</option>
+              <option value="97">97. Al-Qadr</option>
+              <option value="98">98. Al-Bayyinah</option>
+              <option value="99">99. Az-Zalzalah</option>
+              <option value="100">100. Al-'Adiyat</option>
+              <option value="101">101. Al-Qari'ah</option>
+              <option value="102">102. At-Takathur</option>
+              <option value="103">103. Al-'Asr</option>
+              <option value="104">104. Al-Humazah</option>
+              <option value="105">105. Al-Fil</option>
+              <option value="106">106. Quraysh</option>
+              <option value="107">107. Al-Ma'un</option>
+              <option value="108">108. Al-Kawthar</option>
+              <option value="109">109. Al-Kafirun</option>
+              <option value="110">110. An-Nasr</option>
+              <option value="111">111. Al-Masad</option>
+              <option value="112">112. Al-Ikhlas</option>
+              <option value="113">113. Al-Falaq</option>
+              <option value="114">114. An-Nas</option>
             </select>
           </div>
-        </div>
-        
-        <div id="friday-banner" class="friday-banner">
-          <div class="fb-text">Sunat muakkad membaca Surah Al-Kahfi pada hari Jumaat.</div>
-          <button id="fb-close-btn" class="fb-close" aria-label="Tutup">&times;</button>
-        </div>
-      </header>
-
-      <section class="hero-tracker" id="hero-tracker-card">
-        <div class="hero-top-bar">
-          <div class="hero-now-label" id="ui-now-label">-</div>
-        </div>
-        <div class="hero-name" id="hero-current-name">-</div>
-        <div class="hero-time" id="hero-current-range">-</div>
-        <div class="progress-container" id="hero-progress-container">
-          <div class="progress-countdown" id="hero-countdown-text">-</div>
-          <div class="progress-track">
-            <div class="progress-fill" id="hero-progress-fill"></div>
+          <div class="qh-controls">
+            <div class="district-select-wrapper">
+              <select id="verse-select" class="district-select" disabled>
+                <option value="">Ayat</option>
+              </select>
+            </div>
+            <button id="quran-expand-toggle" class="icon-btn qs-btn" aria-label="Skrin Penuh">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+            </button>
+            <button id="quran-settings-toggle" class="icon-btn qs-btn" aria-label="Tetapan Al-Quran">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </button>
           </div>
         </div>
-      </section>
+        <div id="quran-settings-panel" class="quran-settings-panel">
+          <div class="qs-grid">
+            <div class="qs-item qs-col-span-2 qs-vertical">
+              <label for="quran-translation-select" class="qs-label">Terjemahan / Translation</label>
+              <select id="quran-translation-select" class="district-select qs-full">
+                <option value="none">🛑 Tiada (Arab Sahaja)</option>
+                <option value="39">🇲🇾 - Abdullah Basmeih</option>
+                <option value="20">🇬🇧 - Saheeh International</option>
+                <option value="22">🇬🇧 - Yusuf Ali</option>
+              </select>
+            </div>
+            <div class="qs-item">
+              <div class="quran-mode-switcher">
+                <button id="mode-verse" class="qm-btn active">Ayat</button>
+                <button id="mode-reading" class="qm-btn">Mushaf</button>
+              </div>
+            </div>
+            <div class="qs-item">
+              <div class="theme-toggles">
+                <button data-theme="dark" class="theme-btn active" aria-label="Gelap">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+                <button data-theme="light" class="theme-btn" aria-label="Cerah">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                </button>
+                <button data-theme="sepia" class="theme-btn" aria-label="Sepia">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                </button>
+              </div>
+            </div>
+            <div class="qs-item qs-col-span-2">
+              <div class="font-toggles">
+                <button id="font-decrease" class="font-btn">A-</button>
+                <button id="font-increase" class="font-btn">A+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      
+      <button id="quran-restore-toggle" class="icon-btn floating-restore-btn" aria-label="Papar Menu">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
+      </button>
 
-      <div id="ptr-indicator" class="ptr-container"></div>
-
-      <div id="return-today-wrapper" class="return-today-wrapper">
-        <button id="reset-date-btn" class="return-today-btn" type="button">Kembali ke Hari Ini</button>
+      <div id="quran-verses" class="quran-verses">
+        <div class="quran-loading" id="quran-loading">
+          <span class="ptr-spinner"></span>
+        </div>
       </div>
-
-      <main class="prayer-list" id="prayer-list-container"></main>
-
-      <footer class="site-footer">
-        <button class="info-btn" id="info-btn-trigger" aria-label="Informasi Aplikasi" type="button">
-          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="16" x2="12" y2="12"></line>
-            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-          </svg>
-        </button>
-      </footer>
     </div>
+  </div>
 
-    <div class="quran-wrapper" id="quran-wrapper" data-theme="dark">
-      <header class="quran-header
+  <div class="main-nav-dots" id="main-nav-dots">
+    <div class="ns-dot active" id="mn-dot-1"></div>
+    <div class="ns-dot" id="mn-dot-2"></div>
+  </div>
+
+  <div class="modal-backdrop" id="info-modal">
+    <div class="modal-card" id="info-modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title">-</h3>
+        <button class="modal-close-btn" id="modal-close-btn-1" type="button">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body-content"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="about-modal">
+    <div class="modal-card" id="about-modal-card">
+      <div class="modal-header">
+        <h3 id="about-title">-</h3>
+        <button class="modal-close-btn" id="modal-close-btn-2" type="button">&times;</button>
+      </div>
+      <div class="modal-body about-body" id="about-body-content">
+        <p><strong>Sumber Data Rasmi:</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">Kementerian Hal Ehwal Ugama (KHEU) Brunei</a></p>
+        <p><strong>Data Al-Quran:</strong><br><a href="https://quran.com" target="_blank">Quran.com Foundation API</a><br><span style="font-size: 0.75rem; color: var(--text-secondary);">Terjemahan BM: Abdullah Basmeih<br>Terjemahan EN: Saheeh International, Yusuf Ali</span></p>
+        <p><strong>Dibangunkan oleh:</strong><br><a href="https://www.qwamii.com" target="_blank">Qwamii</a> / <a href="https://www.behance.net/naqiuddinihsan" target="_blank">Naqiuddin Ihsan</a></p>
+        <p class="about-version">Versi 0.16.28</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="quran-verse-modal">
+    <div class="modal-card" id="quran-verse-modal-card">
+      <div class="modal-header">
+        <h3 id="qv-modal-title">Ayat</h3>
+        <button class="modal-close-btn" id="qv-modal-close-btn" type="button">&times;</button>
+      </div>
+      <div class="modal-body qv-modal-body" id="qv-modal-body-content">
+        <div class="qv-scroll-area">
+          <div class="qv-arabic verse-arabic" id="qv-arabic" style="margin-bottom: 16px;"></div>
+          <div class="qv-translation verse-translation" id="qv-translation"></div>
+        </div>
+        <div class="qv-sticky-footer">
+          <a href="#" target="_blank" id="qv-quran-link" class="return-today-btn" style="text-align:center; display:block; text-decoration:none;">Lihat di Quran.com</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="nightstand-mode">
+    <div class="ns-scroll-container" id="ns-scroll-container">
+      <div class="ns-panel ns-panel-1">
+        <div id="ns-time">00<span class="blink-colon">:</span>00</div>
+        <div id="ns-date">-</div>
+        <div id="ns-next">-</div>
+      </div>
+      <div class="ns-panel ns-panel-2">
+        <div class="ns-widget-left">
+          <div id="ns-time-2">00<span class="blink-colon">:</span>00</div>
+          <div id="ns-date-2">-</div>
+        </div>
+        <div class="ns-widget-right-wrapper">
+          <div class="ns-widget-right" id="ns-widget-right-scroll">
+            <div class="ns-widget-page ns-widget-page-2" id="ns-prayer-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ns-dots">
+      <div class="ns-dot active" id="ns-dot-1"></div>
+      <div class="ns-dot" id="ns-dot-2"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 0.16.27
-Description: Synchronized version bump for translation option removal.
+Version: 0.16.28
+Description: Surah selector promoted to main title width, Settings Grid expanded for Translation labels.
 */
 
 @import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap');
@@ -89,7 +89,7 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 .quran-wrapper[data-theme="dark"] { background: transparent; }
 .quran-wrapper[data-theme="light"] { background: #f8f9fa; }
 .quran-wrapper[data-theme="light"] .quran-header { background: #ffffff; border-color: #e2e8f0; }
-.quran-wrapper[data-theme="light"] .qh-top h2 { color: #1a1a1a; }
+.quran-wrapper[data-theme="light"] .qh-surah-select { background-color: #f1f5f9; border-color: #cbd5e1; color: #1a1a1a; }
 .quran-wrapper[data-theme="light"] .district-select { background-color: #f1f5f9; color: #1a1a1a; border-color: #cbd5e1; }
 .quran-wrapper[data-theme="light"] .district-select-wrapper::after { color: #1a1a1a; }
 .quran-wrapper[data-theme="light"] .qs-btn { background: #f1f5f9; color: #1a1a1a; border-color: #cbd5e1; }
@@ -108,7 +108,7 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 
 .quran-wrapper[data-theme="sepia"] { background: #f4ecd8; }
 .quran-wrapper[data-theme="sepia"] .quran-header { background: #fdf6e3; border-color: #e4d5b7; }
-.quran-wrapper[data-theme="sepia"] .qh-top h2 { color: #433422; }
+.quran-wrapper[data-theme="sepia"] .qh-surah-select { background-color: #ede0c8; border-color: #d1c0a0; color: #433422; }
 .quran-wrapper[data-theme="sepia"] .district-select { background-color: #ede0c8; color: #433422; border-color: #d1c0a0; }
 .quran-wrapper[data-theme="sepia"] .district-select-wrapper::after { color: #433422; }
 .quran-wrapper[data-theme="sepia"] .qs-btn { background: #ede0c8; color: #433422; border-color: #d1c0a0; }
@@ -146,19 +146,25 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
   padding: 12px 16px; border-radius: 12px; backdrop-filter: blur(8px); 
   transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); max-height: 600px; transform: translateY(0); opacity: 1; 
 }
-.qh-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-.qh-top h2 { font-size: 1.1rem; font-weight: 700; color: #ffffff; text-transform: uppercase; letter-spacing: 0.05em; }
-.qh-controls { display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; }
+.qh-top { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 8px; }
+.qh-controls { display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; flex-shrink: 0; }
+
+.qh-surah-wrapper { flex: 1; min-width: 0; }
+.qh-surah-select { width: 100%; text-overflow: ellipsis; white-space: nowrap; font-size: 1.05rem !important; font-weight: 700; border: 1px solid var(--border-active); background-color: var(--bg-surface-elevated); }
 
 .qh-controls .district-select { font-size: 13px !important; padding: 6px 22px 6px 8px; }
-#surah-select { max-width: 120px; text-overflow: ellipsis; white-space: nowrap; }
 #verse-select { max-width: 75px; }
 
 .quran-settings-panel { max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0.25, 1, 0.5, 1); opacity: 0; }
-.quran-settings-panel.is-expanded { max-height: 250px; opacity: 1; padding-top: 16px; }
-.qs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.quran-settings-panel.is-expanded { max-height: 300px; opacity: 1; padding-top: 16px; }
+
+/* Settings Grid Logic */
+.qs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 8px; }
 .qs-item { display: flex; }
-.qs-full { width: 100%; font-size: 0.8rem !important; }
+.qs-col-span-2 { grid-column: 1 / -1; }
+.qs-vertical { flex-direction: column; align-items: stretch; gap: 6px; }
+.qs-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-left: 2px; }
+.qs-full { width: 100%; font-size: 0.85rem !important; }
 
 .quran-mode-switcher, .theme-toggles { display: flex; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 8px; overflow: hidden; width: 100%; }
 .qm-btn, .theme-btn { flex: 1; background: none; border: none; color: var(--text-secondary); font-size: 0.75rem; font-weight: 600; padding: 8px 4px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }

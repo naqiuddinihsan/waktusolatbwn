@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.27
-Description: Version synchronization and translation ID migration failsafe.
+Version: 0.16.28
+Description: Dynamic API payload handling for the "Tiada Terjemahan" (Arab Sahaja) mode and UI collapse logic.
 */
 
 if ('serviceWorker' in navigator) {
@@ -103,7 +103,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.27" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.28" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -130,7 +130,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.27" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.28" }
   }
 };
 
@@ -745,7 +745,7 @@ function initPullToRefresh() {
 async function loadSurah(chapterId) {
   const versesContainer = document.getElementById('quran-verses');
   const transSelect = document.getElementById('quran-translation-select');
-  const transId = transSelect ? transSelect.value : 39;
+  const transId = transSelect ? transSelect.value : "39";
   const cacheKey = `${chapterId}_${transId}`;
   
   if (quranCache[cacheKey]) {
@@ -761,7 +761,12 @@ async function loadSurah(chapterId) {
      let totalPages = 1;
      
      do {
-       const res = await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${chapterId}?fields=text_uthmani&translations=${transId}&page=${page}&per_page=50`);
+       let apiUrl = `https://api.quran.com/api/v4/verses/by_chapter/${chapterId}?fields=text_uthmani&page=${page}&per_page=50`;
+       if (transId !== "none") {
+         apiUrl += `&translations=${transId}`;
+       }
+         
+       const res = await fetch(apiUrl);
        if (!res.ok) throw new Error("API Fetch failed");
        const data = await res.json();
        if (data && data.verses) {
@@ -824,6 +829,7 @@ function renderSurah(verses) {
      transWrap.className = 'verse-translation';
      const transText = v.translations && v.translations.length > 0 ? v.translations[0].text : "";
      transWrap.innerHTML = transText;
+     if (!transText) transWrap.style.display = 'none';
      
      const rightStack = document.createElement('div');
      rightStack.className = 'verse-right-stack';
@@ -834,7 +840,7 @@ function renderSurah(verses) {
      numWrap.className = 'verse-number-side';
      numWrap.textContent = v.verse_key;
      
-     // Vector Copy Engine
+     // Vector Copy Engine formats purely based on translation existence
      const actionsWrap = document.createElement('div');
      actionsWrap.className = 'verse-actions';
      const copyBtn = document.createElement('button');
@@ -844,7 +850,10 @@ function renderSurah(verses) {
      copyBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         const activeSurahName = surahSelect.options[surahSelect.selectedIndex].text.replace(/^[0-9.]+\s/, '');
-        const textToCopy = `${v.text_uthmani}\n\n${transText}\n\n[Surah ${activeSurahName}, Ayat ${vNum}]`;
+        const textToCopy = transText 
+           ? `${v.text_uthmani}\n\n${transText}\n\n[Surah ${activeSurahName}, Ayat ${vNum}]` 
+           : `${v.text_uthmani}\n\n[Surah ${activeSurahName}, Ayat ${vNum}]`;
+           
         navigator.clipboard.writeText(textToCopy).then(() => {
             const originalHTML = copyBtn.innerHTML;
             copyBtn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="#34d399" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
@@ -862,7 +871,7 @@ function renderSurah(verses) {
      row.appendChild(rightStack);
      row.appendChild(sideBar);
      
-     // Verse Focus Modal Injection
+     // Verse Focus Modal Injection natively adapts if translation is absent
      row.addEventListener('click', () => {
         vibrateTap();
         const qvModal = document.getElementById('quran-verse-modal');
@@ -870,7 +879,11 @@ function renderSurah(verses) {
             const activeSurahName = surahSelect.options[surahSelect.selectedIndex].text.replace(/^[0-9.]+\s/, '');
             document.getElementById('qv-modal-title').textContent = `Surah ${activeSurahName} - Ayat ${vNum}`;
             document.getElementById('qv-arabic').innerHTML = v.text_uthmani + " ۝" + arNum;
-            document.getElementById('qv-translation').innerHTML = transText;
+            
+            const qvTrans = document.getElementById('qv-translation');
+            qvTrans.innerHTML = transText;
+            qvTrans.style.display = transText ? 'block' : 'none';
+            
             document.getElementById('qv-quran-link').href = `https://quran.com/${chapterId}/${vNum}`;
             
             const scrollArea = document.querySelector('.qv-scroll-area');
@@ -1054,7 +1067,6 @@ function bindEvents() {
   const transSelect = document.getElementById('quran-translation-select');
   if (transSelect) {
      let savedTrans = localStorage.getItem('quranTransId') || "39";
-     // Failsafe: If user had Dr. Mustafa Khattab (131) saved, migrate them to Saheeh International (20)
      if (savedTrans === "131") {
          savedTrans = "20";
          localStorage.setItem('quranTransId', savedTrans);
