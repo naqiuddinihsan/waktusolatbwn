@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.15
-Description: Network-first service worker enforcing cache updates for vertical scrolling geometry fix and date initialization.
+Version: 0.16.16
+Description: Network-first service worker bumping version to cache the temporarily disabled layout geometry.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.15';
+const CACHE_NAME = 'waktu-solat-v0.16.16';
 const ASSETS = [
   './',
   './index.html',
