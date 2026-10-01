@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.19
-Description: Service worker cache bump ensuring the browser pulls the new master-slider and Quran API components.
+Version: 0.16.20
+Description: Service worker cache bump to pull the new translation loop and mode switching logic.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.19';
+const CACHE_NAME = 'waktu-solat-v0.16.20';
 const ASSETS = [
   './',
   './index.html',

@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 0.16.19
-Description: Integrated horizontal scroll-snap engine and native Quran API lazy-loading.
+Version: 0.16.20
+Description: Upgraded Quran engine with Verse/Reading modes and localized translations.
 -->
 <!DOCTYPE html>
 <html lang="ms" translate="no">
@@ -120,12 +120,20 @@ Description: Integrated horizontal scroll-snap engine and native Quran API lazy-
 
     <div class="quran-wrapper" id="quran-wrapper">
       <header class="quran-header">
-        <h2>Al-Quran</h2>
-        <div class="district-select-wrapper">
-          <select id="surah-select" class="district-select">
-            <option value="1">1. Al-Fatihah</option>
-            <option value="18">18. Al-Kahf</option>
-          </select>
+        <div class="qh-top">
+          <h2>Al-Quran</h2>
+          <div class="district-select-wrapper">
+            <select id="surah-select" class="district-select">
+              <option value="1">1. Al-Fatihah</option>
+              <option value="18">18. Al-Kahf</option>
+            </select>
+          </div>
+        </div>
+        <div class="qh-bottom">
+          <div class="quran-mode-switcher">
+            <button id="mode-verse" class="qm-btn active">Ayat</button>
+            <button id="mode-reading" class="qm-btn">Mushaf</button>
+          </div>
         </div>
       </header>
       <div id="quran-verses" class="quran-verses">
@@ -161,7 +169,7 @@ Description: Integrated horizontal scroll-snap engine and native Quran API lazy-
         <p><strong>Sumber Data Rasmi:</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">Kementerian Hal Ehwal Ugama (KHEU) Brunei</a></p>
         <p><strong>Data Al-Quran:</strong><br><a href="https://quran.com" target="_blank">Quran.com Foundation API</a></p>
         <p><strong>Dibangunkan oleh:</strong><br><a href="https://www.qwamii.com" target="_blank">Qwamii</a> / <a href="https://www.behance.net/naqiuddinihsan" target="_blank">Naqiuddin Ihsan</a></p>
-        <p class="about-version">Versi 0.16.19</p>
+        <p class="about-version">Versi 0.16.20</p>
       </div>
     </div>
   </div>

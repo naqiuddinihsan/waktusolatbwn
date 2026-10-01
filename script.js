@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.19
-Description: Added lazy-load mechanics for Quran.com API via IntersectionObserver tied to the horizontal scroll.
+Version: 0.16.20
+Description: Upgraded API logic with translation fetches, loop pagination, and mode-switching rendering mechanics.
 */
 
 if ('serviceWorker' in navigator) {
@@ -70,6 +70,12 @@ function setText(id, text) {
   if (el) el.textContent = text;
 }
 
+function toArabicNumeral(enNum) {
+  return ("" + enNum).replace(/[0-9]/g, function(t) {
+      return String.fromCharCode(t.charCodeAt(0) + 1584);
+  });
+}
+
 const I18N = {
   ms: {
     appTitle: "Waktu Solat BWN",
@@ -86,6 +92,8 @@ const I18N = {
     nsNextLabel: "Next:",
     nsStartsAt: "Starts at",
     dataAsOf: "Data dikemas kini pada",
+    quranModeVerse: "Ayat",
+    quranModeReading: "Mushaf",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir", sunat: "Sunat" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
@@ -94,7 +102,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.19" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.20" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -111,6 +119,8 @@ const I18N = {
     nsNextLabel: "Next:",
     nsStartsAt: "Starts at",
     dataAsOf: "Data as of",
+    quranModeVerse: "Verse",
+    quranModeReading: "Reading",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witr", sunat: "Sunnah" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
@@ -119,7 +129,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.19" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.20" }
   }
 };
 
@@ -196,6 +206,9 @@ function setLanguage(lang) {
   document.title = t.appTitle;
   setText("reset-date-btn", t.resetToday);
   setText("ui-now-label", t.nowLabel);
+  
+  setText("mode-verse", t.quranModeVerse);
+  setText("mode-reading", t.quranModeReading);
 
   let sel = document.getElementById("district-select");
   let savedIndex = sel ? sel.selectedIndex : 0;
@@ -221,6 +234,11 @@ function setLanguage(lang) {
   }
   setDateHeaders();
   updateTick();
+
+  if (isQuranLoaded) {
+    const surahSelect = document.getElementById('surah-select');
+    if(surahSelect) loadSurah(surahSelect.value);
+  }
 }
 
 function checkDateStatus() {
@@ -425,27 +443,6 @@ function renderPrayerList(adjustedTimes, activeKey) {
   });
 }
 
-function renderNightstandPrayerList(adjustedTimes, activeKey, nextKey) {
-  const list = document.getElementById("ns-prayer-list");
-  if (!list) return;
-  list.innerHTML = "";
-  
-  const sequence = ["imsak", "subuh", "syuruk", "duha", "zuhur", "asar", "maghrib", "isya"];
-  
-  sequence.forEach(key => {
-     const row = document.createElement("div");
-     row.className = "ns-prayer-row";
-     if (key === activeKey) row.classList.add("is-active-ns");
-     if (key === nextKey) row.classList.add("is-next");
-     
-     const name = I18N[currentLang].prayers[key];
-     const time = minutesToDisplay(adjustedTimes[key]);
-     
-     row.innerHTML = `<span>${name}</span><span>${time}</span>`;
-     list.appendChild(row);
-  });
-}
-
 function determinePrayerState(adjustedTimes) {
   const now = new Date();
   const currentMins = now.getHours() * 60 + now.getMinutes();
@@ -645,7 +642,6 @@ function updateTick() {
   }
 
   renderPrayerList(adjustedTimes, state.active ? state.active.key : null);
-  renderNightstandPrayerList(adjustedTimes, state.active ? state.active.key : null, state.next ? state.next.key : null);
   const engineAdjustedTimes = getAdjustedSchedule();
   updateSkyVisuals(engineAdjustedTimes, (now.getHours() * 60) + now.getMinutes());
 }
@@ -735,42 +731,86 @@ function initPullToRefresh() {
 
 async function loadSurah(chapterId) {
   const versesContainer = document.getElementById('quran-verses');
-  versesContainer.innerHTML = '<div class="quran-loading"><span class="ptr-spinner"></span></div>';
   
-  if (quranCache[chapterId]) {
-     renderSurah(quranCache[chapterId]);
+  const transId = currentLang === 'ms' ? 39 : 131;
+  const cacheKey = `${chapterId}_${transId}`;
+  
+  if (quranCache[cacheKey]) {
+     renderSurah(quranCache[cacheKey]);
      return;
   }
+  
+  versesContainer.innerHTML = '<div class="quran-loading"><span class="ptr-spinner"></span></div>';
 
   try {
-     const res = await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${chapterId}?fields=text_uthmani`);
-     const data = await res.json();
-     if (data && data.verses) {
-        quranCache[chapterId] = data.verses;
-        renderSurah(data.verses);
+     let allVerses = [];
+     let page = 1;
+     let totalPages = 1;
+     
+     do {
+       const res = await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${chapterId}?fields=text_uthmani&translations=${transId}&page=${page}&per_page=50`);
+       if (!res.ok) throw new Error("API Fetch failed");
+       const data = await res.json();
+       if (data && data.verses) {
+          allVerses = allVerses.concat(data.verses);
+          totalPages = data.pagination ? data.pagination.total_pages : 1;
+          page++;
+       } else {
+          break;
+       }
+     } while (page <= totalPages);
+     
+     if (allVerses.length > 0) {
+        quranCache[cacheKey] = allVerses;
+        renderSurah(allVerses);
      }
   } catch (e) {
-     versesContainer.innerHTML = '<p style="color:var(--text-secondary); text-align:center; margin-top: 40px; font-size: 0.85rem;">Memerlukan sambungan internet untuk memuat turun Surah buat kali pertama.</p>';
+     const t = I18N[currentLang];
+     versesContainer.innerHTML = `<p style="color:var(--text-secondary); text-align:center; margin-top: 40px; font-size: 0.85rem;">Memerlukan sambungan internet untuk memuat turun Surah buat kali pertama.</p>`;
   }
 }
 
 function renderSurah(verses) {
   const versesContainer = document.getElementById('quran-verses');
   versesContainer.innerHTML = '';
+  
+  const surahSelect = document.getElementById('surah-select');
+  const chapterId = surahSelect.value;
+  
+  if (chapterId !== "1" && chapterId !== "9") {
+      const bismillah = document.createElement('div');
+      bismillah.className = 'bismillah-header';
+      bismillah.textContent = "بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ";
+      versesContainer.appendChild(bismillah);
+  }
+
   verses.forEach(v => {
      const row = document.createElement('div');
      row.className = 'verse-row';
      
-     const text = document.createElement('div');
-     text.className = 'verse-arabic';
-     text.textContent = v.text_uthmani;
+     const vNum = v.verse_key.split(':')[1];
+     const arNum = toArabicNumeral(vNum);
+
+     const textWrap = document.createElement('div');
+     textWrap.className = 'verse-arabic';
+     textWrap.innerHTML = `${v.text_uthmani} <span class="ayah-end"><span class="ayah-symbol">۝</span><span class="ayah-num">${arNum}</span></span>`;
      
-     const num = document.createElement('div');
-     num.className = 'verse-number';
-     num.textContent = v.verse_key.split(':')[1];
+     const transWrap = document.createElement('div');
+     transWrap.className = 'verse-translation';
+     const transText = v.translations && v.translations.length > 0 ? v.translations[0].text : "";
+     transWrap.innerHTML = transText;
      
-     row.appendChild(text);
-     row.appendChild(num);
+     const rightStack = document.createElement('div');
+     rightStack.className = 'verse-right-stack';
+     rightStack.appendChild(textWrap);
+     rightStack.appendChild(transWrap);
+
+     const numWrap = document.createElement('div');
+     numWrap.className = 'verse-number-side';
+     numWrap.textContent = vNum;
+
+     row.appendChild(rightStack);
+     row.appendChild(numWrap);
      versesContainer.appendChild(row);
   });
 }
@@ -811,7 +851,6 @@ function bindEvents() {
     card.addEventListener('click', (e) => e.stopPropagation());
   });
 
-  // Nightstand scroll listener
   const nsScroll = document.getElementById('ns-scroll-container');
   if(nsScroll) {
     nsScroll.addEventListener('scroll', () => {
@@ -824,7 +863,6 @@ function bindEvents() {
     }, {passive: true});
   }
 
-  // Horizontal Master Slider Quran Observer
   const masterSlider = document.getElementById('master-slider');
   const quranWrapper = document.getElementById('quran-wrapper');
   const dot1 = document.getElementById('mn-dot-1');
@@ -854,6 +892,23 @@ function bindEvents() {
     surahSelect.addEventListener('change', (e) => {
        loadSurah(e.target.value);
     });
+  }
+  
+  const modeVerse = document.getElementById('mode-verse');
+  const modeReading = document.getElementById('mode-reading');
+  const quranVerses = document.getElementById('quran-verses');
+
+  if(modeVerse && modeReading) {
+     modeVerse.addEventListener('click', () => {
+        quranVerses.classList.remove('is-reading-mode');
+        modeVerse.classList.add('active');
+        modeReading.classList.remove('active');
+     });
+     modeReading.addEventListener('click', () => {
+        quranVerses.classList.add('is-reading-mode');
+        modeReading.classList.add('active');
+        modeVerse.classList.remove('active');
+     });
   }
 }
 

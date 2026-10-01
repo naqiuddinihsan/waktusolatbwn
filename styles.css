@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 0.16.19
-Description: Introduced master-slider for horizontal swipe layout, imported Amiri Quran font, and reconfigured Desktop CSS Grid for a permanent 3-column architecture.
+Version: 0.16.20
+Description: Reading Mode styles configured allowing verses to seamlessly inline-flow alongside translation logic formatting.
 */
 
 @import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap');
@@ -86,15 +86,37 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
   padding-right: max(12px, env(safe-area-inset-right));
 }
 
-.quran-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 12px 16px; border-radius: 12px; backdrop-filter: blur(8px); }
-.quran-header h2 { font-size: 1.1rem; font-weight: 700; color: #ffffff; text-transform: uppercase; letter-spacing: 0.05em; }
+.quran-header { display: flex; flex-direction: column; background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 12px 16px; border-radius: 12px; backdrop-filter: blur(8px); }
+.qh-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+.qh-top h2 { font-size: 1.1rem; font-weight: 700; color: #ffffff; text-transform: uppercase; letter-spacing: 0.05em; }
+.qh-bottom { display: flex; width: 100%; margin-top: 12px; }
+
+.quran-mode-switcher { display: flex; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 8px; overflow: hidden; width: 100%; }
+.qm-btn { flex: 1; background: none; border: none; color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; padding: 8px; cursor: pointer; transition: all 0.2s; }
+.qm-btn.active { background: var(--bg-surface-elevated); color: var(--text-primary); }
 
 .quran-verses { flex: 1; overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 12px; scrollbar-width: none; }
 .quran-verses::-webkit-scrollbar { display: none; }
 
-.verse-row { display: flex; flex-direction: column; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px 20px; backdrop-filter: blur(8px); gap: 16px; }
+.bismillah-header { display: block !important; font-family: 'Amiri Quran', serif; font-size: 2.2rem; color: #ffffff; text-align: center; padding: 16px 0 24px 0; width: 100%; }
+
+.verse-row { display: flex; flex-direction: row-reverse; justify-content: space-between; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px 20px; backdrop-filter: blur(8px); gap: 16px; }
+.verse-right-stack { display: flex; flex-direction: column; gap: 12px; flex: 1; }
 .verse-arabic { font-family: 'Amiri Quran', serif; font-size: 2.2rem; color: #ffffff; line-height: 2.4; text-align: right; direction: rtl; }
-.verse-number { align-self: flex-start; background: var(--bg-surface-elevated); color: var(--accent-primary); font-size: 0.75rem; font-weight: 700; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid var(--border-active); }
+.verse-translation { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5; text-align: left; direction: ltr; }
+.verse-number-side { background: var(--bg-surface-elevated); color: var(--accent-primary); font-size: 0.75rem; font-weight: 700; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid var(--border-active); flex-shrink: 0; }
+
+/* READING MODE OVERRIDES */
+.quran-verses.is-reading-mode { display: block; padding: 24px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 16px; backdrop-filter: blur(8px); text-align: center; direction: rtl; line-height: 3; }
+.quran-verses.is-reading-mode .verse-row { display: inline; background: none; border: none; padding: 0; margin: 0; backdrop-filter: none; }
+.quran-verses.is-reading-mode .verse-right-stack { display: inline; }
+.quran-verses.is-reading-mode .verse-translation, .quran-verses.is-reading-mode .verse-number-side { display: none; }
+.quran-verses.is-reading-mode .verse-arabic { display: inline; }
+
+/* Ayah end formatting */
+.ayah-end { display: inline-flex; align-items: center; justify-content: center; position: relative; margin: 0 6px; color: var(--accent-primary); vertical-align: middle; }
+.ayah-symbol { font-size: 2.2rem; line-height: 1; }
+.ayah-num { position: absolute; font-size: 0.8rem; font-family: var(--font-stack); font-weight: bold; }
 
 .main-nav-dots { position: fixed; bottom: max(12px, env(safe-area-inset-bottom)); left: 0; right: 0; display: flex; justify-content: center; gap: 8px; z-index: 100; pointer-events: none; transition: opacity 0.3s; }
 body.quran-active .main-nav-dots { opacity: 0.3; }
