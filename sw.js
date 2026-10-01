@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.18
-Description: Service worker cache bump ensuring the desktop Fadhilat hover disable update is fetched.
+Version: 0.16.19
+Description: Service worker cache bump ensuring the browser pulls the new master-slider and Quran API components.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.18';
+const CACHE_NAME = 'waktu-solat-v0.16.19';
 const ASSETS = [
   './',
   './index.html',

@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 0.16.18
-Description: Version synchronization for tooltip disable update.
+Version: 0.16.19
+Description: Integrated horizontal scroll-snap engine and native Quran API lazy-loading.
 -->
 <!DOCTYPE html>
 <html lang="ms" translate="no">
@@ -33,88 +33,112 @@ Description: Version synchronization for tooltip disable update.
     <div class="cloud c3"></div>
   </div>
 
-  <div class="app-wrapper">
-    <header class="header-bar">
-      <div class="header-top">
-        <div class="brand-cluster">
-          <div class="brand-logo" aria-hidden="true">
-            <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M256 52c-2.8 14.3-9.8 27.4-20.2 37.7-10.3 10.3-23.4 17.4-37.7 20.2 14.3 2.8 27.4 9.8 37.7 20.2 10.3 10.3 17.4 23.4 20.2 37.7 2.8-14.3 9.8-27.4 20.2-37.7 10.3-10.3 23.4-17.4 37.7-20.2-14.3-2.8-27.4-9.8-37.7-20.2-10.4-10.3-17.4-23.4-20.2-37.7z" fill="#e5e5e5"/>
-              <path d="M256 140c-58.8 0-112 38.5-128 100h256c-16-61.5-69.2-100-128-100z" fill="#e5e5e5"/>
-              <path d="M128 240v172c0 6.6 5.4 12 12 12h60v-92c0-31 14-56 56-56s56 25 56 56v92h60c6.6 0 12-5.4 12-12V240H128z" fill="#262626"/>
-              <path d="M224 332c0-22.1 14.3-40 32-40s32 17.9 32 40v92h-64v-92z" fill="#e5e5e5"/>
-              <path d="M81 222h18v190H36c-4.4 0-8-3.6-8-8V230c0-4.4 3.6-8 8-8h45zm332 0h18v190h-45c-4.4 0-8-3.6-8-8V230c0-4.4 3.6-8 8-8h45z" fill="#404040"/>
-              <path d="M90 170c-13.3 0-24 20-24 50h48c0-30-10.7-50-24-50zm332 0c-13.3 0-24 20-24 50h48c0-30-10.7-50-24-50z" fill="#e5e5e5"/>
-              <path d="M80 384h352v24H80z" fill="#e5e5e5"/>
-            </svg>
-          </div>
-          <div class="header-title-box">
-            <h1 id="ui-app-title">Waktu Solat BWN</h1>
-          </div>
-        </div>
-
-        <div class="controls-cluster">
-          <button class="icon-btn" id="visuals-toggle" type="button">BG OFF</button>
-          <div class="lang-switcher">
-            <button id="lang-btn-ms" class="lang-btn active" type="button">BM</button>
-            <button id="lang-btn-en" class="lang-btn" type="button">EN</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="header-bottom">
-        <div class="date-picker-button">
-          <div class="date-stacked">
-            <div class="date-row-top">
-              <span class="date-gregorian" id="gregorian-date">-</span>
+  <div id="master-slider" class="master-slider">
+    <div class="app-wrapper">
+      <header class="header-bar">
+        <div class="header-top">
+          <div class="brand-cluster">
+            <div class="brand-logo" aria-hidden="true">
+              <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M256 52c-2.8 14.3-9.8 27.4-20.2 37.7-10.3 10.3-23.4 17.4-37.7 20.2 14.3 2.8 27.4 9.8 37.7 20.2 10.3 10.3 17.4 23.4 20.2 37.7 2.8-14.3 9.8-27.4 20.2-37.7 10.3-10.3 23.4-17.4 37.7-20.2-14.3-2.8-27.4-9.8-37.7-20.2-10.4-10.3-17.4-23.4-20.2-37.7z" fill="#e5e5e5"/>
+                <path d="M256 140c-58.8 0-112 38.5-128 100h256c-16-61.5-69.2-100-128-100z" fill="#e5e5e5"/>
+                <path d="M128 240v172c0 6.6 5.4 12 12 12h60v-92c0-31 14-56 56-56s56 25 56 56v92h60c6.6 0 12-5.4 12-12V240H128z" fill="#262626"/>
+                <path d="M224 332c0-22.1 14.3-40 32-40s32 17.9 32 40v92h-64v-92z" fill="#e5e5e5"/>
+                <path d="M81 222h18v190H36c-4.4 0-8-3.6-8-8V230c0-4.4 3.6-8 8-8h45zm332 0h18v190h-45c-4.4 0-8-3.6-8-8V230c0-4.4 3.6-8 8-8h45z" fill="#404040"/>
+                <path d="M90 170c-13.3 0-24 20-24 50h48c0-30-10.7-50-24-50zm332 0c-13.3 0-24 20-24 50h48c0-30-10.7-50-24-50z" fill="#e5e5e5"/>
+                <path d="M80 384h352v24H80z" fill="#e5e5e5"/>
+              </svg>
             </div>
-            <span class="date-hijrah" id="hijrah-date">-</span>
+            <div class="header-title-box">
+              <h1 id="ui-app-title">Waktu Solat BWN</h1>
+            </div>
           </div>
-          <input type="date" id="native-date-input" aria-label="Pilih Tarikh">
-        </div>
-        
-        <div class="district-select-wrapper">
-          <select class="district-select" id="district-select">
-            <option value="0">Brunei-Muara</option>
-            <option value="3">Belait (+3 min)</option>
-            <option value="1">Tutong (+1 min)</option>
-            <option value="0">Temburong</option>
-          </select>
-        </div>
-      </div>
-    </header>
 
-    <section class="hero-tracker" id="hero-tracker-card">
-      <div class="hero-top-bar">
-        <div class="hero-now-label" id="ui-now-label">-</div>
-      </div>
-      <div class="hero-name" id="hero-current-name">-</div>
-      <div class="hero-time" id="hero-current-range">-</div>
-      <div class="progress-container" id="hero-progress-container">
-        <div class="progress-countdown" id="hero-countdown-text">-</div>
-        <div class="progress-track">
-          <div class="progress-fill" id="hero-progress-fill"></div>
+          <div class="controls-cluster">
+            <button class="icon-btn" id="visuals-toggle" type="button">BG OFF</button>
+            <div class="lang-switcher">
+              <button id="lang-btn-ms" class="lang-btn active" type="button">BM</button>
+              <button id="lang-btn-en" class="lang-btn" type="button">EN</button>
+            </div>
+          </div>
         </div>
+
+        <div class="header-bottom">
+          <div class="date-picker-button">
+            <div class="date-stacked">
+              <div class="date-row-top">
+                <span class="date-gregorian" id="gregorian-date">-</span>
+              </div>
+              <span class="date-hijrah" id="hijrah-date">-</span>
+            </div>
+            <input type="date" id="native-date-input" aria-label="Pilih Tarikh">
+          </div>
+          
+          <div class="district-select-wrapper">
+            <select class="district-select" id="district-select">
+              <option value="0">Brunei-Muara</option>
+              <option value="3">Belait (+3 min)</option>
+              <option value="1">Tutong (+1 min)</option>
+              <option value="0">Temburong</option>
+            </select>
+          </div>
+        </div>
+      </header>
+
+      <section class="hero-tracker" id="hero-tracker-card">
+        <div class="hero-top-bar">
+          <div class="hero-now-label" id="ui-now-label">-</div>
+        </div>
+        <div class="hero-name" id="hero-current-name">-</div>
+        <div class="hero-time" id="hero-current-range">-</div>
+        <div class="progress-container" id="hero-progress-container">
+          <div class="progress-countdown" id="hero-countdown-text">-</div>
+          <div class="progress-track">
+            <div class="progress-fill" id="hero-progress-fill"></div>
+          </div>
+        </div>
+      </section>
+
+      <div id="ptr-indicator" class="ptr-container"></div>
+
+      <div id="return-today-wrapper" class="return-today-wrapper">
+        <button id="reset-date-btn" class="return-today-btn" type="button">Kembali ke Hari Ini</button>
       </div>
-    </section>
 
-    <div id="ptr-indicator" class="ptr-container"></div>
+      <main class="prayer-list" id="prayer-list-container"></main>
 
-    <div id="return-today-wrapper" class="return-today-wrapper">
-      <button id="reset-date-btn" class="return-today-btn" type="button">Kembali ke Hari Ini</button>
+      <footer class="site-footer">
+        <button class="info-btn" id="info-btn-trigger" aria-label="Informasi Aplikasi" type="button">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+        </button>
+      </footer>
     </div>
 
-    <main class="prayer-list" id="prayer-list-container"></main>
+    <div class="quran-wrapper" id="quran-wrapper">
+      <header class="quran-header">
+        <h2>Al-Quran</h2>
+        <div class="district-select-wrapper">
+          <select id="surah-select" class="district-select">
+            <option value="1">1. Al-Fatihah</option>
+            <option value="18">18. Al-Kahf</option>
+          </select>
+        </div>
+      </header>
+      <div id="quran-verses" class="quran-verses">
+        <div class="quran-loading" id="quran-loading">
+          <span class="ptr-spinner"></span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <footer class="site-footer">
-      <button class="info-btn" id="info-btn-trigger" aria-label="Informasi Aplikasi" type="button">
-        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="16" x2="12" y2="12"></line>
-          <line x1="12" y1="8" x2="12.01" y2="8"></line>
-        </svg>
-      </button>
-    </footer>
+  <div class="main-nav-dots" id="main-nav-dots">
+    <div class="ns-dot active" id="mn-dot-1"></div>
+    <div class="ns-dot" id="mn-dot-2"></div>
   </div>
 
   <div class="modal-backdrop" id="info-modal">
@@ -135,59 +159,32 @@ Description: Version synchronization for tooltip disable update.
       </div>
       <div class="modal-body about-body" id="about-body-content">
         <p><strong>Sumber Data Rasmi:</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">Kementerian Hal Ehwal Ugama (KHEU) Brunei</a></p>
+        <p><strong>Data Al-Quran:</strong><br><a href="https://quran.com" target="_blank">Quran.com Foundation API</a></p>
         <p><strong>Dibangunkan oleh:</strong><br><a href="https://www.qwamii.com" target="_blank">Qwamii</a> / <a href="https://www.behance.net/naqiuddinihsan" target="_blank">Naqiuddin Ihsan</a></p>
-        <p class="about-version">Versi 0.16.18</p>
+        <p class="about-version">Versi 0.16.19</p>
       </div>
     </div>
   </div>
 
   <div id="nightstand-mode">
     <div class="ns-scroll-container" id="ns-scroll-container">
-      
       <div class="ns-panel ns-panel-1">
         <div id="ns-time">00<span class="blink-colon">:</span>00</div>
         <div id="ns-date">-</div>
         <div id="ns-next">-</div>
       </div>
-      
       <div class="ns-panel ns-panel-2">
         <div class="ns-widget-left">
           <div id="ns-time-2">00<span class="blink-colon">:</span>00</div>
           <div id="ns-date-2">-</div>
         </div>
-        
         <div class="ns-widget-right-wrapper">
           <div class="ns-widget-right" id="ns-widget-right-scroll">
-            
-            <!-- TEMPORARILY DISABLED: Nightstand Widget Page 1
-            <div class="ns-widget-page ns-widget-page-1">
-              <div class="ns-time-left" id="ns-time-left-2">Time left: --:--:--</div>
-              <div class="ns-right-mid">
-                <div class="ns-current-icon" id="ns-current-icon-2"></div>
-                <div class="ns-current-name" id="ns-current-name-2">-</div>
-              </div>
-              <div class="ns-right-bottom">
-                <div class="ns-next-info" id="ns-next-info-2">Next: -</div>
-                <div class="ns-starts-at" id="ns-starts-at-2">Starts at --:--</div>
-              </div>
-            </div>
-            -->
-
-            <div class="ns-widget-page ns-widget-page-2" id="ns-prayer-list">
-            </div>
+            <div class="ns-widget-page ns-widget-page-2" id="ns-prayer-list"></div>
           </div>
-          
-          <!-- TEMPORARILY DISABLED: Nightstand Widget Dots
-          <div class="ns-widget-dots" id="ns-widget-dots">
-            <div class="ns-widget-dot active" id="ns-w-dot-1"></div>
-            <div class="ns-widget-dot" id="ns-w-dot-2"></div>
-          </div>
-          -->
         </div>
       </div>
-      
     </div>
-    
     <div class="ns-dots">
       <div class="ns-dot active" id="ns-dot-1"></div>
       <div class="ns-dot" id="ns-dot-2"></div>

@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.18
-Description: Temporarily disabled dynamic Fadhilat hover tooltips on desktop for maintainability.
+Version: 0.16.19
+Description: Added lazy-load mechanics for Quran.com API via IntersectionObserver tied to the horizontal scroll.
 */
 
 if ('serviceWorker' in navigator) {
@@ -21,11 +21,14 @@ let fullYearSchedule = {};
 let fadhilatData = null;
 let selectedDate = new Date();
 
+let quranCache = {};
+let isQuranLoaded = false;
+
 const nightstandQuery = window.matchMedia('(orientation: landscape) and (max-height: 600px)');
 
 async function evaluateWakeLock() {
   if (!('wakeLock' in navigator)) return;
-  const isNightstand = nightstandQuery.matches;
+  const isNightstand = nightstandQuery.matches && !document.body.classList.contains('quran-active');
   const isVisible = document.visibilityState === 'visible';
 
   if (isNightstand && isVisible) {
@@ -91,7 +94,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.18" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.19" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -116,7 +119,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.18" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.19" }
   }
 };
 
@@ -211,6 +214,7 @@ function setLanguage(lang) {
   if (aboutBody) {
     aboutBody.innerHTML = `
       <p><strong>${t.about.sourceLabel}</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">${t.about.sourceName}</a></p>
+      <p><strong>Data Al-Quran:</strong><br><a href="https://quran.com" target="_blank">Quran.com Foundation API</a></p>
       <p><strong>${t.about.devLabel}</strong><br><a href="https://www.qwamii.com" target="_blank">Qwamii</a> / <a href="https://www.behance.net/naqiuddinihsan" target="_blank">Naqiuddin Ihsan</a></p>
       <p class="about-version">${t.about.version}${dataAsOfStr}</p>
     `;
@@ -408,17 +412,6 @@ function renderPrayerList(adjustedTimes, activeKey) {
     }
     
     let fadhilatHtml = '';
-    
-    // TEMPORARILY DISABLED: Desktop Fadhilat Tooltip Injection
-    /*
-    let detail = { desc: "", benefit: "" };
-    if (fadhilatData && fadhilatData[currentLang] && fadhilatData[currentLang][item.key]) {
-      detail = fadhilatData[currentLang][item.key];
-    }
-    if (detail.benefit && detail.benefit !== "-") {
-      fadhilatHtml = `<div class="fadhilat-tooltip"><div class="fadhilat-tooltip-title">${detail.desc}</div>${detail.benefit}</div>`;
-    }
-    */
 
     const nameClass = item.type === "fardhu" ? "row-left-fardhu" : "row-left-sec";
     const timeClass = item.type === "fardhu" ? "row-right-fardhu" : "row-right-sec";
@@ -740,6 +733,48 @@ function initPullToRefresh() {
   list.addEventListener('touchcancel', endPull);
 }
 
+async function loadSurah(chapterId) {
+  const versesContainer = document.getElementById('quran-verses');
+  versesContainer.innerHTML = '<div class="quran-loading"><span class="ptr-spinner"></span></div>';
+  
+  if (quranCache[chapterId]) {
+     renderSurah(quranCache[chapterId]);
+     return;
+  }
+
+  try {
+     const res = await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${chapterId}?fields=text_uthmani`);
+     const data = await res.json();
+     if (data && data.verses) {
+        quranCache[chapterId] = data.verses;
+        renderSurah(data.verses);
+     }
+  } catch (e) {
+     versesContainer.innerHTML = '<p style="color:var(--text-secondary); text-align:center; margin-top: 40px; font-size: 0.85rem;">Memerlukan sambungan internet untuk memuat turun Surah buat kali pertama.</p>';
+  }
+}
+
+function renderSurah(verses) {
+  const versesContainer = document.getElementById('quran-verses');
+  versesContainer.innerHTML = '';
+  verses.forEach(v => {
+     const row = document.createElement('div');
+     row.className = 'verse-row';
+     
+     const text = document.createElement('div');
+     text.className = 'verse-arabic';
+     text.textContent = v.text_uthmani;
+     
+     const num = document.createElement('div');
+     num.className = 'verse-number';
+     num.textContent = v.verse_key.split(':')[1];
+     
+     row.appendChild(text);
+     row.appendChild(num);
+     versesContainer.appendChild(row);
+  });
+}
+
 function bindEvents() {
   const toggleBtn = document.getElementById('visuals-toggle');
   if (toggleBtn) toggleBtn.addEventListener('click', toggleVisuals);
@@ -776,6 +811,7 @@ function bindEvents() {
     card.addEventListener('click', (e) => e.stopPropagation());
   });
 
+  // Nightstand scroll listener
   const nsScroll = document.getElementById('ns-scroll-container');
   if(nsScroll) {
     nsScroll.addEventListener('scroll', () => {
@@ -788,32 +824,36 @@ function bindEvents() {
     }, {passive: true});
   }
 
-  const nsWidgetScroll = document.getElementById('ns-widget-right-scroll');
-  const nsWidgetDots = document.getElementById('ns-widget-dots');
-  let dotsTimeout;
-  
-  if(nsWidgetScroll) {
-    const showDots = () => {
-      if(nsWidgetDots) {
-        nsWidgetDots.classList.remove('hidden');
-        clearTimeout(dotsTimeout);
-        dotsTimeout = setTimeout(() => {
-          nsWidgetDots.classList.add('hidden');
-        }, 2500);
-      }
-    };
+  // Horizontal Master Slider Quran Observer
+  const masterSlider = document.getElementById('master-slider');
+  const quranWrapper = document.getElementById('quran-wrapper');
+  const dot1 = document.getElementById('mn-dot-1');
+  const dot2 = document.getElementById('mn-dot-2');
+  const surahSelect = document.getElementById('surah-select');
+
+  if (masterSlider && quranWrapper) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+           document.body.classList.add('quran-active');
+           if(dot1) dot1.classList.remove('active');
+           if(dot2) dot2.classList.add('active');
+           if (!isQuranLoaded) {
+              loadSurah(surahSelect.value);
+              isQuranLoaded = true;
+           }
+        } else {
+           document.body.classList.remove('quran-active');
+           if(dot1) dot1.classList.add('active');
+           if(dot2) dot2.classList.remove('active');
+        }
+      });
+    }, { root: masterSlider, threshold: 0.5 });
+    observer.observe(quranWrapper);
     
-    nsWidgetScroll.addEventListener('scroll', () => {
-      showDots();
-      const height = nsWidgetScroll.clientHeight;
-      const activeIndex = Math.round(nsWidgetScroll.scrollTop / height);
-      const dot1 = document.getElementById('ns-w-dot-1');
-      const dot2 = document.getElementById('ns-w-dot-2');
-      if (dot1) dot1.classList.toggle('active', activeIndex === 0);
-      if (dot2) dot2.classList.toggle('active', activeIndex === 1);
-    }, {passive: true});
-    
-    showDots();
+    surahSelect.addEventListener('change', (e) => {
+       loadSurah(e.target.value);
+    });
   }
 }
 
