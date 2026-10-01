@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 0.16.23
-Description: Replaced theme text with SVGs and injected the Verse Focus Modal for deep-reading features.
+Version: 0.16.24
+Description: Restructured Verse Focus Modal, injected Fullscreen toggles, and updated Friday reminder text.
 -->
 <!DOCTYPE html>
 <html lang="ms" translate="no">
@@ -85,7 +85,7 @@ Description: Replaced theme text with SVGs and injected the Verse Focus Modal fo
         </div>
         
         <div id="friday-banner" class="friday-banner">
-          <div class="fb-text">Sinar Jumaat: Sunat membaca Surah Al-Kahfi.</div>
+          <div class="fb-text">Sunat muakkad membaca Surah Al-Kahfi pada hari Jumaat.</div>
           <button id="fb-close-btn" class="fb-close" aria-label="Tutup">&times;</button>
         </div>
       </header>
@@ -124,7 +124,7 @@ Description: Replaced theme text with SVGs and injected the Verse Focus Modal fo
     </div>
 
     <div class="quran-wrapper" id="quran-wrapper" data-theme="dark">
-      <header class="quran-header">
+      <header class="quran-header" id="quran-header">
         <div class="qh-top">
           <h2>Al-Quran</h2>
           <div class="qh-controls">
@@ -139,6 +139,9 @@ Description: Replaced theme text with SVGs and injected the Verse Focus Modal fo
                 <option value="">Ayat</option>
               </select>
             </div>
+            <button id="quran-expand-toggle" class="icon-btn qs-btn" aria-label="Skrin Penuh">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+            </button>
             <button id="quran-settings-toggle" class="icon-btn qs-btn" aria-label="Tetapan Al-Quran">
               <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
             </button>
@@ -182,6 +185,11 @@ Description: Replaced theme text with SVGs and injected the Verse Focus Modal fo
           </div>
         </div>
       </header>
+      
+      <button id="quran-restore-toggle" class="icon-btn floating-restore-btn" aria-label="Papar Menu">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
+      </button>
+
       <div id="quran-verses" class="quran-verses">
         <div class="quran-loading" id="quran-loading">
           <span class="ptr-spinner"></span>
@@ -215,7 +223,7 @@ Description: Replaced theme text with SVGs and injected the Verse Focus Modal fo
         <p><strong>Sumber Data Rasmi:</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">Kementerian Hal Ehwal Ugama (KHEU) Brunei</a></p>
         <p><strong>Data Al-Quran:</strong><br><a href="https://quran.com" target="_blank">Quran.com Foundation API</a><br><span style="font-size: 0.75rem; color: var(--text-secondary);">Terjemahan BM: Abdullah Basmeih<br>Terjemahan EN: Dr. Mustafa Khattab, Saheeh International, Yusuf Ali</span></p>
         <p><strong>Dibangunkan oleh:</strong><br><a href="https://www.qwamii.com" target="_blank">Qwamii</a> / <a href="https://www.behance.net/naqiuddinihsan" target="_blank">Naqiuddin Ihsan</a></p>
-        <p class="about-version">Versi 0.16.23</p>
+        <p class="about-version">Versi 0.16.24</p>
       </div>
     </div>
   </div>
@@ -227,9 +235,13 @@ Description: Replaced theme text with SVGs and injected the Verse Focus Modal fo
         <button class="modal-close-btn" id="qv-modal-close-btn" type="button">&times;</button>
       </div>
       <div class="modal-body qv-modal-body" id="qv-modal-body-content">
-        <div class="qv-arabic verse-arabic" id="qv-arabic" style="margin-bottom: 16px;"></div>
-        <div class="qv-translation verse-translation" id="qv-translation"></div>
-        <a href="#" target="_blank" id="qv-quran-link" class="return-today-btn" style="text-align:center; display:block; text-decoration:none; margin-top:24px;">Lihat di Quran.com</a>
+        <div class="qv-scroll-area">
+          <div class="qv-arabic verse-arabic" id="qv-arabic" style="margin-bottom: 16px;"></div>
+          <div class="qv-translation verse-translation" id="qv-translation"></div>
+        </div>
+        <div class="qv-sticky-footer">
+          <a href="#" target="_blank" id="qv-quran-link" class="return-today-btn" style="text-align:center; display:block; text-decoration:none;">Lihat di Quran.com</a>
+        </div>
       </div>
     </div>
   </div>

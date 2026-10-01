@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.23
-Description: Wired up Vector Copy engine, Verse Focus Modal injection, and Theme Sync for dynamic sky crossfading.
+Version: 0.16.24
+Description: Added Fullscreen toolbar toggles, expanded font scale limits, and restricted Al-Kahf banner to Fridays exclusively.
 */
 
 if ('serviceWorker' in navigator) {
@@ -103,7 +103,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.23" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.24" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -130,7 +130,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.23" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.24" }
   }
 };
 
@@ -437,7 +437,7 @@ function renderPrayerList(adjustedTimes, activeKey) {
   });
 }
 
-function checkFridayBanner(adjustedTimes) {
+function checkFridayBanner() {
   const banner = document.getElementById('friday-banner');
   if (!banner) return;
   
@@ -447,19 +447,9 @@ function checkFridayBanner(adjustedTimes) {
   }
   
   const now = new Date();
-  const day = now.getDay();
-  let isIslamicFriday = false;
   
-  if (day === 5) {
-    isIslamicFriday = true;
-  } else if (day === 4 && !isNaN(adjustedTimes.maghrib)) {
-    const currentMins = now.getHours() * 60 + now.getMinutes();
-    if (currentMins >= adjustedTimes.maghrib) {
-       isIslamicFriday = true;
-    }
-  }
-  
-  if (isIslamicFriday) {
+  // Strictly Friday logic
+  if (now.getDay() === 5) {
      banner.classList.add('is-visible');
   } else {
      banner.classList.remove('is-visible');
@@ -665,8 +655,8 @@ function updateTick() {
   }
 
   renderPrayerList(adjustedTimes, state.active ? state.active.key : null);
+  checkFridayBanner();
   const engineAdjustedTimes = getAdjustedSchedule();
-  checkFridayBanner(engineAdjustedTimes);
   updateSkyVisuals(engineAdjustedTimes, (now.getHours() * 60) + now.getMinutes());
 }
 
@@ -883,6 +873,10 @@ function renderSurah(verses) {
             document.getElementById('qv-arabic').innerHTML = v.text_uthmani + " ۝" + arNum;
             document.getElementById('qv-translation').innerHTML = transText;
             document.getElementById('qv-quran-link').href = `https://quran.com/${chapterId}/${vNum}`;
+            
+            const scrollArea = document.querySelector('.qv-scroll-area');
+            if(scrollArea) scrollArea.scrollTop = 0;
+            
             qvModal.classList.add('is-visible');
         }
      });
@@ -897,7 +891,7 @@ function renderSurah(verses) {
 
 function updateQuranFontSize(delta) {
   currentQuranFontSize += delta;
-  if(currentQuranFontSize < 1.5) currentQuranFontSize = 1.5;
+  if(currentQuranFontSize < 1.0) currentQuranFontSize = 1.0;
   if(currentQuranFontSize > 4.0) currentQuranFontSize = 4.0;
   document.documentElement.style.setProperty('--quran-font-size', currentQuranFontSize + 'rem');
   localStorage.setItem('quranFontSize', currentQuranFontSize);
@@ -1035,6 +1029,18 @@ function bindEvents() {
        });
     }
   }
+
+  // Fullscreen Expand/Restore Toggle
+  const qExpandBtn = document.getElementById('quran-expand-toggle');
+  const qRestoreBtn = document.getElementById('quran-restore-toggle');
+  if (qExpandBtn && qRestoreBtn && quranWrapper) {
+    qExpandBtn.addEventListener('click', () => {
+      quranWrapper.classList.add('is-fullscreen');
+    });
+    qRestoreBtn.addEventListener('click', () => {
+      quranWrapper.classList.remove('is-fullscreen');
+    });
+  }
   
   // Quran Settings Controls
   const qSettingsBtn = document.getElementById('quran-settings-toggle');
@@ -1086,7 +1092,6 @@ function bindEvents() {
 
   document.querySelectorAll('.theme-btn').forEach(btn => {
      btn.addEventListener('click', (e) => {
-        // Find the button (target might be the SVG inside it)
         const targetBtn = e.target.closest('.theme-btn');
         if (targetBtn) {
             applyQuranTheme(targetBtn.dataset.theme);

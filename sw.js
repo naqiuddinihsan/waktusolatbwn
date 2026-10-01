@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.23
-Description: Validated caching parameters for externalized Quran settings panel and Friday Banner UI injections.
+Version: 0.16.24
+Description: Service worker cache bump securing the verse focus modal scroll fix, fullscreen toggles, and Friday banner updates.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.21';
+const CACHE_NAME = 'waktu-solat-v0.16.24';
 const ASSETS = [
   './',
   './index.html',
