@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.17
-Description: Service worker cache bump ensuring the new desktop CSS Grid layout is delivered.
+Version: 0.16.18
+Description: Service worker cache bump ensuring the desktop Fadhilat hover disable update is fetched.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.17';
+const CACHE_NAME = 'waktu-solat-v0.16.18';
 const ASSETS = [
   './',
   './index.html',

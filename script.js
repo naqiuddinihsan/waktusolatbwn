@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.17
-Description: Version bump for formatting updates. Added dynamic injection of Fadhilat tooltips on desktop hover.
+Version: 0.16.18
+Description: Temporarily disabled dynamic Fadhilat hover tooltips on desktop for maintainability.
 */
 
 if ('serviceWorker' in navigator) {
@@ -91,7 +91,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.17" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.18" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -116,7 +116,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.17" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.18" }
   }
 };
 
@@ -407,15 +407,18 @@ function renderPrayerList(adjustedTimes, activeKey) {
       item.badges.forEach(badge => { badgesHtml += `<span class="fiqh-badge ${badge.type}">${badge.text}</span>`; });
     }
     
-    // Inject Desktop Fadhilat Tooltip dynamically
+    let fadhilatHtml = '';
+    
+    // TEMPORARILY DISABLED: Desktop Fadhilat Tooltip Injection
+    /*
     let detail = { desc: "", benefit: "" };
     if (fadhilatData && fadhilatData[currentLang] && fadhilatData[currentLang][item.key]) {
       detail = fadhilatData[currentLang][item.key];
     }
-    let fadhilatHtml = '';
     if (detail.benefit && detail.benefit !== "-") {
       fadhilatHtml = `<div class="fadhilat-tooltip"><div class="fadhilat-tooltip-title">${detail.desc}</div>${detail.benefit}</div>`;
     }
+    */
 
     const nameClass = item.type === "fardhu" ? "row-left-fardhu" : "row-left-sec";
     const timeClass = item.type === "fardhu" ? "row-right-fardhu" : "row-right-sec";
