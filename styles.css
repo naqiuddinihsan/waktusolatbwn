@@ -1,7 +1,7 @@
 /*
 File Name: styles.css
-Version: 0.16.16
-Description: Version bump synchronization to accompany HTML component toggling.
+Version: 0.16.17
+Description: Desktop UX overhaul implemented via CSS Grid (@media min-width: 1024px) providing side-by-side dashboard layout and hover tooltips.
 */
 
 :root {
@@ -181,6 +181,8 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 .row-right-sec { font-size: 0.95rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; pointer-events: none;}
 .prayer-row.is-active .row-right-fardhu, .prayer-row.is-active .row-right-sec { color: #ffffff; }
 
+.fadhilat-tooltip { display: none; }
+
 .modal-backdrop { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; padding: 16px; }
 .modal-backdrop.is-visible { opacity: 1; pointer-events: auto; }
 .modal-card { background: rgba(24, 24, 27, 0.95); border: 1px solid var(--border-active); border-radius: 16px; width: 100%; max-width: 420px; padding: 20px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); transform: translateY(10px); transition: transform 0.25s ease; }
@@ -254,4 +256,75 @@ body.visuals-off #celestial-body, body.visuals-off #clouds-layer { opacity: 0 !i
 @media (orientation: landscape) and (max-height: 600px) {
   .app-wrapper, .modal-backdrop, #sky-bg, #celestial-body, #clouds-layer { display: none !important; }
   #nightstand-mode { display: flex; }
+}
+
+@media (min-width: 1024px) {
+  .app-wrapper {
+    max-width: 1100px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 32px;
+    padding-top: 6vh;
+    padding-bottom: 6vh;
+  }
+  .header-bar {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .header-bottom { width: auto; min-width: 400px; }
+  .hero-tracker {
+    grid-column: 1;
+    grid-row: 2 / span 3;
+    max-height: none;
+    height: 100%;
+    border-radius: 24px;
+    padding: 60px 40px;
+    justify-content: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  }
+  .hero-tracker.is-collapsed {
+    max-height: none;
+    opacity: 0.6;
+    transform: none;
+    margin: 0;
+    padding: 60px 40px;
+    border-width: 1px;
+  }
+  .hero-name { font-size: 4rem; margin-bottom: 8px; }
+  .hero-time { font-size: 1rem; margin-bottom: 24px; }
+  .progress-countdown { font-size: 1.1rem; }
+  .progress-track { height: 8px; }
+  
+  #return-today-wrapper { grid-column: 2; grid-row: 2; margin-bottom: -16px; }
+  #prayer-list-container { grid-column: 2; grid-row: 3; padding-right: 16px; margin-top: 8px; }
+  
+  .site-footer { grid-column: 1 / -1; grid-row: 4; justify-content: flex-start; }
+  
+  #ptr-indicator { display: none !important; }
+  
+  .prayer-row {
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s ease, opacity 0.2s ease, box-shadow 0.3s ease;
+  }
+  .prayer-row:hover {
+    transform: scale(1.02) translateX(4px);
+    background-color: var(--bg-surface-active);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+    z-index: 20;
+  }
+  
+  .fadhilat-tooltip {
+    display: block; position: absolute; top: calc(100% + 8px); left: 0;
+    background: var(--bg-surface-active); border: 1px solid var(--border-active);
+    padding: 16px; border-radius: 12px; opacity: 0; pointer-events: none;
+    transform: translateY(10px); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 50; width: 320px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    font-size: 0.75rem; color: var(--text-primary); text-transform: none; font-weight: normal; letter-spacing: normal;
+  }
+  .fadhilat-tooltip-title { font-weight: 700; color: var(--accent-primary); margin-bottom: 6px; font-size: 0.85rem; }
+  .prayer-row:hover .fadhilat-tooltip { opacity: 1; transform: translateY(0); }
+  .row-mid { position: relative; }
 }

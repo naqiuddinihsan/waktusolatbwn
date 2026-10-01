@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.16
-Description: Network-first service worker bumping version to cache the temporarily disabled layout geometry.
+Version: 0.16.17
+Description: Service worker cache bump ensuring the new desktop CSS Grid layout is delivered.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.16';
+const CACHE_NAME = 'waktu-solat-v0.16.17';
 const ASSETS = [
   './',
   './index.html',
