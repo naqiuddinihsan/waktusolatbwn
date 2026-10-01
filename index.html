@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 0.16.20
-Description: Upgraded Quran engine with Verse/Reading modes and localized translations.
+Version: 0.16.21
+Description: Unified Quran Settings Toolbar, Theme Engine, Font Scaling, and Friday Al-Kahf intelligent banner.
 -->
 <!DOCTYPE html>
 <html lang="ms" translate="no">
@@ -83,6 +83,11 @@ Description: Upgraded Quran engine with Verse/Reading modes and localized transl
             </select>
           </div>
         </div>
+        
+        <div id="friday-banner" class="friday-banner">
+          <div class="fb-text">Sinar Jumaat: Sunat membaca Surah Al-Kahfi.</div>
+          <button id="fb-close-btn" class="fb-close" aria-label="Tutup">&times;</button>
+        </div>
       </header>
 
       <section class="hero-tracker" id="hero-tracker-card">
@@ -118,21 +123,49 @@ Description: Upgraded Quran engine with Verse/Reading modes and localized transl
       </footer>
     </div>
 
-    <div class="quran-wrapper" id="quran-wrapper">
+    <div class="quran-wrapper" id="quran-wrapper" data-theme="dark">
       <header class="quran-header">
         <div class="qh-top">
           <h2>Al-Quran</h2>
-          <div class="district-select-wrapper">
-            <select id="surah-select" class="district-select">
-              <option value="1">1. Al-Fatihah</option>
-              <option value="18">18. Al-Kahf</option>
-            </select>
+          <div class="qh-controls">
+            <div class="district-select-wrapper">
+              <select id="surah-select" class="district-select">
+                <option value="1">1. Al-Fatihah</option>
+                <option value="18">18. Al-Kahf</option>
+              </select>
+            </div>
+            <button id="quran-settings-toggle" class="icon-btn qs-btn" aria-label="Tetapan Al-Quran">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </button>
           </div>
         </div>
-        <div class="qh-bottom">
-          <div class="quran-mode-switcher">
-            <button id="mode-verse" class="qm-btn active">Ayat</button>
-            <button id="mode-reading" class="qm-btn">Mushaf</button>
+        <div id="quran-settings-panel" class="quran-settings-panel">
+          <div class="qs-grid">
+            <div class="qs-item">
+              <select id="quran-translation-select" class="district-select qs-full">
+                <option value="39">Terjemahan: Bahasa Melayu</option>
+                <option value="131">Translation: English</option>
+              </select>
+            </div>
+            <div class="qs-item">
+              <div class="quran-mode-switcher">
+                <button id="mode-verse" class="qm-btn active">Ayat</button>
+                <button id="mode-reading" class="qm-btn">Mushaf</button>
+              </div>
+            </div>
+            <div class="qs-item">
+              <div class="theme-toggles">
+                <button data-theme="dark" class="theme-btn active">Gelap</button>
+                <button data-theme="light" class="theme-btn">Cerah</button>
+                <button data-theme="sepia" class="theme-btn">Sepia</button>
+              </div>
+            </div>
+            <div class="qs-item">
+              <div class="font-toggles">
+                <button id="font-decrease" class="font-btn">A-</button>
+                <button id="font-increase" class="font-btn">A+</button>
+              </div>
+            </div>
           </div>
         </div>
       </header>
@@ -167,9 +200,9 @@ Description: Upgraded Quran engine with Verse/Reading modes and localized transl
       </div>
       <div class="modal-body about-body" id="about-body-content">
         <p><strong>Sumber Data Rasmi:</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">Kementerian Hal Ehwal Ugama (KHEU) Brunei</a></p>
-        <p><strong>Data Al-Quran:</strong><br><a href="https://quran.com" target="_blank">Quran.com Foundation API</a></p>
+        <p><strong>Data Al-Quran:</strong><br><a href="https://quran.com" target="_blank">Quran.com Foundation API</a><br><span style="font-size: 0.75rem; color: var(--text-secondary);">Terjemahan BM: Abdullah Basmeih<br>Terjemahan EN: Dr. Mustafa Khattab</span></p>
         <p><strong>Dibangunkan oleh:</strong><br><a href="https://www.qwamii.com" target="_blank">Qwamii</a> / <a href="https://www.behance.net/naqiuddinihsan" target="_blank">Naqiuddin Ihsan</a></p>
-        <p class="about-version">Versi 0.16.20</p>
+        <p class="about-version">Versi 0.16.21</p>
       </div>
     </div>
   </div>

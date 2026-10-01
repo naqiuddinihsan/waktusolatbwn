@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.20
-Description: Upgraded API logic with translation fetches, loop pagination, and mode-switching rendering mechanics.
+Version: 0.16.21
+Description: Instantiated Quran settings control schema, dynamic Friday banner math, and typography scaling.
 */
 
 if ('serviceWorker' in navigator) {
@@ -23,6 +23,7 @@ let selectedDate = new Date();
 
 let quranCache = {};
 let isQuranLoaded = false;
+let currentQuranFontSize = parseFloat(localStorage.getItem('quranFontSize')) || 2.2;
 
 const nightstandQuery = window.matchMedia('(orientation: landscape) and (max-height: 600px)');
 
@@ -92,8 +93,6 @@ const I18N = {
     nsNextLabel: "Next:",
     nsStartsAt: "Starts at",
     dataAsOf: "Data dikemas kini pada",
-    quranModeVerse: "Ayat",
-    quranModeReading: "Mushaf",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir", sunat: "Sunat" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
@@ -102,7 +101,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.20" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.21" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -119,8 +118,6 @@ const I18N = {
     nsNextLabel: "Next:",
     nsStartsAt: "Starts at",
     dataAsOf: "Data as of",
-    quranModeVerse: "Verse",
-    quranModeReading: "Reading",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witr", sunat: "Sunnah" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
@@ -129,7 +126,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.20" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.21" }
   }
 };
 
@@ -206,9 +203,6 @@ function setLanguage(lang) {
   document.title = t.appTitle;
   setText("reset-date-btn", t.resetToday);
   setText("ui-now-label", t.nowLabel);
-  
-  setText("mode-verse", t.quranModeVerse);
-  setText("mode-reading", t.quranModeReading);
 
   let sel = document.getElementById("district-select");
   let savedIndex = sel ? sel.selectedIndex : 0;
@@ -227,18 +221,13 @@ function setLanguage(lang) {
   if (aboutBody) {
     aboutBody.innerHTML = `
       <p><strong>${t.about.sourceLabel}</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">${t.about.sourceName}</a></p>
-      <p><strong>Data Al-Quran:</strong><br><a href="https://quran.com" target="_blank">Quran.com Foundation API</a></p>
+      <p><strong>Data Al-Quran:</strong><br><a href="https://quran.com" target="_blank">Quran.com Foundation API</a><br><span style="font-size: 0.75rem; color: var(--text-secondary);">Terjemahan BM: Abdullah Basmeih<br>Terjemahan EN: Dr. Mustafa Khattab</span></p>
       <p><strong>${t.about.devLabel}</strong><br><a href="https://www.qwamii.com" target="_blank">Qwamii</a> / <a href="https://www.behance.net/naqiuddinihsan" target="_blank">Naqiuddin Ihsan</a></p>
       <p class="about-version">${t.about.version}${dataAsOfStr}</p>
     `;
   }
   setDateHeaders();
   updateTick();
-
-  if (isQuranLoaded) {
-    const surahSelect = document.getElementById('surah-select');
-    if(surahSelect) loadSurah(surahSelect.value);
-  }
 }
 
 function checkDateStatus() {
@@ -428,19 +417,46 @@ function renderPrayerList(adjustedTimes, activeKey) {
     if (item.badges) {
       item.badges.forEach(badge => { badgesHtml += `<span class="fiqh-badge ${badge.type}">${badge.text}</span>`; });
     }
-    
-    let fadhilatHtml = '';
 
     const nameClass = item.type === "fardhu" ? "row-left-fardhu" : "row-left-sec";
     const timeClass = item.type === "fardhu" ? "row-right-fardhu" : "row-right-sec";
 
     row.innerHTML =
       `<div class="${nameClass}">${prayerName}</div>` +
-      `<div class="row-mid">${badgesHtml}${fadhilatHtml}</div>` +
+      `<div class="row-mid">${badgesHtml}</div>` +
       `<div class="${timeClass}">${minutesToDisplay(prayerMins)}</div>`;
 
     list.appendChild(row);
   });
+}
+
+function checkFridayBanner(adjustedTimes) {
+  const banner = document.getElementById('friday-banner');
+  if (!banner) return;
+  
+  if (localStorage.getItem('hideFridayBanner') === new Date().toDateString()) {
+    banner.classList.remove('is-visible');
+    return;
+  }
+  
+  const now = new Date();
+  const day = now.getDay();
+  let isIslamicFriday = false;
+  
+  if (day === 5) {
+    isIslamicFriday = true;
+  } else if (day === 4 && !isNaN(adjustedTimes.maghrib)) {
+    const currentMins = now.getHours() * 60 + now.getMinutes();
+    if (currentMins >= adjustedTimes.maghrib) {
+       isIslamicFriday = true;
+    }
+  }
+  
+  if (isIslamicFriday) {
+     banner.classList.add('is-visible');
+  } else {
+     banner.classList.remove('is-visible');
+  }
 }
 
 function determinePrayerState(adjustedTimes) {
@@ -643,6 +659,7 @@ function updateTick() {
 
   renderPrayerList(adjustedTimes, state.active ? state.active.key : null);
   const engineAdjustedTimes = getAdjustedSchedule();
+  checkFridayBanner(engineAdjustedTimes);
   updateSkyVisuals(engineAdjustedTimes, (now.getHours() * 60) + now.getMinutes());
 }
 
@@ -731,8 +748,8 @@ function initPullToRefresh() {
 
 async function loadSurah(chapterId) {
   const versesContainer = document.getElementById('quran-verses');
-  
-  const transId = currentLang === 'ms' ? 39 : 131;
+  const transSelect = document.getElementById('quran-translation-select');
+  const transId = transSelect ? transSelect.value : 39;
   const cacheKey = `${chapterId}_${transId}`;
   
   if (quranCache[cacheKey]) {
@@ -765,7 +782,6 @@ async function loadSurah(chapterId) {
         renderSurah(allVerses);
      }
   } catch (e) {
-     const t = I18N[currentLang];
      versesContainer.innerHTML = `<p style="color:var(--text-secondary); text-align:center; margin-top: 40px; font-size: 0.85rem;">Memerlukan sambungan internet untuk memuat turun Surah buat kali pertama.</p>`;
   }
 }
@@ -793,7 +809,7 @@ function renderSurah(verses) {
 
      const textWrap = document.createElement('div');
      textWrap.className = 'verse-arabic';
-     textWrap.innerHTML = `${v.text_uthmani} <span class="ayah-end"><span class="ayah-symbol">۝</span><span class="ayah-num">${arNum}</span></span>`;
+     textWrap.innerHTML = v.text_uthmani + " ۝" + arNum;
      
      const transWrap = document.createElement('div');
      transWrap.className = 'verse-translation';
@@ -812,6 +828,22 @@ function renderSurah(verses) {
      row.appendChild(rightStack);
      row.appendChild(numWrap);
      versesContainer.appendChild(row);
+  });
+}
+
+function updateQuranFontSize(delta) {
+  currentQuranFontSize += delta;
+  if(currentQuranFontSize < 1.5) currentQuranFontSize = 1.5;
+  if(currentQuranFontSize > 4.0) currentQuranFontSize = 4.0;
+  document.documentElement.style.setProperty('--quran-font-size', currentQuranFontSize + 'rem');
+  localStorage.setItem('quranFontSize', currentQuranFontSize);
+}
+
+function applyQuranTheme(theme) {
+  document.getElementById('quran-wrapper').setAttribute('data-theme', theme);
+  localStorage.setItem('quranTheme', theme);
+  document.querySelectorAll('.theme-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.theme === theme);
   });
 }
 
@@ -850,6 +882,26 @@ function bindEvents() {
   document.querySelectorAll('.modal-card').forEach(card => {
     card.addEventListener('click', (e) => e.stopPropagation());
   });
+
+  // Friday Banner Interaction
+  const fbClose = document.getElementById('fb-close-btn');
+  const fBanner = document.getElementById('friday-banner');
+  if (fbClose && fBanner) {
+    fbClose.addEventListener('click', (e) => {
+      e.stopPropagation();
+      fBanner.classList.remove('is-visible');
+      localStorage.setItem('hideFridayBanner', new Date().toDateString());
+    });
+    fBanner.addEventListener('click', () => {
+      const surahSelect = document.getElementById('surah-select');
+      const masterSlider = document.getElementById('master-slider');
+      if (surahSelect && masterSlider) {
+        surahSelect.value = "18";
+        loadSurah("18");
+        masterSlider.scrollTo({left: window.innerWidth, behavior: 'smooth'});
+      }
+    });
+  }
 
   const nsScroll = document.getElementById('ns-scroll-container');
   if(nsScroll) {
@@ -894,25 +946,69 @@ function bindEvents() {
     });
   }
   
+  // Quran Settings Controls
+  const qSettingsBtn = document.getElementById('quran-settings-toggle');
+  const qSettingsPanel = document.getElementById('quran-settings-panel');
+  if (qSettingsBtn && qSettingsPanel) {
+     qSettingsBtn.addEventListener('click', () => {
+        qSettingsPanel.classList.toggle('is-expanded');
+        qSettingsBtn.classList.toggle('active');
+     });
+  }
+
+  const transSelect = document.getElementById('quran-translation-select');
+  if (transSelect) {
+     const savedTrans = localStorage.getItem('quranTransId') || "39";
+     transSelect.value = savedTrans;
+     transSelect.addEventListener('change', (e) => {
+        localStorage.setItem('quranTransId', e.target.value);
+        if (isQuranLoaded && surahSelect) {
+           loadSurah(surahSelect.value);
+        }
+     });
+  }
+
   const modeVerse = document.getElementById('mode-verse');
   const modeReading = document.getElementById('mode-reading');
   const quranVerses = document.getElementById('quran-verses');
 
   if(modeVerse && modeReading) {
+     const savedMode = localStorage.getItem('quranMode') || "verse";
+     if (savedMode === "reading") {
+        quranVerses.classList.add('is-reading-mode');
+        modeReading.classList.add('active');
+        modeVerse.classList.remove('active');
+     }
+     
      modeVerse.addEventListener('click', () => {
         quranVerses.classList.remove('is-reading-mode');
         modeVerse.classList.add('active');
         modeReading.classList.remove('active');
+        localStorage.setItem('quranMode', 'verse');
      });
      modeReading.addEventListener('click', () => {
         quranVerses.classList.add('is-reading-mode');
         modeReading.classList.add('active');
         modeVerse.classList.remove('active');
+        localStorage.setItem('quranMode', 'reading');
      });
   }
+
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+     btn.addEventListener('click', (e) => {
+        applyQuranTheme(e.target.dataset.theme);
+     });
+  });
+
+  const fontDec = document.getElementById('font-decrease');
+  const fontInc = document.getElementById('font-increase');
+  if(fontDec) fontDec.addEventListener('click', () => updateQuranFontSize(-0.2));
+  if(fontInc) fontInc.addEventListener('click', () => updateQuranFontSize(0.2));
 }
 
 function initApp() {
+  document.documentElement.style.setProperty('--quran-font-size', currentQuranFontSize + 'rem');
+  applyQuranTheme(localStorage.getItem('quranTheme') || 'dark');
   bindEvents();
   applyVisualState();
   setLanguage("ms");

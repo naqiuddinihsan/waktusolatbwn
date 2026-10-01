@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.20
-Description: Service worker cache bump to pull the new translation loop and mode switching logic.
+Version: 0.16.21
+Description: Validated caching parameters for externalized Quran settings panel and Friday Banner UI injections.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.20';
+const CACHE_NAME = 'waktu-solat-v0.16.21';
 const ASSETS = [
   './',
   './index.html',
