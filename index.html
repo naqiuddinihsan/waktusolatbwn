@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 0.16.21
-Description: Unified Quran Settings Toolbar, Theme Engine, Font Scaling, and Friday Al-Kahf intelligent banner.
+Version: 0.16.23
+Description: Replaced theme text with SVGs and injected the Verse Focus Modal for deep-reading features.
 -->
 <!DOCTYPE html>
 <html lang="ms" translate="no">
@@ -134,6 +134,11 @@ Description: Unified Quran Settings Toolbar, Theme Engine, Font Scaling, and Fri
                 <option value="18">18. Al-Kahf</option>
               </select>
             </div>
+            <div class="district-select-wrapper">
+              <select id="verse-select" class="district-select" disabled>
+                <option value="">Ayat</option>
+              </select>
+            </div>
             <button id="quran-settings-toggle" class="icon-btn qs-btn" aria-label="Tetapan Al-Quran">
               <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
             </button>
@@ -143,8 +148,10 @@ Description: Unified Quran Settings Toolbar, Theme Engine, Font Scaling, and Fri
           <div class="qs-grid">
             <div class="qs-item">
               <select id="quran-translation-select" class="district-select qs-full">
-                <option value="39">Terjemahan: Bahasa Melayu</option>
-                <option value="131">Translation: English</option>
+                <option value="39">🇲🇾 - Abdullah Basmeih</option>
+                <option value="131">🇬🇧 - Dr. Mustafa Khattab</option>
+                <option value="20">🇬🇧 - Saheeh International</option>
+                <option value="22">🇬🇧 - Yusuf Ali</option>
               </select>
             </div>
             <div class="qs-item">
@@ -155,9 +162,15 @@ Description: Unified Quran Settings Toolbar, Theme Engine, Font Scaling, and Fri
             </div>
             <div class="qs-item">
               <div class="theme-toggles">
-                <button data-theme="dark" class="theme-btn active">Gelap</button>
-                <button data-theme="light" class="theme-btn">Cerah</button>
-                <button data-theme="sepia" class="theme-btn">Sepia</button>
+                <button data-theme="dark" class="theme-btn active" aria-label="Gelap">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+                <button data-theme="light" class="theme-btn" aria-label="Cerah">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                </button>
+                <button data-theme="sepia" class="theme-btn" aria-label="Sepia">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                </button>
               </div>
             </div>
             <div class="qs-item">
@@ -200,9 +213,23 @@ Description: Unified Quran Settings Toolbar, Theme Engine, Font Scaling, and Fri
       </div>
       <div class="modal-body about-body" id="about-body-content">
         <p><strong>Sumber Data Rasmi:</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">Kementerian Hal Ehwal Ugama (KHEU) Brunei</a></p>
-        <p><strong>Data Al-Quran:</strong><br><a href="https://quran.com" target="_blank">Quran.com Foundation API</a><br><span style="font-size: 0.75rem; color: var(--text-secondary);">Terjemahan BM: Abdullah Basmeih<br>Terjemahan EN: Dr. Mustafa Khattab</span></p>
+        <p><strong>Data Al-Quran:</strong><br><a href="https://quran.com" target="_blank">Quran.com Foundation API</a><br><span style="font-size: 0.75rem; color: var(--text-secondary);">Terjemahan BM: Abdullah Basmeih<br>Terjemahan EN: Dr. Mustafa Khattab, Saheeh International, Yusuf Ali</span></p>
         <p><strong>Dibangunkan oleh:</strong><br><a href="https://www.qwamii.com" target="_blank">Qwamii</a> / <a href="https://www.behance.net/naqiuddinihsan" target="_blank">Naqiuddin Ihsan</a></p>
-        <p class="about-version">Versi 0.16.21</p>
+        <p class="about-version">Versi 0.16.23</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="quran-verse-modal">
+    <div class="modal-card" id="quran-verse-modal-card">
+      <div class="modal-header">
+        <h3 id="qv-modal-title">Ayat</h3>
+        <button class="modal-close-btn" id="qv-modal-close-btn" type="button">&times;</button>
+      </div>
+      <div class="modal-body qv-modal-body" id="qv-modal-body-content">
+        <div class="qv-arabic verse-arabic" id="qv-arabic" style="margin-bottom: 16px;"></div>
+        <div class="qv-translation verse-translation" id="qv-translation"></div>
+        <a href="#" target="_blank" id="qv-quran-link" class="return-today-btn" style="text-align:center; display:block; text-decoration:none; margin-top:24px;">Lihat di Quran.com</a>
       </div>
     </div>
   </div>

@@ -1,6 +1,6 @@
 /*
 File Name: sw.js
-Version: 0.16.21
+Version: 0.16.23
 Description: Validated caching parameters for externalized Quran settings panel and Friday Banner UI injections.
 */
 

@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.21
-Description: Instantiated Quran settings control schema, dynamic Friday banner math, and typography scaling.
+Version: 0.16.23
+Description: Wired up Vector Copy engine, Verse Focus Modal injection, and Theme Sync for dynamic sky crossfading.
 */
 
 if ('serviceWorker' in navigator) {
@@ -93,6 +93,8 @@ const I18N = {
     nsNextLabel: "Next:",
     nsStartsAt: "Starts at",
     dataAsOf: "Data dikemas kini pada",
+    quranModeVerse: "Ayat",
+    quranModeReading: "Mushaf",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir", sunat: "Sunat" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
@@ -101,7 +103,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.21" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.23" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -118,6 +120,8 @@ const I18N = {
     nsNextLabel: "Next:",
     nsStartsAt: "Starts at",
     dataAsOf: "Data as of",
+    quranModeVerse: "Verse",
+    quranModeReading: "Reading",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witr", sunat: "Sunnah" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
@@ -126,7 +130,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.21" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.23" }
   }
 };
 
@@ -203,6 +207,9 @@ function setLanguage(lang) {
   document.title = t.appTitle;
   setText("reset-date-btn", t.resetToday);
   setText("ui-now-label", t.nowLabel);
+  
+  setText("mode-verse", t.quranModeVerse);
+  setText("mode-reading", t.quranModeReading);
 
   let sel = document.getElementById("district-select");
   let savedIndex = sel ? sel.selectedIndex : 0;
@@ -221,7 +228,7 @@ function setLanguage(lang) {
   if (aboutBody) {
     aboutBody.innerHTML = `
       <p><strong>${t.about.sourceLabel}</strong><br><a href="https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx" target="_blank">${t.about.sourceName}</a></p>
-      <p><strong>Data Al-Quran:</strong><br><a href="https://quran.com" target="_blank">Quran.com Foundation API</a><br><span style="font-size: 0.75rem; color: var(--text-secondary);">Terjemahan BM: Abdullah Basmeih<br>Terjemahan EN: Dr. Mustafa Khattab</span></p>
+      <p><strong>Data Al-Quran:</strong><br><a href="https://quran.com" target="_blank">Quran.com Foundation API</a><br><span style="font-size: 0.75rem; color: var(--text-secondary);">Terjemahan BM: Abdullah Basmeih<br>Terjemahan EN: Dr. Mustafa Khattab, Saheeh International, Yusuf Ali</span></p>
       <p><strong>${t.about.devLabel}</strong><br><a href="https://www.qwamii.com" target="_blank">Qwamii</a> / <a href="https://www.behance.net/naqiuddinihsan" target="_blank">Naqiuddin Ihsan</a></p>
       <p class="about-version">${t.about.version}${dataAsOfStr}</p>
     `;
@@ -800,12 +807,25 @@ function renderSurah(verses) {
       versesContainer.appendChild(bismillah);
   }
 
+  const verseSelect = document.getElementById('verse-select');
+  if (verseSelect) {
+     verseSelect.innerHTML = '<option value="">Ayat</option>';
+  }
+
   verses.forEach(v => {
      const row = document.createElement('div');
      row.className = 'verse-row';
+     row.id = `verse-${v.verse_key}`;
      
      const vNum = v.verse_key.split(':')[1];
      const arNum = toArabicNumeral(vNum);
+
+     if (verseSelect) {
+        const opt = document.createElement('option');
+        opt.value = v.verse_key;
+        opt.textContent = vNum;
+        verseSelect.appendChild(opt);
+     }
 
      const textWrap = document.createElement('div');
      textWrap.className = 'verse-arabic';
@@ -823,12 +843,56 @@ function renderSurah(verses) {
 
      const numWrap = document.createElement('div');
      numWrap.className = 'verse-number-side';
-     numWrap.textContent = vNum;
+     numWrap.textContent = v.verse_key;
+     
+     // Vector Copy Engine
+     const actionsWrap = document.createElement('div');
+     actionsWrap.className = 'verse-actions';
+     const copyBtn = document.createElement('button');
+     copyBtn.className = 'icon-btn copy-btn';
+     copyBtn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+     
+     copyBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const activeSurahName = surahSelect.options[surahSelect.selectedIndex].text.replace(/^[0-9.]+\s/, '');
+        const textToCopy = `${v.text_uthmani}\n\n${transText}\n\n[Surah ${activeSurahName}, Ayat ${vNum}]`;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalHTML = copyBtn.innerHTML;
+            copyBtn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="#34d399" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            setTimeout(() => { copyBtn.innerHTML = originalHTML; }, 2000);
+        });
+        vibrateTap();
+     });
+     actionsWrap.appendChild(copyBtn);
+
+     const sideBar = document.createElement('div');
+     sideBar.className = 'verse-sidebar';
+     sideBar.appendChild(numWrap);
+     sideBar.appendChild(actionsWrap);
 
      row.appendChild(rightStack);
-     row.appendChild(numWrap);
+     row.appendChild(sideBar);
+     
+     // Verse Focus Modal Injection
+     row.addEventListener('click', () => {
+        vibrateTap();
+        const qvModal = document.getElementById('quran-verse-modal');
+        if (qvModal) {
+            const activeSurahName = surahSelect.options[surahSelect.selectedIndex].text.replace(/^[0-9.]+\s/, '');
+            document.getElementById('qv-modal-title').textContent = `Surah ${activeSurahName} - Ayat ${vNum}`;
+            document.getElementById('qv-arabic').innerHTML = v.text_uthmani + " ۝" + arNum;
+            document.getElementById('qv-translation').innerHTML = transText;
+            document.getElementById('qv-quran-link').href = `https://quran.com/${chapterId}/${vNum}`;
+            qvModal.classList.add('is-visible');
+        }
+     });
+
      versesContainer.appendChild(row);
   });
+
+  if (verseSelect) {
+     verseSelect.disabled = false;
+  }
 }
 
 function updateQuranFontSize(delta) {
@@ -841,6 +905,7 @@ function updateQuranFontSize(delta) {
 
 function applyQuranTheme(theme) {
   document.getElementById('quran-wrapper').setAttribute('data-theme', theme);
+  document.body.setAttribute('data-quran-theme', theme);
   localStorage.setItem('quranTheme', theme);
   document.querySelectorAll('.theme-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.theme === theme);
@@ -870,7 +935,12 @@ function bindEvents() {
   if (dateInput) dateInput.addEventListener('change', handleDateChange);
 
   document.querySelectorAll('.modal-close-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => { closeModal(e); closeAboutModal(e); });
+    btn.addEventListener('click', (e) => { 
+        closeModal(e); 
+        closeAboutModal(e); 
+        const qvModal = document.getElementById('quran-verse-modal');
+        if (qvModal) qvModal.classList.remove('is-visible');
+    });
   });
 
   const infoModal = document.getElementById('info-modal');
@@ -878,6 +948,11 @@ function bindEvents() {
 
   const aboutModal = document.getElementById('about-modal');
   if (aboutModal) aboutModal.addEventListener('click', closeAboutModal);
+  
+  const qvModal = document.getElementById('quran-verse-modal');
+  if (qvModal) {
+      qvModal.addEventListener('click', () => { qvModal.classList.remove('is-visible'); });
+  }
 
   document.querySelectorAll('.modal-card').forEach(card => {
     card.addEventListener('click', (e) => e.stopPropagation());
@@ -920,6 +995,7 @@ function bindEvents() {
   const dot1 = document.getElementById('mn-dot-1');
   const dot2 = document.getElementById('mn-dot-2');
   const surahSelect = document.getElementById('surah-select');
+  const verseSelect = document.getElementById('verse-select');
 
   if (masterSlider && quranWrapper) {
     const observer = new IntersectionObserver((entries) => {
@@ -942,8 +1018,22 @@ function bindEvents() {
     observer.observe(quranWrapper);
     
     surahSelect.addEventListener('change', (e) => {
+       if (verseSelect) {
+         verseSelect.innerHTML = '<option value="">Ayat</option>';
+         verseSelect.disabled = true;
+       }
        loadSurah(e.target.value);
     });
+
+    if (verseSelect) {
+       verseSelect.addEventListener('change', (e) => {
+          if (!e.target.value) return;
+          const targetEl = document.getElementById(`verse-${e.target.value}`);
+          if (targetEl) {
+             targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+       });
+    }
   }
   
   // Quran Settings Controls
@@ -996,7 +1086,11 @@ function bindEvents() {
 
   document.querySelectorAll('.theme-btn').forEach(btn => {
      btn.addEventListener('click', (e) => {
-        applyQuranTheme(e.target.dataset.theme);
+        // Find the button (target might be the SVG inside it)
+        const targetBtn = e.target.closest('.theme-btn');
+        if (targetBtn) {
+            applyQuranTheme(targetBtn.dataset.theme);
+        }
      });
   });
 
