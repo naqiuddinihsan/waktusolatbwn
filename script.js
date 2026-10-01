@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.15
-Description: Version bump for metadata and formatting updates. Targeted ns-date-2 in setDateHeaders.
+Version: 0.16.16
+Description: Version bump for metadata. JS naturally handles the disabled ns-widget-page-1 DOM elements.
 */
 
 if ('serviceWorker' in navigator) {
@@ -91,7 +91,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.15" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.16" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -116,7 +116,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.15" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.16" }
   }
 };
 
