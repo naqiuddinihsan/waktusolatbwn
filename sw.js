@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.25
-Description: Service worker cache bump securing the animated Fullscreen toolbar state delegation and modal fixes.
+Version: 0.16.26
+Description: Service worker cache bump securing the 114 Surah DOM expansion and dynamic Bismillah scaling logic.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.25';
+const CACHE_NAME = 'waktu-solat-v0.16.26';
 const ASSETS = [
   './',
   './index.html',

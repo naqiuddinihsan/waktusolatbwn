@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.25
-Description: State delegation for animated Fullscreen toolbar toggles and synchronized version bumping.
+Version: 0.16.26
+Description: Synchronized version bumping for the 114 Surah expansion and dynamic Bismillah scaling.
 */
 
 if ('serviceWorker' in navigator) {
@@ -103,7 +103,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.25" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.26" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -130,7 +130,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.25" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.26" }
   }
 };
 
@@ -448,7 +448,6 @@ function checkFridayBanner() {
   
   const now = new Date();
   
-  // Strictly Friday logic
   if (now.getDay() === 5) {
      banner.classList.add('is-visible');
   } else {
