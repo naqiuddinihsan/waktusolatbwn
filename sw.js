@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.24
-Description: Service worker cache bump securing the verse focus modal scroll fix, fullscreen toggles, and Friday banner updates.
+Version: 0.16.25
+Description: Service worker cache bump securing the animated Fullscreen toolbar state delegation and modal fixes.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.24';
+const CACHE_NAME = 'waktu-solat-v0.16.25';
 const ASSETS = [
   './',
   './index.html',
