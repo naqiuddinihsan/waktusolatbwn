@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.29
-Description: Service worker cache bump securing the Midnight Rollover Engine for Nightstand mode.
+Version: 0.16.30
+Description: Service worker cache bump securing the restored Nightstand widget HTML and dual-rendering JS engine.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.29';
+const CACHE_NAME = 'waktu-solat-v0.16.30';
 const ASSETS = [
   './',
   './index.html',

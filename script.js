@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.29
-Description: Injected Midnight Rollover Engine to seamlessly update days in persistent Nightstand mode.
+Version: 0.16.30
+Description: Dual rendering engine to populate Nightstand widget prayer lists and vertical scroll bindings.
 */
 
 if ('serviceWorker' in navigator) {
@@ -106,7 +106,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.29" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.30" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -133,7 +133,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.29" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.30" }
   }
 };
 
@@ -442,6 +442,32 @@ function renderPrayerList(adjustedTimes, activeKey) {
   });
 }
 
+function renderNightstandPrayerList(adjustedTimes, state) {
+  const nsList = document.getElementById("ns-prayer-list");
+  if (!nsList) return;
+  nsList.innerHTML = "";
+
+  const isToday = selectedDate.toDateString() === new Date().toDateString();
+  const sequence = ["imsak", "subuh", "syuruk", "duha", "zuhur", "asar", "maghrib", "isya"];
+
+  sequence.forEach(key => {
+    const row = document.createElement("div");
+    let cls = "ns-prayer-row";
+    
+    if (isToday) {
+       if (state.active && state.active.key === key) cls += " is-active-ns";
+       if (state.next && state.next.key === key) cls += " is-next";
+    }
+    
+    row.className = cls;
+    const prayerName = I18N[currentLang].prayers[key];
+    const prayerMins = adjustedTimes[key];
+    
+    row.innerHTML = `<span>${prayerName}</span><span>${minutesToDisplay(prayerMins)}</span>`;
+    nsList.appendChild(row);
+  });
+}
+
 function checkFridayBanner() {
   const banner = document.getElementById('friday-banner');
   if (!banner) return;
@@ -667,6 +693,7 @@ function updateTick() {
   }
 
   renderPrayerList(adjustedTimes, state.active ? state.active.key : null);
+  renderNightstandPrayerList(adjustedTimes, state);
   checkFridayBanner();
   const engineAdjustedTimes = getAdjustedSchedule();
   updateSkyVisuals(engineAdjustedTimes, (now.getHours() * 60) + now.getMinutes());
@@ -1006,6 +1033,19 @@ function bindEvents() {
       const dot2 = document.getElementById('ns-dot-2');
       if (dot1) dot1.classList.toggle('active', activeIndex === 0);
       if (dot2) dot2.classList.toggle('active', activeIndex === 1);
+    }, {passive: true});
+  }
+
+  // Vertical Widget Dots Hookup
+  const nsWidgetScroll = document.getElementById('ns-widget-right-scroll');
+  if (nsWidgetScroll) {
+    nsWidgetScroll.addEventListener('scroll', () => {
+      const height = nsWidgetScroll.clientHeight;
+      const activeIndex = Math.round(nsWidgetScroll.scrollTop / height);
+      const wDot1 = document.getElementById('ns-widget-dot-1');
+      const wDot2 = document.getElementById('ns-widget-dot-2');
+      if (wDot1) wDot1.classList.toggle('active', activeIndex === 0);
+      if (wDot2) wDot2.classList.toggle('active', activeIndex === 1);
     }, {passive: true});
   }
 
