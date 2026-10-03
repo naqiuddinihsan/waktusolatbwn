@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.30
-Description: Dual rendering engine to populate Nightstand widget prayer lists and vertical scroll bindings.
+Version: 0.16.31
+Description: Stripped out dead Javascript DOM hooks for the removed Nightstand countdown widget.
 */
 
 if ('serviceWorker' in navigator) {
@@ -106,7 +106,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.30" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.31" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -133,7 +133,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.30" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.31" }
   }
 };
 
@@ -671,25 +671,8 @@ function updateTick() {
   
   if (isToday && hasData && state.next) {
      setText("ns-next", document.getElementById("hero-countdown-text").textContent);
-     
-     setText("ns-time-left-2", t.nsTimeLeft + " " + timeOnlyStr);
-     const iconContainer = document.getElementById("ns-current-icon-2");
-     if (iconContainer) iconContainer.innerHTML = activeIcon;
-     setText("ns-current-name-2", state.active.name);
-     
-     const nextEl = document.getElementById("ns-next-info-2");
-     if (nextEl) nextEl.innerHTML = t.nsNextLabel + " " + nextIcon + " " + state.next.name;
-     
-     setText("ns-starts-at-2", t.nsStartsAt + " " + minutesToDisplay(adjustedTimes[state.next.key]));
   } else {
      setText("ns-next", "-");
-     setText("ns-time-left-2", t.nsTimeLeft + " --:--:--");
-     const iconContainer = document.getElementById("ns-current-icon-2");
-     if (iconContainer) iconContainer.innerHTML = SVG_MOON;
-     setText("ns-current-name-2", "-");
-     const nextEl = document.getElementById("ns-next-info-2");
-     if (nextEl) nextEl.innerHTML = t.nsNextLabel + " -";
-     setText("ns-starts-at-2", t.nsStartsAt + " --:--");
   }
 
   renderPrayerList(adjustedTimes, state.active ? state.active.key : null);
@@ -1033,19 +1016,6 @@ function bindEvents() {
       const dot2 = document.getElementById('ns-dot-2');
       if (dot1) dot1.classList.toggle('active', activeIndex === 0);
       if (dot2) dot2.classList.toggle('active', activeIndex === 1);
-    }, {passive: true});
-  }
-
-  // Vertical Widget Dots Hookup
-  const nsWidgetScroll = document.getElementById('ns-widget-right-scroll');
-  if (nsWidgetScroll) {
-    nsWidgetScroll.addEventListener('scroll', () => {
-      const height = nsWidgetScroll.clientHeight;
-      const activeIndex = Math.round(nsWidgetScroll.scrollTop / height);
-      const wDot1 = document.getElementById('ns-widget-dot-1');
-      const wDot2 = document.getElementById('ns-widget-dot-2');
-      if (wDot1) wDot1.classList.toggle('active', activeIndex === 0);
-      if (wDot2) wDot2.classList.toggle('active', activeIndex === 1);
     }, {passive: true});
   }
 

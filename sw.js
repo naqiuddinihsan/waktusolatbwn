@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.30
-Description: Service worker cache bump securing the restored Nightstand widget HTML and dual-rendering JS engine.
+Version: 0.16.31
+Description: Service worker cache bump securing the removal of the redundant Nightstand countdown page.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.30';
+const CACHE_NAME = 'waktu-solat-v0.16.31';
 const ASSETS = [
   './',
   './index.html',
