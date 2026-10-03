@@ -1,10 +1,10 @@
 /*
 File Name: sw.js
-Version: 0.16.28
-Description: Service worker cache bump securing the expanded header layout and 'Arab Sahaja' API toggle.
+Version: 0.16.29
+Description: Service worker cache bump securing the Midnight Rollover Engine for Nightstand mode.
 */
 
-const CACHE_NAME = 'waktu-solat-v0.16.28';
+const CACHE_NAME = 'waktu-solat-v0.16.29';
 const ASSETS = [
   './',
   './index.html',

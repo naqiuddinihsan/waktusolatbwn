@@ -1,7 +1,7 @@
 /*
 File Name: script.js
-Version: 0.16.28
-Description: Dynamic API payload handling for the "Tiada Terjemahan" (Arab Sahaja) mode and UI collapse logic.
+Version: 0.16.29
+Description: Injected Midnight Rollover Engine to seamlessly update days in persistent Nightstand mode.
 */
 
 if ('serviceWorker' in navigator) {
@@ -19,6 +19,9 @@ let wakeLock = null;
 
 let fullYearSchedule = {};
 let fadhilatData = null;
+
+// The app defaults to tracking 'today'. If true, it auto-rolls over at midnight.
+let isTrackingToday = true;
 let selectedDate = new Date();
 
 let quranCache = {};
@@ -103,7 +106,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Subuh", syuruk: "Syuruk", duha: "Duha", zuhur: "Zuhur", asar: "Asar", maghrib: "Maghrib", isya: "Isya'" },
-    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.28" }
+    about: { title: "Maklumat Aplikasi", sourceLabel: "Sumber Data Rasmi:", sourceName: "Kementerian Hal Ehwal Ugama (KHEU) Brunei", devLabel: "Dibangunkan oleh:", version: "Versi 0.16.29" }
   },
   en: {
     appTitle: "Waktu Solat BWN",
@@ -130,7 +133,7 @@ const I18N = {
       { val: 0, text: "Temburong" }
     ],
     prayers: { imsak: "Imsak", subuh: "Fajr", syuruk: "Sunrise", duha: "Dhuha", zuhur: "Zuhr", asar: "Asr", maghrib: "Maghrib", isya: "Isha'" },
-    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.28" }
+    about: { title: "App Information", sourceLabel: "Official Data Source:", sourceName: "Ministry of Religious Affairs (MORA) Brunei", devLabel: "Developed by:", version: "Version 0.16.29" }
   }
 };
 
@@ -256,6 +259,7 @@ function checkDateStatus() {
 
 function handleDateChange(e) {
   if (e.target.value) {
+    isTrackingToday = false; // Disable auto-rollover when user manually picks a date
     const [y, m, d] = e.target.value.split('-');
     selectedDate = new Date(y, m - 1, d);
     animateDateUpdate();
@@ -264,6 +268,7 @@ function handleDateChange(e) {
 
 function resetDateToToday() {
   vibrateTap();
+  isTrackingToday = true; // Re-enable auto-rollover
   selectedDate = new Date();
   document.getElementById('native-date-input').value = "";
   animateDateUpdate();
@@ -558,10 +563,19 @@ function updateSkyVisuals(adjustedTimes, currentMins) {
 }
 
 function updateTick() {
+  const now = new Date();
+  
+  // MIDNIGHT ROLLOVER ENGINE
+  if (isTrackingToday && selectedDate.toDateString() !== now.toDateString()) {
+     selectedDate = new Date(); // Snap to new day
+     syncScheduleToSelectedDate(); // Pull new schedule and re-trigger UI updates
+     return; // Abort this stale tick
+  }
+
   const adjustedTimes = getAdjustedSchedule();
   const state = determinePrayerState(adjustedTimes);
   const t = I18N[currentLang];
-  const isToday = selectedDate.toDateString() === new Date().toDateString();
+  const isToday = selectedDate.toDateString() === now.toDateString();
   const hasData = !isNaN(adjustedTimes["subuh"]);
 
   let timeOnlyStr = "--:--:--";
@@ -620,7 +634,6 @@ function updateTick() {
     }
   }
 
-  const now = new Date();
   const nhh = String(now.getHours()).padStart(2, '0');
   const nmm = String(now.getMinutes()).padStart(2, '0');
   
