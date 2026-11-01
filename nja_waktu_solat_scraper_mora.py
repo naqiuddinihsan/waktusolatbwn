@@ -96,13 +96,19 @@ def extract_prayer_times():
                     
                     if len(col_texts) > 7 and "Tarikh" not in col_texts[0] and "Tarikh" not in col_texts[1]:
                         idx_offset = None
-                        if re.match(r'\d{2}-\d{2}-\d{4}', col_texts[0]):
+                        formatted_date = ""
+                        
+                        m0 = re.match(r'(\d{1,2})[-/](\d{1,2})[-/](\d{4})', col_texts[0])
+                        m1 = re.match(r'(\d{1,2})[-/](\d{1,2})[-/](\d{4})', col_texts[1])
+                        
+                        if m0:
                             idx_offset = -1
-                        elif re.match(r'\d{2}-\d{2}-\d{4}', col_texts[1]):
+                            formatted_date = f"{int(m0.group(1)):02d}-{int(m0.group(2)):02d}-{m0.group(3)}"
+                        elif m1:
                             idx_offset = 0
+                            formatted_date = f"{int(m1.group(1)):02d}-{int(m1.group(2)):02d}-{m1.group(3)}"
 
                         if idx_offset is not None:
-                            formatted_date = col_texts[0] if idx_offset == -1 else col_texts[1]
                             hijrah = col_texts[1].strip() if idx_offset == -1 else col_texts[2].strip()
 
                             # Guard against ghost rows
@@ -126,6 +132,12 @@ def extract_prayer_times():
 
         browser.close()
 
+    # CRITICAL FAILSAFE: Do not overwrite if scraping failed
+    if len(structured_json) == 0:
+        print("CRITICAL ERROR: No data scraped. The KHEU website structure may have changed, or the table is empty.")
+        print("Aborting script to protect existing 'brunei_prayers.json' from being wiped.")
+        sys.exit(1)
+
     brunei_tz = timezone(timedelta(hours=8))
     structured_json["metadata"] = {"last_updated": datetime.now(brunei_tz).isoformat()}
 
@@ -135,7 +147,7 @@ def extract_prayer_times():
     with open(json_file, mode="w", encoding="utf-8") as f:
         json.dump(structured_json, f, indent=2, ensure_ascii=False)
         
-    print("Extraction complete.")
+    print("Extraction complete. Safely updated with new data.")
 
 if __name__ == "__main__":
     extract_prayer_times()
