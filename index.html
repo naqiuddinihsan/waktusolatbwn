@@ -1,7 +1,7 @@
 <!--
 Page Name: index.html
-Version: 0.16.31
-Description: Purged the redundant Nightstand Page 1 countdown and vertical scroll dots.
+Version: 0.17.0
+Description: Authentic Madani Mushaf Book feature with 3D page flip animation, 2-screen navigation (Prayer Times and Quran), continuous Surah-to-Surah reading with ornate separators, and Study Mushaf Ayah mode.
 -->
 <!DOCTYPE html>
 <html lang="ms" translate="no">
@@ -33,7 +33,7 @@ Description: Purged the redundant Nightstand Page 1 countdown and vertical scrol
     <div class="cloud c3"></div>
   </div>
 
-  <div id="master-slider" class="master-slider">
+  <div id="prayer-screen" class="app-screen active-screen">
     <div class="app-wrapper">
       <header class="header-bar">
         <div class="header-top">
@@ -55,6 +55,13 @@ Description: Purged the redundant Nightstand Page 1 countdown and vertical scrol
           </div>
 
           <div class="controls-cluster">
+            <button class="icon-btn quran-nav-btn" id="open-quran-btn" type="button" title="Buka Al-Quran">
+              <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+              </svg>
+              <span id="ui-quran-btn-text">Al-Quran</span>
+            </button>
             <button class="icon-btn" id="visuals-toggle" type="button">BG OFF</button>
             <div class="lang-switcher">
               <button id="lang-btn-ms" class="lang-btn active" type="button">BM</button>
@@ -122,12 +129,52 @@ Description: Purged the redundant Nightstand Page 1 countdown and vertical scrol
         </button>
       </footer>
     </div>
+  </div>
 
-    <div class="quran-wrapper" id="quran-wrapper" data-theme="dark">
-      <header class="quran-header" id="quran-header">
-        <div class="qh-top">
-          <div class="district-select-wrapper qh-surah-wrapper">
-            <select id="surah-select" class="district-select qh-surah-select">
+  <div id="quran-screen" class="app-screen" data-theme="dark">
+    <div class="quran-container">
+      <header class="quran-top-bar" id="quran-top-bar">
+        <button type="button" id="quran-back-btn" class="quran-top-btn quran-back-btn" aria-label="Kembali ke Waktu Solat" title="Kembali ke Waktu Solat">
+          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+
+        <div class="quran-segmented-pill" role="group" aria-label="Pilihan Mod Bacaan">
+          <button type="button" id="pill-mode-verse" class="qs-pill-btn" title="Mod Ayat (Dengan Terjemahan Sisi)">
+            <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            <span id="pill-label-verse">Ayah</span>
+          </button>
+          <button type="button" id="pill-mode-mushaf" class="qs-pill-btn active" title="Mod Mushaf (Teks Arab Sahaja)">
+            <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+            <span id="pill-label-mushaf">Mushaf</span>
+          </button>
+        </div>
+
+        <button type="button" id="quran-settings-toggle" class="quran-top-btn" aria-label="Tetapan Al-Quran" title="Tetapan">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+      </header>
+
+      <div id="quran-settings-drawer" class="quran-settings-drawer">
+        <div class="qsd-grid">
+          <div class="qsd-item">
+            <label for="surah-select" class="qsd-label">Pilih Surah</label>
+            <div class="district-select-wrapper">
+              <select id="surah-select" class="district-select qsd-select">
               <option value="1">1. Al-Fatihah</option>
               <option value="2">2. Al-Baqarah</option>
               <option value="3">3. Ali 'Imran</option>
@@ -244,98 +291,101 @@ Description: Purged the redundant Nightstand Page 1 countdown and vertical scrol
               <option value="114">114. An-Nas</option>
             </select>
           </div>
-          <div class="qh-controls">
-            <div class="quran-quick-switch" id="quran-quick-switch" role="group" aria-label="Pilihan Mod Al-Quran">
-              <button type="button" id="quick-mode-verse" class="qq-btn active" title="Mod Ayat (Terjemahan & Salin)">
-                <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-                <span class="qq-label" id="qq-label-verse">Ayat</span>
-              </button>
-              <button type="button" id="quick-mode-reading" class="qq-btn" title="Mod Mushaf (Teks Penuh)">
-                <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-                <span class="qq-label" id="qq-label-reading">Mushaf</span>
-              </button>
-            </div>
-            <button type="button" id="quran-book-toggle" class="icon-btn qs-btn quran-book-btn" aria-label="Togol Mod Buku (Dwi-Halaman)" title="Togol Mod Buku">
-              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-              <span class="book-btn-text" id="book-btn-text">Buku</span>
-            </button>
-            <div class="district-select-wrapper">
-              <select id="verse-select" class="district-select" disabled>
-                <option value="">Ayat</option>
-              </select>
-            </div>
-            <button id="quran-expand-toggle" class="icon-btn qs-btn" aria-label="Skrin Penuh">
-              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
-            </button>
-            <button id="quran-settings-toggle" class="icon-btn qs-btn" aria-label="Tetapan Al-Quran">
-              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-            </button>
+        </div>
+        <div class="qsd-item">
+          <label for="page-jump-input" class="qsd-label">Muka Surat (1-604)</label>
+          <div class="page-jump-row">
+            <input type="number" id="page-jump-input" min="1" max="604" placeholder="1" class="page-jump-input">
+            <button type="button" id="page-jump-btn" class="icon-btn page-jump-btn">Pergi</button>
           </div>
         </div>
-        <div id="quran-settings-panel" class="quran-settings-panel">
-          <div class="qs-grid">
-            <div class="qs-item qs-col-span-2 qs-vertical">
-              <label for="quran-translation-select" class="qs-label">Terjemahan / Translation</label>
-              <select id="quran-translation-select" class="district-select qs-full">
-                <option value="none">🛑 Tiada (Arab Sahaja)</option>
-                <option value="39">🇲🇾 - Abdullah Basmeih</option>
-                <option value="20">🇬🇧 - Saheeh International</option>
-                <option value="22">🇬🇧 - Yusuf Ali</option>
-              </select>
-            </div>
-            <div class="qs-item">
-              <div class="quran-mode-switcher">
-                <button id="mode-verse" class="qm-btn active">Ayat</button>
-                <button id="mode-reading" class="qm-btn">Mushaf</button>
-              </div>
-            </div>
-            <div class="qs-item">
-              <div class="theme-toggles">
-                <button data-theme="dark" class="theme-btn active" aria-label="Gelap">
-                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                </button>
-                <button data-theme="light" class="theme-btn" aria-label="Cerah">
-                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                </button>
-                <button data-theme="sepia" class="theme-btn" aria-label="Sepia">
-                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                </button>
-              </div>
-            </div>
-            <div class="qs-item qs-col-span-2">
-              <div class="font-toggles">
-                <button id="font-decrease" class="font-btn">A-</button>
-                <button id="font-increase" class="font-btn">A+</button>
-              </div>
-            </div>
+        <div class="qsd-item">
+          <label for="quran-translation-select" class="qsd-label">Terjemahan</label>
+          <div class="district-select-wrapper">
+            <select id="quran-translation-select" class="district-select qsd-select">
+              <option value="none">🛑 Tiada (Arab Sahaja)</option>
+              <option value="39">🇲🇾 - Abdullah Basmeih</option>
+              <option value="20">🇬🇧 - Saheeh International</option>
+              <option value="22">🇬🇧 - Yusuf Ali</option>
+            </select>
           </div>
         </div>
-      </header>
-      
-      <div class="floating-quran-bar" id="floating-quran-bar">
-        <button type="button" id="floating-quick-mode" class="icon-btn floating-bar-btn" aria-label="Tukar Mod" title="Tukar Mod">
-          <span id="floating-mode-text">Mushaf</span>
-        </button>
-        <button type="button" id="floating-book-toggle" class="icon-btn floating-bar-btn" aria-label="Mod Buku" title="Togol Mod Buku">
-          <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-        </button>
-        <button type="button" id="quran-restore-toggle" class="icon-btn floating-restore-btn" aria-label="Papar Menu" title="Keluar Skrin Penuh">
-          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
-        </button>
-      </div>
-
-      <div id="quran-verses" class="quran-verses">
-        <div class="quran-loading" id="quran-loading">
-          <span class="ptr-spinner"></span>
+        <div class="qsd-item">
+          <label class="qsd-label">Tema</label>
+          <div class="theme-toggles">
+            <button data-theme="dark" class="theme-btn active" aria-label="Gelap">Gelap</button>
+            <button data-theme="sepia" class="theme-btn" aria-label="Sepia">Sepia</button>
+            <button data-theme="light" class="theme-btn" aria-label="Cerah">Cerah</button>
+          </div>
+        </div>
+        <div class="qsd-item">
+          <label class="qsd-label">Saiz Tulisan</label>
+          <div class="font-toggles">
+            <button id="font-decrease" class="font-btn" aria-label="Kecilkan Saiz">A-</button>
+            <button id="font-increase" class="font-btn" aria-label="Besarkan Saiz">A+</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="main-nav-dots" id="main-nav-dots">
-    <div class="ns-dot active" id="mn-dot-1"></div>
-    <div class="ns-dot" id="mn-dot-2"></div>
+    <main class="mushaf-book-stage" id="mushaf-book-stage">
+      <button type="button" id="book-nav-prev" class="book-edge-nav nav-prev" aria-label="Halaman Sebelumnya" title="Halaman Sebelumnya">
+        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+
+      <div class="mushaf-book-container" id="mushaf-book-container">
+        <!-- Left Page (Even page: 2, 4, 6...) -->
+        <article class="mushaf-page book-page-left" id="book-page-left" data-page="2">
+          <header class="mushaf-page-header">
+            <div class="mph-surah" id="mph-surah-left" title="Tukar Surah">2. AL-BAQARAH ⬍</div>
+            <div class="mph-juz" id="mph-juz-left">JUZ 1 ⬍</div>
+          </header>
+          <div class="mushaf-page-body">
+            <aside class="mushaf-margin-trans left-margin" id="margin-trans-left"></aside>
+            <div class="mushaf-text-content" id="mushaf-text-left"></div>
+          </div>
+          <footer class="mushaf-page-footer">
+            <div class="mpf-surah" id="mpf-surah-left">2. AL-BAQARAH</div>
+            <div class="mpf-page" id="mpf-page-left">PAGE 2</div>
+          </footer>
+        </article>
+
+        <!-- 3D Center Crease -->
+        <div class="book-spine" id="book-spine" aria-hidden="true"></div>
+
+        <!-- Right Page (Odd page: 1, 3, 5...) -->
+        <article class="mushaf-page book-page-right" id="book-page-right" data-page="1">
+          <header class="mushaf-page-header">
+            <div class="mph-surah" id="mph-surah-right" title="Tukar Surah">1. AL-FATIHAH ⬍</div>
+            <div class="mph-juz" id="mph-juz-right">JUZ 1 ⬍</div>
+          </header>
+          <div class="mushaf-page-body">
+            <div class="mushaf-text-content" id="mushaf-text-right"></div>
+            <aside class="mushaf-margin-trans right-margin" id="margin-trans-right"></aside>
+          </div>
+          <footer class="mushaf-page-footer">
+            <div class="mpf-page" id="mpf-page-right">PAGE 1</div>
+            <div class="mpf-juz" id="mpf-juz-right">JUZ 1</div>
+          </footer>
+        </article>
+
+        <!-- 3D Flip Leaf Layer -->
+        <div class="book-flip-leaf" id="book-flip-leaf" aria-hidden="true">
+          <div class="leaf-face leaf-front" id="leaf-front"></div>
+          <div class="leaf-face leaf-back" id="leaf-back"></div>
+        </div>
+      </div>
+
+      <button type="button" id="book-nav-next" class="book-edge-nav nav-next" aria-label="Halaman Seterusnya" title="Halaman Seterusnya">
+        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+    </main>
   </div>
+</div>
 
   <div class="modal-backdrop" id="info-modal">
     <div class="modal-card" id="info-modal-card">
