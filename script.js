@@ -98,6 +98,8 @@ const I18N = {
     dataAsOf: "Data dikemas kini pada",
     quranModeVerse: "Ayat",
     quranModeReading: "Mushaf",
+    quranModeBook: "Buku",
+    quranModeSingle: "Halaman",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witir", sunat: "Sunat" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
@@ -124,7 +126,9 @@ const I18N = {
     nsStartsAt: "Starts at",
     dataAsOf: "Data as of",
     quranModeVerse: "Verse",
-    quranModeReading: "Reading",
+    quranModeReading: "Mushaf",
+    quranModeBook: "Book",
+    quranModeSingle: "Single",
     badges: { qabliyyah: "Qabliyyah", ba_diyyah: "Ba'diyyah", witir: "Witr", sunat: "Sunnah" },
     districts: [
       { val: 0, text: "Brunei-Muara" },
@@ -213,6 +217,9 @@ function setLanguage(lang) {
   
   setText("mode-verse", t.quranModeVerse);
   setText("mode-reading", t.quranModeReading);
+  setText("qq-label-verse", t.quranModeVerse);
+  setText("qq-label-reading", t.quranModeReading);
+  setText("book-btn-text", t.quranModeBook);
 
   let sel = document.getElementById("district-select");
   let savedIndex = sel ? sel.selectedIndex : 0;
@@ -1104,31 +1111,114 @@ function bindEvents() {
      });
   }
 
+  // Quran Mode Switching Logic
+  function setQuranMode(mode, preserveScroll = true) {
+    const quranVerses = document.getElementById('quran-verses');
+    const modeVerse = document.getElementById('mode-verse');
+    const modeReading = document.getElementById('mode-reading');
+    const quickVerse = document.getElementById('quick-mode-verse');
+    const quickReading = document.getElementById('quick-mode-reading');
+    const floatingModeText = document.getElementById('floating-mode-text');
+
+    let currentKey = null;
+    if (preserveScroll && quranVerses) {
+      const rows = quranVerses.querySelectorAll('.verse-row');
+      const containerTop = quranVerses.getBoundingClientRect().top;
+      for (const r of rows) {
+        if (r.getBoundingClientRect().bottom > containerTop + 20) {
+          currentKey = r.id;
+          break;
+        }
+      }
+    }
+
+    const isReading = mode === "reading";
+    
+    if (quranVerses) {
+      quranVerses.classList.toggle('is-reading-mode', isReading);
+    }
+    
+    if (modeVerse) modeVerse.classList.toggle('active', !isReading);
+    if (modeReading) modeReading.classList.toggle('active', isReading);
+    if (quickVerse) quickVerse.classList.toggle('active', !isReading);
+    if (quickReading) quickReading.classList.toggle('active', isReading);
+
+    if (floatingModeText) {
+      floatingModeText.textContent = isReading ? "Ayat" : "Mushaf";
+    }
+
+    localStorage.setItem('quranMode', mode);
+
+    if (currentKey) {
+      setTimeout(() => {
+        const el = document.getElementById(currentKey);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 40);
+    }
+  }
+
+  // Book Mode Logic (Dual-Page Spread & Foldable Spine Crease)
+  function setQuranBookMode(enabled) {
+    const quranWrapper = document.getElementById('quran-wrapper');
+    const bookBtn = document.getElementById('quran-book-toggle');
+    const floatingBookBtn = document.getElementById('floating-book-toggle');
+    
+    if (!quranWrapper) return;
+    
+    if (enabled) {
+      quranWrapper.classList.add('is-book-mode');
+      quranWrapper.classList.remove('book-mode-disabled');
+      if (bookBtn) bookBtn.classList.add('active');
+      if (floatingBookBtn) floatingBookBtn.classList.add('active');
+    } else {
+      quranWrapper.classList.remove('is-book-mode');
+      quranWrapper.classList.add('book-mode-disabled');
+      if (bookBtn) bookBtn.classList.remove('active');
+      if (floatingBookBtn) floatingBookBtn.classList.remove('active');
+    }
+    
+    localStorage.setItem('quranBookMode', enabled ? 'true' : 'false');
+  }
+
+  function toggleQuranBookMode() {
+    const quranWrapper = document.getElementById('quran-wrapper');
+    if (!quranWrapper) return;
+    const isCurrentlyBook = quranWrapper.classList.contains('is-book-mode') || 
+      (!quranWrapper.classList.contains('book-mode-disabled') && (window.innerWidth >= 600));
+    setQuranBookMode(!isCurrentlyBook);
+  }
+
   const modeVerse = document.getElementById('mode-verse');
   const modeReading = document.getElementById('mode-reading');
-  const quranVerses = document.getElementById('quran-verses');
+  const quickVerse = document.getElementById('quick-mode-verse');
+  const quickReading = document.getElementById('quick-mode-reading');
+  const floatingQuickMode = document.getElementById('floating-quick-mode');
+  const bookToggleBtn = document.getElementById('quran-book-toggle');
+  const floatingBookToggle = document.getElementById('floating-book-toggle');
 
-  if(modeVerse && modeReading) {
-     const savedMode = localStorage.getItem('quranMode') || "verse";
-     if (savedMode === "reading") {
-        quranVerses.classList.add('is-reading-mode');
-        modeReading.classList.add('active');
-        modeVerse.classList.remove('active');
-     }
-     
-     modeVerse.addEventListener('click', () => {
-        quranVerses.classList.remove('is-reading-mode');
-        modeVerse.classList.add('active');
-        modeReading.classList.remove('active');
-        localStorage.setItem('quranMode', 'verse');
-     });
-     modeReading.addEventListener('click', () => {
-        quranVerses.classList.add('is-reading-mode');
-        modeReading.classList.add('active');
-        modeVerse.classList.remove('active');
-        localStorage.setItem('quranMode', 'reading');
-     });
+  if (modeVerse) modeVerse.addEventListener('click', () => setQuranMode('verse'));
+  if (modeReading) modeReading.addEventListener('click', () => setQuranMode('reading'));
+  if (quickVerse) quickVerse.addEventListener('click', () => setQuranMode('verse'));
+  if (quickReading) quickReading.addEventListener('click', () => setQuranMode('reading'));
+  
+  if (floatingQuickMode) {
+    floatingQuickMode.addEventListener('click', () => {
+      const currentMode = localStorage.getItem('quranMode') || 'verse';
+      setQuranMode(currentMode === 'reading' ? 'verse' : 'reading');
+    });
   }
+
+  if (bookToggleBtn) bookToggleBtn.addEventListener('click', toggleQuranBookMode);
+  if (floatingBookToggle) floatingBookToggle.addEventListener('click', toggleQuranBookMode);
+
+  // Initialize modes
+  const savedMode = localStorage.getItem('quranMode') || "verse";
+  setQuranMode(savedMode, false);
+
+  const savedBookMode = localStorage.getItem('quranBookMode');
+  const defaultBook = (window.innerWidth >= 600 && window.innerWidth <= 1000) || window.innerWidth >= 1024;
+  const isBookActive = savedBookMode !== null ? savedBookMode === 'true' : defaultBook;
+  setQuranBookMode(isBookActive);
 
   document.querySelectorAll('.theme-btn').forEach(btn => {
      btn.addEventListener('click', (e) => {
@@ -1154,6 +1244,21 @@ function initApp() {
   fetchRemoteData();
   initPullToRefresh();
   setInterval(updateTick, 1000);
+
+  // Auto-load Quran on desktop / wide screens where both panels are visible side-by-side
+  if (window.innerWidth >= 1024 && !isQuranLoaded) {
+    const surahSel = document.getElementById('surah-select');
+    loadSurah(surahSel ? surahSel.value : "1");
+    isQuranLoaded = true;
+  }
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 1024 && !isQuranLoaded) {
+      const surahSel = document.getElementById('surah-select');
+      loadSurah(surahSel ? surahSel.value : "1");
+      isQuranLoaded = true;
+    }
+  });
 }
 
 if (document.readyState === 'loading') {
